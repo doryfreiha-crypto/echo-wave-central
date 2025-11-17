@@ -255,36 +255,38 @@ export default function Home() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             {announcements.map((announcement) => (
               <Card key={announcement.id} className="overflow-hidden hover:shadow-lg transition-shadow">
-                <CardHeader className="p-0">
-                  <div className="aspect-[4/3] bg-muted relative">
-                    {announcement.images && announcement.images.length > 0 ? (
-                      <img
-                        src={announcement.images[0]}
-                        alt={announcement.title}
-                        className="w-full h-full object-cover"
-                      />
-                    ) : (
-                      <div className="w-full h-full flex items-center justify-center">
-                        <Megaphone className="w-12 h-12 text-muted-foreground" />
-                      </div>
-                    )}
-                  </div>
-                </CardHeader>
-                <CardContent className="p-4">
-                  <CardTitle className="text-lg mb-2 line-clamp-2">
-                    {announcement.title}
-                  </CardTitle>
-                  <p className="text-2xl font-bold text-primary mb-2">
-                    €{announcement.price?.toFixed(2)}
-                  </p>
-                  <p className="text-sm text-muted-foreground line-clamp-2 mb-3">
-                    {announcement.description}
-                  </p>
-                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                    <MapPin className="w-4 h-4" />
-                    <span>{announcement.location}</span>
-                  </div>
-                </CardContent>
+                <Link to={`/announcement/${announcement.id}`}>
+                  <CardHeader className="p-0">
+                    <div className="aspect-[4/3] bg-muted relative">
+                      {announcement.images && announcement.images.length > 0 ? (
+                        <img
+                          src={announcement.images[0]}
+                          alt={announcement.title}
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center">
+                          <Megaphone className="w-12 h-12 text-muted-foreground" />
+                        </div>
+                      )}
+                    </div>
+                  </CardHeader>
+                  <CardContent className="p-4">
+                    <CardTitle className="text-lg mb-2 line-clamp-2">
+                      {announcement.title}
+                    </CardTitle>
+                    <p className="text-2xl font-bold text-primary mb-2">
+                      €{announcement.price?.toFixed(2)}
+                    </p>
+                    <p className="text-sm text-muted-foreground line-clamp-2 mb-3">
+                      {announcement.description}
+                    </p>
+                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                      <MapPin className="w-4 h-4" />
+                      <span>{announcement.location}</span>
+                    </div>
+                  </CardContent>
+                </Link>
                 <CardFooter className="p-4 pt-0 flex flex-col gap-3">
                   <div className="flex justify-between items-center w-full">
                     <Badge variant="outline">{announcement.categories.name}</Badge>
