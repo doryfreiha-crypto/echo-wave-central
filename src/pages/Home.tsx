@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Megaphone, Plus, Search, MapPin, LogOut, LayoutDashboard } from 'lucide-react';
+import { Megaphone, Plus, Search, MapPin, LogOut, LayoutDashboard, MessageSquare } from 'lucide-react';
 import { toast } from 'sonner';
 
 interface Category {
@@ -23,6 +23,7 @@ interface Announcement {
   location: string;
   images: string[];
   created_at: string;
+  user_id: string;
   categories: Category;
   profiles: {
     username: string;
@@ -111,6 +112,52 @@ export default function Home() {
     toast.success('Logged out successfully');
   };
 
+  const handleContactSeller = async (announcement: Announcement) => {
+    if (!user) {
+      toast.error('Please login to contact the seller');
+      return;
+    }
+
+    if (announcement.user_id === user.id) {
+      toast.error('You cannot message your own announcement');
+      return;
+    }
+
+    try {
+      // Check if conversation already exists
+      const { data: existingConv } = await supabase
+        .from('conversations')
+        .select('id')
+        .eq('announcement_id', announcement.id)
+        .eq('buyer_id', user.id)
+        .maybeSingle();
+
+      if (existingConv) {
+        // Navigate to existing conversation
+        window.location.href = `/chat/${existingConv.id}`;
+        return;
+      }
+
+      // Create new conversation
+      const { data: newConv, error } = await supabase
+        .from('conversations')
+        .insert({
+          announcement_id: announcement.id,
+          buyer_id: user.id,
+          seller_id: announcement.user_id,
+        })
+        .select()
+        .single();
+
+      if (error) throw error;
+
+      window.location.href = `/chat/${newConv.id}`;
+    } catch (error) {
+      console.error('Error creating conversation:', error);
+      toast.error('Failed to start conversation');
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-background to-muted">
       {/* Header */}
@@ -135,6 +182,12 @@ export default function Home() {
                       </Link>
                     </Button>
                   )}
+                  <Button variant="outline" asChild>
+                    <Link to="/messages">
+                      <MessageSquare className="w-4 h-4 mr-2" />
+                      Messages
+                    </Link>
+                  </Button>
                   <Button asChild>
                     <Link to="/create">
                       <Plus className="w-4 h-4 mr-2" />
@@ -232,11 +285,24 @@ export default function Home() {
                     <span>{announcement.location}</span>
                   </div>
                 </CardContent>
-                <CardFooter className="p-4 pt-0 flex justify-between items-center">
-                  <Badge variant="outline">{announcement.categories.name}</Badge>
-                  <span className="text-sm text-muted-foreground">
-                    by {announcement.profiles.username}
-                  </span>
+                <CardFooter className="p-4 pt-0 flex flex-col gap-3">
+                  <div className="flex justify-between items-center w-full">
+                    <Badge variant="outline">{announcement.categories.name}</Badge>
+                    <span className="text-sm text-muted-foreground">
+                      by {announcement.profiles.username}
+                    </span>
+                  </div>
+                  {user && announcement.user_id !== user.id && (
+                    <Button
+                      className="w-full"
+                      variant="default"
+                      size="sm"
+                      onClick={() => handleContactSeller(announcement)}
+                    >
+                      <MessageSquare className="w-4 h-4 mr-2" />
+                      Contact Seller
+                    </Button>
+                  )}
                 </CardFooter>
               </Card>
             ))}
