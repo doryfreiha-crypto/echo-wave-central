@@ -188,6 +188,12 @@ export default function Home() {
                       Messages
                     </Link>
                   </Button>
+                  <Button variant="outline" asChild>
+                    <Link to="/my-listings">
+                      <LayoutDashboard className="w-4 h-4 mr-2" />
+                      My Listings
+                    </Link>
+                  </Button>
                   <Button asChild>
                     <Link to="/create">
                       <Plus className="w-4 h-4 mr-2" />
