@@ -9,6 +9,19 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { toast } from 'sonner';
 import { Megaphone } from 'lucide-react';
+import { z } from 'zod';
+
+const loginSchema = z.object({
+  email: z.string().trim().email('Invalid email address').max(255, 'Email too long'),
+  password: z.string().min(6, 'Password must be at least 6 characters').max(128, 'Password too long'),
+});
+
+const signupSchema = z.object({
+  email: z.string().trim().email('Invalid email address').max(255, 'Email too long'),
+  password: z.string().min(6, 'Password must be at least 6 characters').max(128, 'Password too long'),
+  username: z.string().trim().min(3, 'Username must be at least 3 characters').max(30, 'Username too long').regex(/^[a-zA-Z0-9_]+$/, 'Username can only contain letters, numbers, and underscores'),
+  fullName: z.string().trim().max(100, 'Name too long').optional(),
+});
 
 export default function Auth() {
   const navigate = useNavigate();
@@ -29,7 +42,18 @@ export default function Auth() {
     const email = formData.get('email') as string;
     const password = formData.get('password') as string;
 
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
+    // Validate input
+    const validation = loginSchema.safeParse({ email, password });
+    if (!validation.success) {
+      toast.error(validation.error.errors[0].message);
+      setIsLoading(false);
+      return;
+    }
+
+    const { error } = await supabase.auth.signInWithPassword({ 
+      email: validation.data.email, 
+      password: validation.data.password 
+    });
 
     if (error) {
       toast.error(error.message);
@@ -49,14 +73,22 @@ export default function Auth() {
     const username = formData.get('username') as string;
     const fullName = formData.get('fullName') as string;
 
+    // Validate input
+    const validation = signupSchema.safeParse({ email, password, username, fullName });
+    if (!validation.success) {
+      toast.error(validation.error.errors[0].message);
+      setIsLoading(false);
+      return;
+    }
+
     const { error } = await supabase.auth.signUp({
-      email,
-      password,
+      email: validation.data.email,
+      password: validation.data.password,
       options: {
         emailRedirectTo: `${window.location.origin}/`,
         data: {
-          username,
-          full_name: fullName,
+          username: validation.data.username,
+          full_name: validation.data.fullName || '',
         },
       },
     });

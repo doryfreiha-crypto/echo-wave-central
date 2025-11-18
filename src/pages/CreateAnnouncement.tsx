@@ -10,6 +10,15 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { toast } from 'sonner';
 import { ArrowLeft, Upload } from 'lucide-react';
+import { z } from 'zod';
+
+const announcementSchema = z.object({
+  title: z.string().trim().min(5, 'Title must be at least 5 characters').max(100, 'Title too long'),
+  description: z.string().trim().min(20, 'Description must be at least 20 characters').max(5000, 'Description too long'),
+  price: z.number().positive('Price must be positive').max(999999999, 'Price too high'),
+  location: z.string().trim().max(200, 'Location too long').optional(),
+  categoryId: z.string().uuid('Invalid category'),
+});
 
 interface Category {
   id: string;
@@ -55,9 +64,31 @@ export default function CreateAnnouncement() {
     const formData = new FormData(e.currentTarget);
     const title = formData.get('title') as string;
     const description = formData.get('description') as string;
-    const price = parseFloat(formData.get('price') as string);
+    const priceStr = formData.get('price') as string;
+    const price = parseFloat(priceStr);
     const location = formData.get('location') as string;
     const categoryId = formData.get('category') as string;
+
+    // Validate input
+    if (isNaN(price)) {
+      toast.error('Please enter a valid price');
+      setIsLoading(false);
+      return;
+    }
+
+    const validation = announcementSchema.safeParse({ 
+      title, 
+      description, 
+      price, 
+      location: location || '', 
+      categoryId 
+    });
+
+    if (!validation.success) {
+      toast.error(validation.error.errors[0].message);
+      setIsLoading(false);
+      return;
+    }
 
     try {
       // Upload images
@@ -84,11 +115,11 @@ export default function CreateAnnouncement() {
         .from('announcements')
         .insert({
           user_id: user.id,
-          category_id: categoryId,
-          title,
-          description,
-          price,
-          location,
+          category_id: validation.data.categoryId,
+          title: validation.data.title,
+          description: validation.data.description,
+          price: validation.data.price,
+          location: validation.data.location || null,
           images: imageUrls,
         });
 

@@ -7,6 +7,11 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { ArrowLeft, Send } from 'lucide-react';
 import { toast } from 'sonner';
+import { z } from 'zod';
+
+const messageSchema = z.object({
+  content: z.string().trim().min(1, 'Message cannot be empty').max(2000, 'Message too long'),
+});
 
 interface Message {
   id: string;
@@ -124,13 +129,20 @@ const Chat = () => {
   const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!newMessage.trim() || !user) return;
+    if (!user) return;
+
+    // Validate message
+    const validation = messageSchema.safeParse({ content: newMessage });
+    if (!validation.success) {
+      toast.error(validation.error.errors[0].message);
+      return;
+    }
 
     try {
       const { error } = await supabase.from('messages').insert({
         conversation_id: conversationId,
         sender_id: user.id,
-        content: newMessage.trim(),
+        content: validation.data.content,
       });
 
       if (error) throw error;
