@@ -7,6 +7,8 @@ import { AuthProvider } from "@/components/AuthProvider";
 import Home from "./pages/Home";
 import Auth from "./pages/Auth";
 import CreateAnnouncement from "./pages/CreateAnnouncement";
+import EditAnnouncement from "./pages/EditAnnouncement";
+import MyListings from "./pages/MyListings";
 import AnnouncementDetail from "./pages/AnnouncementDetail";
 import Admin from "./pages/Admin";
 import Messages from "./pages/Messages";
@@ -26,6 +28,8 @@ const App = () => (
             <Route path="/" element={<Home />} />
             <Route path="/auth" element={<Auth />} />
             <Route path="/create" element={<CreateAnnouncement />} />
+            <Route path="/my-listings" element={<MyListings />} />
+            <Route path="/edit-announcement/:id" element={<EditAnnouncement />} />
             <Route path="/announcement/:id" element={<AnnouncementDetail />} />
             <Route path="/admin" element={<Admin />} />
             <Route path="/messages" element={<Messages />} />
