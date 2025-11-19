@@ -6,8 +6,10 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Megaphone, Plus, Search, MapPin, LogOut, LayoutDashboard, MessageSquare } from 'lucide-react';
+import { Megaphone, Plus, Search, MapPin, LogOut, LayoutDashboard, MessageSquare, SlidersHorizontal } from 'lucide-react';
 import { toast } from 'sonner';
+import AnnouncementFilters, { type FilterState } from '@/components/AnnouncementFilters';
+import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 
 interface Category {
   id: string;
@@ -24,6 +26,7 @@ interface Announcement {
   images: string[];
   created_at: string;
   user_id: string;
+  attributes: Record<string, any>;
   categories: Category;
   profiles: {
     username: string;
@@ -34,10 +37,17 @@ export default function Home() {
   const { user } = useAuth();
   const [announcements, setAnnouncements] = useState<Announcement[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
-  const [selectedCategory, setSelectedCategory] = useState<string>('');
   const [searchQuery, setSearchQuery] = useState('');
   const [isAdmin, setIsAdmin] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [filters, setFilters] = useState<FilterState>({
+    categoryId: '',
+    searchQuery: '',
+    minPrice: 0,
+    maxPrice: 1000000,
+    location: '',
+    attributes: {},
+  });
 
   useEffect(() => {
     fetchCategories();
@@ -49,7 +59,7 @@ export default function Home() {
 
   useEffect(() => {
     fetchAnnouncements();
-  }, [selectedCategory, searchQuery]);
+  }, [filters, searchQuery]);
 
   const checkAdminRole = async () => {
     if (!user) return;
@@ -89,12 +99,27 @@ export default function Home() {
       .eq('status', 'active')
       .order('created_at', { ascending: false });
 
-    if (selectedCategory) {
-      query = query.eq('category_id', selectedCategory);
+    // Category filter
+    if (filters.categoryId && filters.categoryId !== 'all') {
+      query = query.eq('category_id', filters.categoryId);
     }
 
+    // Search filter
     if (searchQuery) {
       query = query.ilike('title', `%${searchQuery}%`);
+    }
+
+    // Location filter
+    if (filters.location) {
+      query = query.ilike('location', `%${filters.location}%`);
+    }
+
+    // Price range filter
+    if (filters.minPrice > 0) {
+      query = query.gte('price', filters.minPrice);
+    }
+    if (filters.maxPrice < 1000000) {
+      query = query.lte('price', filters.maxPrice);
     }
 
     const { data, error } = await query;
@@ -102,9 +127,40 @@ export default function Home() {
     if (error) {
       toast.error('Failed to load announcements');
     } else {
-      setAnnouncements(data || []);
+      // Client-side filtering for attributes
+      let filteredData = (data || []).map(item => ({
+        ...item,
+        attributes: (item.attributes as Record<string, any>) || {}
+      }));
+      
+      if (Object.keys(filters.attributes).length > 0) {
+        filteredData = filteredData.filter((announcement) => {
+          const attrs = announcement.attributes;
+          return Object.entries(filters.attributes).every(([key, value]) => {
+            if (!value) return true; // Skip empty filters
+            if (typeof attrs[key] === 'number' && typeof value === 'string') {
+              return attrs[key] === parseFloat(value);
+            }
+            return attrs[key]?.toString().toLowerCase() === value.toString().toLowerCase();
+          });
+        });
+      }
+      
+      setAnnouncements(filteredData);
     }
     setLoading(false);
+  };
+
+  const handleResetFilters = () => {
+    setFilters({
+      categoryId: '',
+      searchQuery: '',
+      minPrice: 0,
+      maxPrice: 1000000,
+      location: '',
+      attributes: {},
+    });
+    setSearchQuery('');
   };
 
   const handleLogout = async () => {
@@ -229,93 +285,113 @@ export default function Home() {
       </header>
 
       <div className="container mx-auto px-4 py-8">
-        {/* Categories */}
-        <div className="mb-8 flex flex-wrap gap-2">
-          <Badge
-            variant={!selectedCategory ? 'default' : 'outline'}
-            className="cursor-pointer"
-            onClick={() => setSelectedCategory('')}
-          >
-            All
-          </Badge>
-          {categories.map((category) => (
-            <Badge
-              key={category.id}
-              variant={selectedCategory === category.id ? 'default' : 'outline'}
-              className="cursor-pointer"
-              onClick={() => setSelectedCategory(category.id)}
-            >
-              {category.name}
-            </Badge>
-          ))}
-        </div>
+        <div className="flex gap-6">
+          {/* Desktop Filters Sidebar */}
+          <aside className="hidden lg:block w-80 shrink-0">
+            <div className="sticky top-24">
+              <AnnouncementFilters
+                categories={categories}
+                filters={filters}
+                onFiltersChange={setFilters}
+                onReset={handleResetFilters}
+              />
+            </div>
+          </aside>
 
-        {/* Announcements Grid */}
-        {loading ? (
-          <div className="text-center py-12">Loading announcements...</div>
-        ) : announcements.length === 0 ? (
-          <div className="text-center py-12">
-            <p className="text-muted-foreground">No announcements found</p>
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {announcements.map((announcement) => (
-              <Card key={announcement.id} className="overflow-hidden hover:shadow-lg transition-shadow">
-                <Link to={`/announcement/${announcement.id}`}>
-                  <CardHeader className="p-0">
-                    <div className="aspect-[4/3] bg-muted relative">
+          {/* Main Content */}
+          <div className="flex-1 min-w-0">
+            {/* Mobile Filter Button */}
+            <div className="lg:hidden mb-4">
+              <Sheet>
+                <SheetTrigger asChild>
+                  <Button variant="outline" className="w-full">
+                    <SlidersHorizontal className="w-4 h-4 mr-2" />
+                    Filters
+                  </Button>
+                </SheetTrigger>
+                <SheetContent side="left" className="w-80 overflow-y-auto">
+                  <AnnouncementFilters
+                    categories={categories}
+                    filters={filters}
+                    onFiltersChange={setFilters}
+                    onReset={handleResetFilters}
+                  />
+                </SheetContent>
+              </Sheet>
+            </div>
+
+            {/* Announcements Grid */}
+            {loading ? (
+              <div className="text-center py-12">Loading announcements...</div>
+            ) : announcements.length === 0 ? (
+              <div className="text-center py-12">
+                <p className="text-muted-foreground">No announcements found matching your filters.</p>
+                <Button variant="link" onClick={handleResetFilters} className="mt-2">
+                  Clear all filters
+                </Button>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+                {announcements.map((announcement) => (
+                  <Card key={announcement.id} className="overflow-hidden hover:shadow-lg transition-shadow">
+                    <CardHeader className="p-0">
                       {announcement.images && announcement.images.length > 0 ? (
                         <img
                           src={announcement.images[0]}
                           alt={announcement.title}
-                          className="w-full h-full object-cover"
+                          className="w-full h-48 object-cover"
                         />
                       ) : (
-                        <div className="w-full h-full flex items-center justify-center">
+                        <div className="w-full h-48 bg-muted flex items-center justify-center">
                           <Megaphone className="w-12 h-12 text-muted-foreground" />
                         </div>
                       )}
-                    </div>
-                  </CardHeader>
-                  <CardContent className="p-4">
-                    <CardTitle className="text-lg mb-2 line-clamp-2">
-                      {announcement.title}
-                    </CardTitle>
-                    <p className="text-2xl font-bold text-primary mb-2">
-                      €{announcement.price?.toFixed(2)}
-                    </p>
-                    <p className="text-sm text-muted-foreground line-clamp-2 mb-3">
-                      {announcement.description}
-                    </p>
-                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                      <MapPin className="w-4 h-4" />
-                      <span>{announcement.location}</span>
-                    </div>
-                  </CardContent>
-                </Link>
-                <CardFooter className="p-4 pt-0 flex flex-col gap-3">
-                  <div className="flex justify-between items-center w-full">
-                    <Badge variant="outline">{announcement.categories.name}</Badge>
-                    <span className="text-sm text-muted-foreground">
-                      by {announcement.profiles.username}
-                    </span>
-                  </div>
-                  {user && announcement.user_id !== user.id && (
-                    <Button
-                      className="w-full"
-                      variant="default"
-                      size="sm"
-                      onClick={() => handleContactSeller(announcement)}
-                    >
-                      <MessageSquare className="w-4 h-4 mr-2" />
-                      Contact Seller
-                    </Button>
-                  )}
-                </CardFooter>
-              </Card>
-            ))}
+                    </CardHeader>
+                    <CardContent className="p-4">
+                      <div className="flex items-start justify-between mb-2">
+                        <CardTitle className="text-lg line-clamp-1">{announcement.title}</CardTitle>
+                        <Badge variant="secondary">{announcement.categories.name}</Badge>
+                      </div>
+                      <p className="text-muted-foreground text-sm line-clamp-2 mb-3">
+                        {announcement.description}
+                      </p>
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="text-2xl font-bold text-primary">
+                          ${announcement.price.toLocaleString()}
+                        </span>
+                      </div>
+                      {announcement.location && (
+                        <div className="flex items-center text-sm text-muted-foreground mb-2">
+                          <MapPin className="w-4 h-4 mr-1" />
+                          {announcement.location}
+                        </div>
+                      )}
+                      <div className="text-xs text-muted-foreground">
+                        by {announcement.profiles.username}
+                      </div>
+                    </CardContent>
+                    <CardFooter className="p-4 pt-0 flex gap-2">
+                      <Link to={`/announcement/${announcement.id}`} className="flex-1">
+                        <Button variant="outline" className="w-full">
+                          View Details
+                        </Button>
+                      </Link>
+                      {user && announcement.user_id !== user.id && (
+                        <Button
+                          variant="default"
+                          size="icon"
+                          onClick={() => handleContactSeller(announcement)}
+                        >
+                          <MessageSquare className="w-4 h-4" />
+                        </Button>
+                      )}
+                    </CardFooter>
+                  </Card>
+                ))}
+              </div>
+            )}
           </div>
-        )}
+        </div>
       </div>
     </div>
   );
