@@ -1,0 +1,203 @@
+import { useState, useEffect } from 'react';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Slider } from '@/components/ui/slider';
+import { X } from 'lucide-react';
+import { getCategoryFields, type FieldDefinition } from '@/lib/categoryFields';
+
+interface Category {
+  id: string;
+  name: string;
+  slug: string;
+}
+
+export interface FilterState {
+  categoryId: string;
+  searchQuery: string;
+  minPrice: number;
+  maxPrice: number;
+  location: string;
+  attributes: Record<string, string>;
+}
+
+interface AnnouncementFiltersProps {
+  categories: Category[];
+  filters: FilterState;
+  onFiltersChange: (filters: FilterState) => void;
+  onReset: () => void;
+}
+
+export default function AnnouncementFilters({ 
+  categories, 
+  filters, 
+  onFiltersChange,
+  onReset
+}: AnnouncementFiltersProps) {
+  const [selectedCategoryFields, setSelectedCategoryFields] = useState<FieldDefinition[]>([]);
+
+  useEffect(() => {
+    if (filters.categoryId) {
+      const category = categories.find(c => c.id === filters.categoryId);
+      if (category) {
+        setSelectedCategoryFields(getCategoryFields(category.name));
+      }
+    } else {
+      setSelectedCategoryFields([]);
+    }
+  }, [filters.categoryId, categories]);
+
+  const handleCategoryChange = (categoryId: string) => {
+    onFiltersChange({
+      ...filters,
+      categoryId,
+      attributes: {}, // Reset attributes when category changes
+    });
+  };
+
+  const handlePriceChange = (values: number[]) => {
+    onFiltersChange({
+      ...filters,
+      minPrice: values[0],
+      maxPrice: values[1],
+    });
+  };
+
+  const handleAttributeChange = (name: string, value: string) => {
+    onFiltersChange({
+      ...filters,
+      attributes: {
+        ...filters.attributes,
+        [name]: value,
+      },
+    });
+  };
+
+  const handleRemoveAttribute = (name: string) => {
+    const newAttributes = { ...filters.attributes };
+    delete newAttributes[name];
+    onFiltersChange({
+      ...filters,
+      attributes: newAttributes,
+    });
+  };
+
+  const hasActiveFilters = filters.categoryId || filters.location || 
+    filters.minPrice > 0 || filters.maxPrice < 1000000 || 
+    Object.keys(filters.attributes).length > 0;
+
+  return (
+    <Card>
+      <CardHeader className="flex flex-row items-center justify-between">
+        <CardTitle>Filters</CardTitle>
+        {hasActiveFilters && (
+          <Button variant="ghost" size="sm" onClick={onReset}>
+            Clear all
+          </Button>
+        )}
+      </CardHeader>
+      <CardContent className="space-y-6">
+        {/* Category Filter */}
+        <div className="space-y-2">
+          <Label>Category</Label>
+          <Select value={filters.categoryId} onValueChange={handleCategoryChange}>
+            <SelectTrigger>
+              <SelectValue placeholder="All categories" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All categories</SelectItem>
+              {categories.map((category) => (
+                <SelectItem key={category.id} value={category.id}>
+                  {category.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+
+        {/* Location Filter */}
+        <div className="space-y-2">
+          <Label htmlFor="location">Location</Label>
+          <Input
+            id="location"
+            placeholder="Enter city or region"
+            value={filters.location}
+            onChange={(e) => onFiltersChange({ ...filters, location: e.target.value })}
+          />
+        </div>
+
+        {/* Price Range Filter */}
+        <div className="space-y-4">
+          <Label>Price Range</Label>
+          <div className="px-2">
+            <Slider
+              min={0}
+              max={1000000}
+              step={1000}
+              value={[filters.minPrice, filters.maxPrice]}
+              onValueChange={handlePriceChange}
+              className="w-full"
+            />
+          </div>
+          <div className="flex items-center gap-2 text-sm text-muted-foreground">
+            <span>${filters.minPrice.toLocaleString()}</span>
+            <span>-</span>
+            <span>${filters.maxPrice.toLocaleString()}</span>
+          </div>
+        </div>
+
+        {/* Category-Specific Filters */}
+        {selectedCategoryFields.length > 0 && (
+          <div className="space-y-4 pt-4 border-t">
+            <Label className="text-base font-semibold">Specific Filters</Label>
+            {selectedCategoryFields.map((field) => (
+              <div key={field.name} className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <Label htmlFor={field.name}>{field.label}</Label>
+                  {filters.attributes[field.name] && (
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => handleRemoveAttribute(field.name)}
+                      className="h-auto p-1"
+                    >
+                      <X className="h-3 w-3" />
+                    </Button>
+                  )}
+                </div>
+                {field.type === 'select' && field.options ? (
+                  <Select
+                    value={filters.attributes[field.name] || ''}
+                    onValueChange={(value) => handleAttributeChange(field.name, value)}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder={`Select ${field.label.toLowerCase()}`} />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="">Any</SelectItem>
+                      {field.options.map((option) => (
+                        <SelectItem key={option} value={option}>
+                          {option}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                ) : (
+                  <Input
+                    id={field.name}
+                    type={field.type}
+                    value={filters.attributes[field.name] || ''}
+                    onChange={(e) => handleAttributeChange(field.name, e.target.value)}
+                    placeholder={field.placeholder}
+                  />
+                )}
+              </div>
+            ))}
+          </div>
+        )}
+      </CardContent>
+    </Card>
+  );
+}
