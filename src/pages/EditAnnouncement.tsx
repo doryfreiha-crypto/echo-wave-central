@@ -11,6 +11,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { toast } from 'sonner';
 import { ArrowLeft, Upload, X } from 'lucide-react';
 import { z } from 'zod';
+import { getCategoryFields, type FieldDefinition } from '@/lib/categoryFields';
 
 const announcementSchema = z.object({
   title: z.string().trim().min(5, 'Title must be at least 5 characters').max(100, 'Title too long'),
@@ -34,6 +35,7 @@ export default function EditAnnouncement() {
   const [loading, setLoading] = useState(true);
   const [selectedImages, setSelectedImages] = useState<File[]>([]);
   const [existingImages, setExistingImages] = useState<string[]>([]);
+  const [attributes, setAttributes] = useState<Record<string, any>>({});
   const [formData, setFormData] = useState({
     title: '',
     description: '',
@@ -84,6 +86,7 @@ export default function EditAnnouncement() {
         categoryId: data.category_id,
       });
       setExistingImages(data.images || []);
+      setAttributes((data.attributes as Record<string, any>) || {});
     } catch (error) {
       console.error('Error fetching announcement:', error);
       toast.error('Failed to load announcement');
@@ -176,6 +179,7 @@ export default function EditAnnouncement() {
           location: validation.data.location || null,
           category_id: validation.data.categoryId,
           images: allImages,
+          attributes: attributes,
         })
         .eq('id', id);
 
@@ -260,7 +264,10 @@ export default function EditAnnouncement() {
                 <Label htmlFor="category">Category *</Label>
                 <Select
                   value={formData.categoryId}
-                  onValueChange={(value) => setFormData({ ...formData, categoryId: value })}
+                  onValueChange={(value) => {
+                    setFormData({ ...formData, categoryId: value });
+                    // Don't reset attributes when changing category during edit
+                  }}
                   required
                 >
                   <SelectTrigger>
@@ -275,6 +282,57 @@ export default function EditAnnouncement() {
                   </SelectContent>
                 </Select>
               </div>
+
+              {/* Category-specific fields */}
+              {formData.categoryId && (() => {
+                const category = categories.find(c => c.id === formData.categoryId);
+                if (!category) return null;
+                
+                const fields = getCategoryFields(category.name);
+                if (fields.length === 0) return null;
+
+                return (
+                  <div className="space-y-4 p-4 border rounded-lg bg-muted/50">
+                    <h3 className="font-semibold">Additional Details</h3>
+                    <div className="grid grid-cols-2 gap-4">
+                      {fields.map((field: FieldDefinition) => (
+                        <div key={field.name} className="space-y-2">
+                          <Label htmlFor={field.name}>
+                            {field.label}
+                            {field.required && ' *'}
+                          </Label>
+                          {field.type === 'select' ? (
+                            <Select
+                              value={attributes[field.name] || ''}
+                              onValueChange={(value) => setAttributes({ ...attributes, [field.name]: value })}
+                            >
+                              <SelectTrigger>
+                                <SelectValue placeholder={`Select ${field.label.toLowerCase()}`} />
+                              </SelectTrigger>
+                              <SelectContent>
+                                {field.options?.map((option) => (
+                                  <SelectItem key={option} value={option}>
+                                    {option}
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                          ) : (
+                            <Input
+                              id={field.name}
+                              type={field.type}
+                              value={attributes[field.name] || ''}
+                              onChange={(e) => setAttributes({ ...attributes, [field.name]: e.target.value })}
+                              placeholder={field.placeholder}
+                              required={field.required}
+                            />
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                );
+              })()}
 
               <div className="space-y-2">
                 <Label>Images (max 5)</Label>

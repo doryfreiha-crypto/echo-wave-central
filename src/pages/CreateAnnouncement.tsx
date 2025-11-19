@@ -11,6 +11,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { toast } from 'sonner';
 import { ArrowLeft, Upload } from 'lucide-react';
 import { z } from 'zod';
+import { getCategoryFields, type FieldDefinition } from '@/lib/categoryFields';
 
 const announcementSchema = z.object({
   title: z.string().trim().min(5, 'Title must be at least 5 characters').max(100, 'Title too long'),
@@ -31,6 +32,8 @@ export default function CreateAnnouncement() {
   const [categories, setCategories] = useState<Category[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [selectedImages, setSelectedImages] = useState<File[]>([]);
+  const [selectedCategory, setSelectedCategory] = useState<string>('');
+  const [attributes, setAttributes] = useState<Record<string, any>>({});
 
   useEffect(() => {
     if (!user) {
@@ -121,6 +124,7 @@ export default function CreateAnnouncement() {
           price: validation.data.price,
           location: validation.data.location || null,
           images: imageUrls,
+          attributes: attributes,
         });
 
       if (error) throw error;
@@ -160,7 +164,14 @@ export default function CreateAnnouncement() {
 
               <div className="space-y-2">
                 <Label htmlFor="category">Category *</Label>
-                <Select name="category" required>
+                <Select 
+                  name="category" 
+                  required
+                  onValueChange={(value) => {
+                    setSelectedCategory(value);
+                    setAttributes({}); // Reset attributes when category changes
+                  }}
+                >
                   <SelectTrigger>
                     <SelectValue placeholder="Select a category" />
                   </SelectTrigger>
@@ -173,6 +184,57 @@ export default function CreateAnnouncement() {
                   </SelectContent>
                 </Select>
               </div>
+
+              {/* Category-specific fields */}
+              {selectedCategory && (() => {
+                const category = categories.find(c => c.id === selectedCategory);
+                if (!category) return null;
+                
+                const fields = getCategoryFields(category.name);
+                if (fields.length === 0) return null;
+
+                return (
+                  <div className="space-y-4 p-4 border rounded-lg bg-muted/50">
+                    <h3 className="font-semibold">Additional Details</h3>
+                    <div className="grid grid-cols-2 gap-4">
+                      {fields.map((field: FieldDefinition) => (
+                        <div key={field.name} className="space-y-2">
+                          <Label htmlFor={field.name}>
+                            {field.label}
+                            {field.required && ' *'}
+                          </Label>
+                          {field.type === 'select' ? (
+                            <Select
+                              value={attributes[field.name] || ''}
+                              onValueChange={(value) => setAttributes({ ...attributes, [field.name]: value })}
+                            >
+                              <SelectTrigger>
+                                <SelectValue placeholder={`Select ${field.label.toLowerCase()}`} />
+                              </SelectTrigger>
+                              <SelectContent>
+                                {field.options?.map((option) => (
+                                  <SelectItem key={option} value={option}>
+                                    {option}
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                          ) : (
+                            <Input
+                              id={field.name}
+                              type={field.type}
+                              value={attributes[field.name] || ''}
+                              onChange={(e) => setAttributes({ ...attributes, [field.name]: e.target.value })}
+                              placeholder={field.placeholder}
+                              required={field.required}
+                            />
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                );
+              })()}
 
               <div className="space-y-2">
                 <Label htmlFor="description">Description *</Label>

@@ -7,6 +7,7 @@ import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
 import { Megaphone, MapPin, ArrowLeft, MessageSquare, Calendar, Eye } from 'lucide-react';
 import { toast } from 'sonner';
+import { getCategoryFields } from '@/lib/categoryFields';
 
 interface Category {
   id: string;
@@ -24,6 +25,7 @@ interface Announcement {
   created_at: string;
   user_id: string;
   views_count: number;
+  attributes: Record<string, any>;
   categories: Category;
   profiles: {
     username: string;
@@ -84,7 +86,10 @@ export default function AnnouncementDetail() {
       toast.error('Announcement not found');
       navigate('/');
     } else {
-      setAnnouncement(data);
+      setAnnouncement({
+        ...data,
+        attributes: (data.attributes as Record<string, any>) || {}
+      });
     }
     setLoading(false);
   };
