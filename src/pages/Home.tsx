@@ -10,6 +10,7 @@ import { Megaphone, Plus, Search, MapPin, LogOut, LayoutDashboard, MessageSquare
 import { toast } from 'sonner';
 import AnnouncementFilters, { type FilterState } from '@/components/AnnouncementFilters';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 interface Category {
   id: string;
@@ -48,6 +49,7 @@ export default function Home() {
     location: '',
     attributes: {},
   });
+  const [sortBy, setSortBy] = useState('newest');
 
   useEffect(() => {
     fetchCategories();
@@ -59,7 +61,7 @@ export default function Home() {
 
   useEffect(() => {
     fetchAnnouncements();
-  }, [filters, searchQuery]);
+  }, [filters, searchQuery, sortBy]);
 
   const checkAdminRole = async () => {
     if (!user) return;
@@ -96,8 +98,24 @@ export default function Home() {
         categories (id, name, slug),
         profiles (username)
       `)
-      .eq('status', 'active')
-      .order('created_at', { ascending: false });
+      .eq('status', 'active');
+    
+    // Apply sorting
+    switch (sortBy) {
+      case 'oldest':
+        query = query.order('created_at', { ascending: true });
+        break;
+      case 'price-low':
+        query = query.order('price', { ascending: true });
+        break;
+      case 'price-high':
+        query = query.order('price', { ascending: false });
+        break;
+      case 'newest':
+      default:
+        query = query.order('created_at', { ascending: false });
+        break;
+    }
 
     // Category filter
     if (filters.categoryId && filters.categoryId !== 'all') {
@@ -269,9 +287,9 @@ export default function Home() {
             </div>
           </div>
 
-          {/* Search */}
-          <div className="mt-4">
-            <div className="relative">
+          {/* Search & Sort */}
+          <div className="mt-4 flex items-center gap-4 flex-wrap">
+            <div className="relative flex-1 min-w-[200px]">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
               <Input
                 placeholder="Search announcements..."
@@ -280,6 +298,17 @@ export default function Home() {
                 className="pl-10"
               />
             </div>
+            <Select value={sortBy} onValueChange={setSortBy}>
+              <SelectTrigger className="w-[180px]">
+                <SelectValue placeholder="Sort by" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="newest">Newest First</SelectItem>
+                <SelectItem value="oldest">Oldest First</SelectItem>
+                <SelectItem value="price-low">Price: Low to High</SelectItem>
+                <SelectItem value="price-high">Price: High to Low</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
         </div>
       </header>
