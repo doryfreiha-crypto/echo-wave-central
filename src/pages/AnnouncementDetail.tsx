@@ -5,7 +5,7 @@ import { useAuth } from '@/components/AuthProvider';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
-import { Megaphone, MapPin, ArrowLeft, MessageSquare, Calendar, Eye } from 'lucide-react';
+import { Megaphone, MapPin, ArrowLeft, MessageSquare, Calendar, Eye, Heart } from 'lucide-react';
 import { toast } from 'sonner';
 import { getCategoryFields } from '@/lib/categoryFields';
 
@@ -41,13 +41,18 @@ export default function AnnouncementDetail() {
   const [announcement, setAnnouncement] = useState<Announcement | null>(null);
   const [selectedImage, setSelectedImage] = useState(0);
   const [loading, setLoading] = useState(true);
+  const [isFavorite, setIsFavorite] = useState(false);
+  const [favoriteId, setFavoriteId] = useState<string | null>(null);
 
   useEffect(() => {
     if (id) {
       fetchAnnouncement();
       incrementViews();
+      if (user) {
+        checkFavoriteStatus();
+      }
     }
-  }, [id]);
+  }, [id, user]);
 
   const incrementViews = async () => {
     if (!id) return;
@@ -92,6 +97,69 @@ export default function AnnouncementDetail() {
       });
     }
     setLoading(false);
+  };
+
+  const checkFavoriteStatus = async () => {
+    if (!user || !id) return;
+
+    const { data } = await supabase
+      .from('favorites')
+      .select('id')
+      .eq('user_id', user.id)
+      .eq('announcement_id', id)
+      .maybeSingle();
+
+    if (data) {
+      setIsFavorite(true);
+      setFavoriteId(data.id);
+    } else {
+      setIsFavorite(false);
+      setFavoriteId(null);
+    }
+  };
+
+  const toggleFavorite = async () => {
+    if (!user) {
+      toast.error('Please login to save favorites');
+      navigate('/auth');
+      return;
+    }
+
+    if (!announcement) return;
+
+    if (isFavorite && favoriteId) {
+      // Remove from favorites
+      const { error } = await supabase
+        .from('favorites')
+        .delete()
+        .eq('id', favoriteId);
+
+      if (error) {
+        toast.error('Failed to remove from favorites');
+      } else {
+        setIsFavorite(false);
+        setFavoriteId(null);
+        toast.success('Removed from favorites');
+      }
+    } else {
+      // Add to favorites
+      const { data, error } = await supabase
+        .from('favorites')
+        .insert({
+          user_id: user.id,
+          announcement_id: announcement.id,
+        })
+        .select()
+        .single();
+
+      if (error) {
+        toast.error('Failed to add to favorites');
+      } else {
+        setIsFavorite(true);
+        setFavoriteId(data.id);
+        toast.success('Added to favorites');
+      }
+    }
   };
 
   const handleContactSeller = async () => {
@@ -256,13 +324,35 @@ export default function AnnouncementDetail() {
                 </div>
 
                 {user && announcement.user_id !== user.id && (
+                  <>
+                    <Button
+                      className="w-full"
+                      size="lg"
+                      onClick={handleContactSeller}
+                    >
+                      <MessageSquare className="w-5 h-5 mr-2" />
+                      Contact Seller
+                    </Button>
+                    <Button
+                      variant={isFavorite ? "default" : "outline"}
+                      className="w-full"
+                      size="lg"
+                      onClick={toggleFavorite}
+                    >
+                      <Heart className={`w-5 h-5 mr-2 ${isFavorite ? 'fill-current' : ''}`} />
+                      {isFavorite ? 'Saved' : 'Save to Favorites'}
+                    </Button>
+                  </>
+                )}
+                {user && announcement.user_id === user.id && (
                   <Button
+                    variant="outline"
                     className="w-full"
                     size="lg"
-                    onClick={handleContactSeller}
+                    onClick={toggleFavorite}
                   >
-                    <MessageSquare className="w-5 h-5 mr-2" />
-                    Contact Seller
+                    <Heart className={`w-5 h-5 mr-2 ${isFavorite ? 'fill-current' : ''}`} />
+                    {isFavorite ? 'Saved' : 'Save to Favorites'}
                   </Button>
                 )}
               </CardContent>
