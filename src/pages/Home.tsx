@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Megaphone, Plus, Search, MapPin, LogOut, LayoutDashboard, MessageSquare, SlidersHorizontal } from 'lucide-react';
+import { Megaphone, Plus, Search, MapPin, LogOut, LayoutDashboard, MessageSquare, SlidersHorizontal, Grid3x3, List } from 'lucide-react';
 import { toast } from 'sonner';
 import AnnouncementFilters, { type FilterState } from '@/components/AnnouncementFilters';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
@@ -50,6 +50,7 @@ export default function Home() {
     attributes: {},
   });
   const [sortBy, setSortBy] = useState('newest');
+  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
 
   useEffect(() => {
     fetchCategories();
@@ -298,17 +299,37 @@ export default function Home() {
                 className="pl-10"
               />
             </div>
-            <Select value={sortBy} onValueChange={setSortBy}>
-              <SelectTrigger className="w-[180px]">
-                <SelectValue placeholder="Sort by" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="newest">Newest First</SelectItem>
-                <SelectItem value="oldest">Oldest First</SelectItem>
-                <SelectItem value="price-low">Price: Low to High</SelectItem>
-                <SelectItem value="price-high">Price: High to Low</SelectItem>
-              </SelectContent>
-            </Select>
+            <div className="flex items-center gap-2">
+              <Select value={sortBy} onValueChange={setSortBy}>
+                <SelectTrigger className="w-[180px]">
+                  <SelectValue placeholder="Sort by" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="newest">Newest First</SelectItem>
+                  <SelectItem value="oldest">Oldest First</SelectItem>
+                  <SelectItem value="price-low">Price: Low to High</SelectItem>
+                  <SelectItem value="price-high">Price: High to Low</SelectItem>
+                </SelectContent>
+              </Select>
+              <div className="flex border rounded-md">
+                <Button
+                  variant={viewMode === 'grid' ? 'default' : 'ghost'}
+                  size="icon"
+                  onClick={() => setViewMode('grid')}
+                  className="rounded-r-none"
+                >
+                  <Grid3x3 className="w-4 h-4" />
+                </Button>
+                <Button
+                  variant={viewMode === 'list' ? 'default' : 'ghost'}
+                  size="icon"
+                  onClick={() => setViewMode('list')}
+                  className="rounded-l-none"
+                >
+                  <List className="w-4 h-4" />
+                </Button>
+              </div>
+            </div>
           </div>
         </div>
       </header>
@@ -349,7 +370,7 @@ export default function Home() {
               </Sheet>
             </div>
 
-            {/* Announcements Grid */}
+            {/* Announcements */}
             {loading ? (
               <div className="text-center py-12">Loading announcements...</div>
             ) : announcements.length === 0 ? (
@@ -359,7 +380,7 @@ export default function Home() {
                   Clear all filters
                 </Button>
               </div>
-            ) : (
+            ) : viewMode === 'grid' ? (
               <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
                 {announcements.map((announcement) => (
                   <Card key={announcement.id} className="overflow-hidden hover:shadow-lg transition-shadow">
@@ -415,6 +436,69 @@ export default function Home() {
                         </Button>
                       )}
                     </CardFooter>
+                  </Card>
+                ))}
+              </div>
+            ) : (
+              <div className="space-y-4">
+                {announcements.map((announcement) => (
+                  <Card key={announcement.id} className="overflow-hidden hover:shadow-lg transition-shadow">
+                    <div className="flex flex-col sm:flex-row">
+                      <div className="sm:w-64 shrink-0">
+                        {announcement.images && announcement.images.length > 0 ? (
+                          <img
+                            src={announcement.images[0]}
+                            alt={announcement.title}
+                            className="w-full h-48 sm:h-full object-cover"
+                          />
+                        ) : (
+                          <div className="w-full h-48 sm:h-full bg-muted flex items-center justify-center">
+                            <Megaphone className="w-12 h-12 text-muted-foreground" />
+                          </div>
+                        )}
+                      </div>
+                      <div className="flex-1 flex flex-col">
+                        <CardContent className="p-4 flex-1">
+                          <div className="flex items-start justify-between mb-2 gap-2">
+                            <CardTitle className="text-xl">{announcement.title}</CardTitle>
+                            <Badge variant="secondary" className="shrink-0">{announcement.categories.name}</Badge>
+                          </div>
+                          <p className="text-muted-foreground text-sm mb-3 line-clamp-2">
+                            {announcement.description}
+                          </p>
+                          <div className="flex items-center gap-4 mb-2 flex-wrap">
+                            <span className="text-2xl font-bold text-primary">
+                              ${announcement.price.toLocaleString()}
+                            </span>
+                            {announcement.location && (
+                              <div className="flex items-center text-sm text-muted-foreground">
+                                <MapPin className="w-4 h-4 mr-1" />
+                                {announcement.location}
+                              </div>
+                            )}
+                          </div>
+                          <div className="text-xs text-muted-foreground">
+                            by {announcement.profiles.username}
+                          </div>
+                        </CardContent>
+                        <CardFooter className="p-4 pt-0 flex gap-2">
+                          <Link to={`/announcement/${announcement.id}`} className="flex-1">
+                            <Button variant="outline" className="w-full">
+                              View Details
+                            </Button>
+                          </Link>
+                          {user && announcement.user_id !== user.id && (
+                            <Button
+                              variant="default"
+                              onClick={() => handleContactSeller(announcement)}
+                            >
+                              <MessageSquare className="w-4 h-4 mr-2" />
+                              Contact
+                            </Button>
+                          )}
+                        </CardFooter>
+                      </div>
+                    </div>
                   </Card>
                 ))}
               </div>
