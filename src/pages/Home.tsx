@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Megaphone, Plus, Search, MapPin, LogOut, LayoutDashboard, MessageSquare, SlidersHorizontal, Grid3x3, List } from 'lucide-react';
+import { Megaphone, Plus, Search, MapPin, LogOut, LayoutDashboard, MessageSquare, SlidersHorizontal, Grid3x3, List, Heart } from 'lucide-react';
 import { toast } from 'sonner';
 import AnnouncementFilters, { type FilterState } from '@/components/AnnouncementFilters';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
@@ -261,6 +261,12 @@ export default function Home() {
                     <Link to="/messages">
                       <MessageSquare className="w-4 h-4 mr-2" />
                       Messages
+                    </Link>
+                  </Button>
+                  <Button variant="outline" asChild>
+                    <Link to="/favorites">
+                      <Heart className="w-4 h-4 mr-2" />
+                      Favorites
                     </Link>
                   </Button>
                   <Button variant="outline" asChild>
