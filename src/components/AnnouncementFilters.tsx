@@ -66,13 +66,23 @@ export default function AnnouncementFilters({
   };
 
   const handleAttributeChange = (name: string, value: string) => {
-    onFiltersChange({
-      ...filters,
-      attributes: {
-        ...filters.attributes,
-        [name]: value,
-      },
-    });
+    // Remove attribute if "any" is selected
+    if (value === 'any') {
+      const newAttributes = { ...filters.attributes };
+      delete newAttributes[name];
+      onFiltersChange({
+        ...filters,
+        attributes: newAttributes,
+      });
+    } else {
+      onFiltersChange({
+        ...filters,
+        attributes: {
+          ...filters.attributes,
+          [name]: value,
+        },
+      });
+    }
   };
 
   const handleRemoveAttribute = (name: string) => {
@@ -169,14 +179,14 @@ export default function AnnouncementFilters({
                 </div>
                 {field.type === 'select' && field.options ? (
                   <Select
-                    value={filters.attributes[field.name] || ''}
+                    value={filters.attributes[field.name] || 'any'}
                     onValueChange={(value) => handleAttributeChange(field.name, value)}
                   >
                     <SelectTrigger>
                       <SelectValue placeholder={`Select ${field.label.toLowerCase()}`} />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="">Any</SelectItem>
+                      <SelectItem value="any">Any</SelectItem>
                       {field.options.map((option) => (
                         <SelectItem key={option} value={option}>
                           {option}
