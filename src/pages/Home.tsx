@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Megaphone, Plus, Search, MapPin, LogOut, LayoutDashboard, MessageSquare, SlidersHorizontal, Grid3x3, List, Heart } from 'lucide-react';
+import { Megaphone, Plus, Search, MapPin, LogOut, LayoutDashboard, MessageSquare, SlidersHorizontal, Grid3x3, List, Heart, LayoutGrid } from 'lucide-react';
 import { toast } from 'sonner';
 import AnnouncementFilters, { type FilterState } from '@/components/AnnouncementFilters';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
@@ -50,7 +50,7 @@ export default function Home() {
     attributes: {},
   });
   const [sortBy, setSortBy] = useState('newest');
-  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
+  const [viewMode, setViewMode] = useState<'grid' | 'list' | 'compact'>('grid');
 
   useEffect(() => {
     fetchCategories();
@@ -330,9 +330,17 @@ export default function Home() {
                   variant={viewMode === 'list' ? 'default' : 'ghost'}
                   size="icon"
                   onClick={() => setViewMode('list')}
-                  className="rounded-l-none"
+                  className="rounded-none border-x-0"
                 >
                   <List className="w-4 h-4" />
+                </Button>
+                <Button
+                  variant={viewMode === 'compact' ? 'default' : 'ghost'}
+                  size="icon"
+                  onClick={() => setViewMode('compact')}
+                  className="rounded-l-none"
+                >
+                  <LayoutGrid className="w-4 h-4" />
                 </Button>
               </div>
             </div>
@@ -385,6 +393,40 @@ export default function Home() {
                 <Button variant="link" onClick={handleResetFilters} className="mt-2">
                   Clear all filters
                 </Button>
+              </div>
+            ) : viewMode === 'compact' ? (
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3">
+                {announcements.map((announcement) => (
+                  <Link 
+                    key={announcement.id} 
+                    to={`/announcement/${announcement.id}`}
+                    className="group"
+                  >
+                    <Card className="overflow-hidden hover:shadow-md transition-shadow h-full">
+                      <div className="aspect-square relative">
+                        {announcement.images && announcement.images.length > 0 ? (
+                          <img
+                            src={announcement.images[0]}
+                            alt={announcement.title}
+                            className="w-full h-full object-cover"
+                          />
+                        ) : (
+                          <div className="w-full h-full bg-muted flex items-center justify-center">
+                            <Megaphone className="w-8 h-8 text-muted-foreground" />
+                          </div>
+                        )}
+                      </div>
+                      <CardContent className="p-2">
+                        <p className="text-sm font-medium line-clamp-1 group-hover:text-primary transition-colors">
+                          {announcement.title}
+                        </p>
+                        <p className="text-sm font-bold text-primary">
+                          ${announcement.price.toLocaleString()}
+                        </p>
+                      </CardContent>
+                    </Card>
+                  </Link>
+                ))}
               </div>
             ) : viewMode === 'grid' ? (
               <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
