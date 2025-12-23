@@ -291,6 +291,33 @@ export default function AnnouncementDetail() {
                 <p className="text-muted-foreground whitespace-pre-wrap">{announcement.description}</p>
               </CardContent>
             </Card>
+
+            {/* Additional Details */}
+            {announcement.attributes && Object.keys(announcement.attributes).length > 0 && (
+              <Card>
+                <CardContent className="p-6">
+                  <h2 className="text-2xl font-bold mb-4">Details</h2>
+                  <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                    {(() => {
+                      const categoryName = announcement.categories?.name || '';
+                      const fieldDefs = getCategoryFields(categoryName);
+                      const fieldMap = new Map(fieldDefs.map(f => [f.name, f.label]));
+                      
+                      return Object.entries(announcement.attributes).map(([key, value]) => {
+                        if (value === null || value === undefined || value === '') return null;
+                        const label = fieldMap.get(key) || key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase());
+                        return (
+                          <div key={key} className="bg-muted/50 rounded-lg p-3">
+                            <p className="text-xs text-muted-foreground uppercase tracking-wide">{label}</p>
+                            <p className="font-medium mt-1">{String(value)}</p>
+                          </div>
+                        );
+                      });
+                    })()}
+                  </div>
+                </CardContent>
+              </Card>
+            )}
           </div>
 
           {/* Details Sidebar */}
