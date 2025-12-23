@@ -395,11 +395,11 @@ export default function Home() {
                         <img
                           src={announcement.images[0]}
                           alt={announcement.title}
-                          className="w-full h-48 object-cover"
+                          className="w-full h-32 object-cover"
                         />
                       ) : (
-                        <div className="w-full h-48 bg-muted flex items-center justify-center">
-                          <Megaphone className="w-12 h-12 text-muted-foreground" />
+                        <div className="w-full h-32 bg-muted flex items-center justify-center">
+                          <Megaphone className="w-10 h-10 text-muted-foreground" />
                         </div>
                       )}
                     </CardHeader>
@@ -450,16 +450,16 @@ export default function Home() {
                 {announcements.map((announcement) => (
                   <Card key={announcement.id} className="overflow-hidden hover:shadow-lg transition-shadow">
                     <div className="flex flex-col sm:flex-row">
-                      <div className="sm:w-64 shrink-0">
+                      <div className="sm:w-40 shrink-0">
                         {announcement.images && announcement.images.length > 0 ? (
                           <img
                             src={announcement.images[0]}
                             alt={announcement.title}
-                            className="w-full h-48 sm:h-full object-cover"
+                            className="w-full h-32 sm:h-full object-cover"
                           />
                         ) : (
-                          <div className="w-full h-48 sm:h-full bg-muted flex items-center justify-center">
-                            <Megaphone className="w-12 h-12 text-muted-foreground" />
+                          <div className="w-full h-32 sm:h-full bg-muted flex items-center justify-center">
+                            <Megaphone className="w-10 h-10 text-muted-foreground" />
                           </div>
                         )}
                       </div>
