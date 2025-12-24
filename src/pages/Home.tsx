@@ -348,19 +348,19 @@ export default function Home() {
 
           {/* Quick Category Chips */}
           {categories.length > 0 && (
-            <div className="mt-3 flex items-center gap-2 flex-wrap">
+            <div className="mt-3 flex items-center gap-2 overflow-x-auto pb-2 scrollbar-thin scrollbar-thumb-muted">
               <Badge
                 variant={!filters.categoryId || filters.categoryId === 'all' ? 'default' : 'outline'}
-                className="cursor-pointer hover:bg-primary/90 transition-colors"
+                className="cursor-pointer hover:bg-primary/90 transition-colors shrink-0"
                 onClick={() => setFilters({ ...filters, categoryId: '' })}
               >
                 All
               </Badge>
-              {categories.slice(0, 6).map((category) => (
+              {categories.map((category) => (
                 <Badge
                   key={category.id}
                   variant={filters.categoryId === category.id ? 'default' : 'outline'}
-                  className="cursor-pointer hover:bg-primary/90 transition-colors"
+                  className="cursor-pointer hover:bg-primary/90 transition-colors shrink-0"
                   onClick={() => setFilters({ ...filters, categoryId: category.id })}
                 >
                   {category.name}
