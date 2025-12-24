@@ -388,24 +388,41 @@ export default function Home() {
           {/* Main Content */}
           <div className="flex-1 min-w-0">
             {/* Mobile Filter Button */}
-            <div className="lg:hidden mb-4">
-              <Sheet>
-                <SheetTrigger asChild>
-                  <Button variant="outline" className="w-full">
-                    <SlidersHorizontal className="w-4 h-4 mr-2" />
-                    Filters
-                  </Button>
-                </SheetTrigger>
-                <SheetContent side="left" className="w-80 overflow-y-auto">
-                  <AnnouncementFilters
-                    categories={categories}
-                    filters={filters}
-                    onFiltersChange={setFilters}
-                    onReset={handleResetFilters}
-                  />
-                </SheetContent>
-              </Sheet>
-            </div>
+            {(() => {
+              const activeFilterCount = [
+                filters.categoryId && filters.categoryId !== 'all',
+                filters.location,
+                filters.minPrice > 0,
+                filters.maxPrice < 1000000,
+                Object.keys(filters.attributes).filter(k => filters.attributes[k]).length > 0
+              ].filter(Boolean).length;
+              
+              return (
+                <div className="lg:hidden mb-4">
+                  <Sheet>
+                    <SheetTrigger asChild>
+                      <Button variant="outline" className="w-full relative">
+                        <SlidersHorizontal className="w-4 h-4 mr-2" />
+                        Filters
+                        {activeFilterCount > 0 && (
+                          <Badge className="ml-2 h-5 w-5 p-0 flex items-center justify-center text-xs">
+                            {activeFilterCount}
+                          </Badge>
+                        )}
+                      </Button>
+                    </SheetTrigger>
+                    <SheetContent side="left" className="w-80 overflow-y-auto">
+                      <AnnouncementFilters
+                        categories={categories}
+                        filters={filters}
+                        onFiltersChange={setFilters}
+                        onReset={handleResetFilters}
+                      />
+                    </SheetContent>
+                  </Sheet>
+                </div>
+              );
+            })()}
 
             {/* Announcements */}
             {loading ? (
