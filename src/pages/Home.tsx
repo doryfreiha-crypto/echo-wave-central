@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/components/AuthProvider';
 import { Button } from '@/components/ui/button';
@@ -11,6 +12,7 @@ import { toast } from 'sonner';
 import AnnouncementFilters, { type FilterState } from '@/components/AnnouncementFilters';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { LanguageSwitcher } from '@/components/LanguageSwitcher';
 
 interface Category {
   id: string;
@@ -35,6 +37,7 @@ interface Announcement {
 }
 
 export default function Home() {
+  const { t } = useTranslation();
   const { user } = useAuth();
   const [announcements, setAnnouncements] = useState<Announcement[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
@@ -247,48 +250,49 @@ export default function Home() {
             </Link>
             
             <div className="flex items-center gap-2">
+              <LanguageSwitcher />
               {user ? (
                 <>
                   {isAdmin && (
                     <Button variant="outline" asChild>
                       <Link to="/admin">
                         <LayoutDashboard className="w-4 h-4 mr-2" />
-                        Admin
+                        {t('nav.admin')}
                       </Link>
                     </Button>
                   )}
                   <Button variant="outline" asChild>
                     <Link to="/messages">
                       <MessageSquare className="w-4 h-4 mr-2" />
-                      Messages
+                      {t('nav.messages')}
                     </Link>
                   </Button>
                   <Button variant="outline" asChild>
                     <Link to="/favorites">
                       <Heart className="w-4 h-4 mr-2" />
-                      Favorites
+                      {t('nav.favorites')}
                     </Link>
                   </Button>
                   <Button variant="outline" asChild>
                     <Link to="/my-listings">
                       <LayoutDashboard className="w-4 h-4 mr-2" />
-                      My Listings
+                      {t('nav.myListings')}
                     </Link>
                   </Button>
                   <Button asChild>
                     <Link to="/create">
                       <Plus className="w-4 h-4 mr-2" />
-                      Post Ad
+                      {t('nav.createAnnouncement')}
                     </Link>
                   </Button>
                   <Button variant="outline" onClick={handleLogout}>
                     <LogOut className="w-4 h-4 mr-2" />
-                    Logout
+                    {t('nav.logout')}
                   </Button>
                 </>
               ) : (
                 <Button asChild>
-                  <Link to="/auth">Login</Link>
+                  <Link to="/auth">{t('nav.login')}</Link>
                 </Button>
               )}
             </div>
@@ -299,7 +303,7 @@ export default function Home() {
             <div className="relative flex-1 min-w-[200px]">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
               <Input
-                placeholder="Search announcements..."
+                placeholder={t('home.searchPlaceholder')}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="pl-10"
@@ -308,13 +312,13 @@ export default function Home() {
             <div className="flex items-center gap-2">
               <Select value={sortBy} onValueChange={setSortBy}>
                 <SelectTrigger className="w-[180px]">
-                  <SelectValue placeholder="Sort by" />
+                  <SelectValue placeholder={t('filters.sortBy')} />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="newest">Newest First</SelectItem>
-                  <SelectItem value="oldest">Oldest First</SelectItem>
-                  <SelectItem value="price-low">Price: Low to High</SelectItem>
-                  <SelectItem value="price-high">Price: High to Low</SelectItem>
+                  <SelectItem value="newest">{t('filters.newest')}</SelectItem>
+                  <SelectItem value="oldest">{t('filters.oldest')}</SelectItem>
+                  <SelectItem value="price-low">{t('filters.priceLowHigh')}</SelectItem>
+                  <SelectItem value="price-high">{t('filters.priceHighLow')}</SelectItem>
                 </SelectContent>
               </Select>
               <div className="flex border rounded-md">

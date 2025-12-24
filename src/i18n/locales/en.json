@@ -1,0 +1,136 @@
+{
+  "common": {
+    "search": "Search",
+    "filter": "Filter",
+    "all": "All",
+    "loading": "Loading...",
+    "noResults": "No results found",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "create": "Create",
+    "back": "Back",
+    "next": "Next",
+    "previous": "Previous",
+    "submit": "Submit",
+    "close": "Close",
+    "yes": "Yes",
+    "no": "No",
+    "or": "or",
+    "and": "and"
+  },
+  "nav": {
+    "home": "Home",
+    "messages": "Messages",
+    "favorites": "Favorites",
+    "myListings": "My Listings",
+    "admin": "Admin",
+    "login": "Login",
+    "signup": "Sign Up",
+    "logout": "Logout",
+    "profile": "Profile",
+    "createAnnouncement": "Create Announcement"
+  },
+  "home": {
+    "title": "Find What You Need",
+    "subtitle": "Browse thousands of listings in your area",
+    "searchPlaceholder": "What are you looking for?",
+    "categories": "Categories",
+    "recentListings": "Recent Listings",
+    "featuredListings": "Featured Listings",
+    "viewAll": "View All",
+    "noListings": "No listings available"
+  },
+  "filters": {
+    "category": "Category",
+    "priceRange": "Price Range",
+    "minPrice": "Min Price",
+    "maxPrice": "Max Price",
+    "location": "Location",
+    "sortBy": "Sort By",
+    "newest": "Newest",
+    "oldest": "Oldest",
+    "priceLowHigh": "Price: Low to High",
+    "priceHighLow": "Price: High to Low",
+    "clearFilters": "Clear Filters",
+    "applyFilters": "Apply Filters"
+  },
+  "listing": {
+    "price": "Price",
+    "location": "Location",
+    "description": "Description",
+    "seller": "Seller",
+    "postedOn": "Posted on",
+    "views": "Views",
+    "contactSeller": "Contact Seller",
+    "addToFavorites": "Add to Favorites",
+    "removeFromFavorites": "Remove from Favorites",
+    "share": "Share",
+    "report": "Report"
+  },
+  "createListing": {
+    "title": "Create New Listing",
+    "editTitle": "Edit Listing",
+    "listingTitle": "Title",
+    "titlePlaceholder": "Enter a title for your listing",
+    "category": "Category",
+    "selectCategory": "Select a category",
+    "description": "Description",
+    "descriptionPlaceholder": "Describe your item or service",
+    "price": "Price",
+    "pricePlaceholder": "Enter price",
+    "location": "Location",
+    "locationPlaceholder": "Enter location",
+    "images": "Images",
+    "uploadImages": "Upload Images",
+    "publish": "Publish",
+    "saveDraft": "Save as Draft"
+  },
+  "auth": {
+    "login": "Login",
+    "signup": "Sign Up",
+    "email": "Email",
+    "password": "Password",
+    "confirmPassword": "Confirm Password",
+    "forgotPassword": "Forgot Password?",
+    "rememberMe": "Remember me",
+    "noAccount": "Don't have an account?",
+    "hasAccount": "Already have an account?",
+    "loginSuccess": "Successfully logged in",
+    "signupSuccess": "Account created successfully",
+    "logoutSuccess": "Successfully logged out"
+  },
+  "messages": {
+    "title": "Messages",
+    "noMessages": "No messages yet",
+    "sendMessage": "Send a message",
+    "typePlaceholder": "Type your message...",
+    "send": "Send"
+  },
+  "favorites": {
+    "title": "My Favorites",
+    "noFavorites": "No favorites yet",
+    "addedToFavorites": "Added to favorites",
+    "removedFromFavorites": "Removed from favorites"
+  },
+  "myListings": {
+    "title": "My Listings",
+    "noListings": "You haven't created any listings yet",
+    "active": "Active",
+    "sold": "Sold",
+    "archived": "Archived"
+  },
+  "errors": {
+    "general": "Something went wrong",
+    "notFound": "Page not found",
+    "unauthorized": "You are not authorized",
+    "networkError": "Network error"
+  },
+  "language": {
+    "select": "Language",
+    "english": "English",
+    "french": "French",
+    "arabic": "Arabic"
+  }
+}
