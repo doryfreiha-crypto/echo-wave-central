@@ -1,0 +1,136 @@
+{
+  "common": {
+    "search": "Rechercher",
+    "filter": "Filtrer",
+    "all": "Tout",
+    "loading": "Chargement...",
+    "noResults": "Aucun résultat trouvé",
+    "save": "Enregistrer",
+    "cancel": "Annuler",
+    "delete": "Supprimer",
+    "edit": "Modifier",
+    "create": "Créer",
+    "back": "Retour",
+    "next": "Suivant",
+    "previous": "Précédent",
+    "submit": "Soumettre",
+    "close": "Fermer",
+    "yes": "Oui",
+    "no": "Non",
+    "or": "ou",
+    "and": "et"
+  },
+  "nav": {
+    "home": "Accueil",
+    "messages": "Messages",
+    "favorites": "Favoris",
+    "myListings": "Mes Annonces",
+    "admin": "Admin",
+    "login": "Connexion",
+    "signup": "Inscription",
+    "logout": "Déconnexion",
+    "profile": "Profil",
+    "createAnnouncement": "Créer une Annonce"
+  },
+  "home": {
+    "title": "Trouvez Ce Dont Vous Avez Besoin",
+    "subtitle": "Parcourez des milliers d'annonces dans votre région",
+    "searchPlaceholder": "Que recherchez-vous ?",
+    "categories": "Catégories",
+    "recentListings": "Annonces Récentes",
+    "featuredListings": "Annonces en Vedette",
+    "viewAll": "Voir Tout",
+    "noListings": "Aucune annonce disponible"
+  },
+  "filters": {
+    "category": "Catégorie",
+    "priceRange": "Fourchette de Prix",
+    "minPrice": "Prix Min",
+    "maxPrice": "Prix Max",
+    "location": "Localisation",
+    "sortBy": "Trier Par",
+    "newest": "Plus Récent",
+    "oldest": "Plus Ancien",
+    "priceLowHigh": "Prix : Croissant",
+    "priceHighLow": "Prix : Décroissant",
+    "clearFilters": "Effacer les Filtres",
+    "applyFilters": "Appliquer les Filtres"
+  },
+  "listing": {
+    "price": "Prix",
+    "location": "Localisation",
+    "description": "Description",
+    "seller": "Vendeur",
+    "postedOn": "Publié le",
+    "views": "Vues",
+    "contactSeller": "Contacter le Vendeur",
+    "addToFavorites": "Ajouter aux Favoris",
+    "removeFromFavorites": "Retirer des Favoris",
+    "share": "Partager",
+    "report": "Signaler"
+  },
+  "createListing": {
+    "title": "Créer une Nouvelle Annonce",
+    "editTitle": "Modifier l'Annonce",
+    "listingTitle": "Titre",
+    "titlePlaceholder": "Entrez un titre pour votre annonce",
+    "category": "Catégorie",
+    "selectCategory": "Sélectionnez une catégorie",
+    "description": "Description",
+    "descriptionPlaceholder": "Décrivez votre article ou service",
+    "price": "Prix",
+    "pricePlaceholder": "Entrez le prix",
+    "location": "Localisation",
+    "locationPlaceholder": "Entrez la localisation",
+    "images": "Images",
+    "uploadImages": "Télécharger des Images",
+    "publish": "Publier",
+    "saveDraft": "Enregistrer comme Brouillon"
+  },
+  "auth": {
+    "login": "Connexion",
+    "signup": "Inscription",
+    "email": "Email",
+    "password": "Mot de passe",
+    "confirmPassword": "Confirmer le Mot de passe",
+    "forgotPassword": "Mot de passe oublié ?",
+    "rememberMe": "Se souvenir de moi",
+    "noAccount": "Vous n'avez pas de compte ?",
+    "hasAccount": "Vous avez déjà un compte ?",
+    "loginSuccess": "Connexion réussie",
+    "signupSuccess": "Compte créé avec succès",
+    "logoutSuccess": "Déconnexion réussie"
+  },
+  "messages": {
+    "title": "Messages",
+    "noMessages": "Pas encore de messages",
+    "sendMessage": "Envoyer un message",
+    "typePlaceholder": "Tapez votre message...",
+    "send": "Envoyer"
+  },
+  "favorites": {
+    "title": "Mes Favoris",
+    "noFavorites": "Pas encore de favoris",
+    "addedToFavorites": "Ajouté aux favoris",
+    "removedFromFavorites": "Retiré des favoris"
+  },
+  "myListings": {
+    "title": "Mes Annonces",
+    "noListings": "Vous n'avez pas encore créé d'annonce",
+    "active": "Active",
+    "sold": "Vendu",
+    "archived": "Archivé"
+  },
+  "errors": {
+    "general": "Une erreur s'est produite",
+    "notFound": "Page non trouvée",
+    "unauthorized": "Vous n'êtes pas autorisé",
+    "networkError": "Erreur réseau"
+  },
+  "language": {
+    "select": "Langue",
+    "english": "Anglais",
+    "french": "Français",
+    "arabic": "Arabe"
+  }
+}

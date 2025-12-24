@@ -1,0 +1,136 @@
+{
+  "common": {
+    "search": "بحث",
+    "filter": "تصفية",
+    "all": "الكل",
+    "loading": "جاري التحميل...",
+    "noResults": "لم يتم العثور على نتائج",
+    "save": "حفظ",
+    "cancel": "إلغاء",
+    "delete": "حذف",
+    "edit": "تعديل",
+    "create": "إنشاء",
+    "back": "رجوع",
+    "next": "التالي",
+    "previous": "السابق",
+    "submit": "إرسال",
+    "close": "إغلاق",
+    "yes": "نعم",
+    "no": "لا",
+    "or": "أو",
+    "and": "و"
+  },
+  "nav": {
+    "home": "الرئيسية",
+    "messages": "الرسائل",
+    "favorites": "المفضلة",
+    "myListings": "إعلاناتي",
+    "admin": "الإدارة",
+    "login": "تسجيل الدخول",
+    "signup": "إنشاء حساب",
+    "logout": "تسجيل الخروج",
+    "profile": "الملف الشخصي",
+    "createAnnouncement": "إنشاء إعلان"
+  },
+  "home": {
+    "title": "ابحث عما تحتاجه",
+    "subtitle": "تصفح آلاف الإعلانات في منطقتك",
+    "searchPlaceholder": "ما الذي تبحث عنه؟",
+    "categories": "الفئات",
+    "recentListings": "الإعلانات الأخيرة",
+    "featuredListings": "الإعلانات المميزة",
+    "viewAll": "عرض الكل",
+    "noListings": "لا توجد إعلانات متاحة"
+  },
+  "filters": {
+    "category": "الفئة",
+    "priceRange": "نطاق السعر",
+    "minPrice": "الحد الأدنى للسعر",
+    "maxPrice": "الحد الأقصى للسعر",
+    "location": "الموقع",
+    "sortBy": "ترتيب حسب",
+    "newest": "الأحدث",
+    "oldest": "الأقدم",
+    "priceLowHigh": "السعر: من الأقل للأعلى",
+    "priceHighLow": "السعر: من الأعلى للأقل",
+    "clearFilters": "مسح الفلاتر",
+    "applyFilters": "تطبيق الفلاتر"
+  },
+  "listing": {
+    "price": "السعر",
+    "location": "الموقع",
+    "description": "الوصف",
+    "seller": "البائع",
+    "postedOn": "تاريخ النشر",
+    "views": "المشاهدات",
+    "contactSeller": "التواصل مع البائع",
+    "addToFavorites": "إضافة للمفضلة",
+    "removeFromFavorites": "إزالة من المفضلة",
+    "share": "مشاركة",
+    "report": "إبلاغ"
+  },
+  "createListing": {
+    "title": "إنشاء إعلان جديد",
+    "editTitle": "تعديل الإعلان",
+    "listingTitle": "العنوان",
+    "titlePlaceholder": "أدخل عنوان إعلانك",
+    "category": "الفئة",
+    "selectCategory": "اختر فئة",
+    "description": "الوصف",
+    "descriptionPlaceholder": "صف منتجك أو خدمتك",
+    "price": "السعر",
+    "pricePlaceholder": "أدخل السعر",
+    "location": "الموقع",
+    "locationPlaceholder": "أدخل الموقع",
+    "images": "الصور",
+    "uploadImages": "رفع الصور",
+    "publish": "نشر",
+    "saveDraft": "حفظ كمسودة"
+  },
+  "auth": {
+    "login": "تسجيل الدخول",
+    "signup": "إنشاء حساب",
+    "email": "البريد الإلكتروني",
+    "password": "كلمة المرور",
+    "confirmPassword": "تأكيد كلمة المرور",
+    "forgotPassword": "نسيت كلمة المرور؟",
+    "rememberMe": "تذكرني",
+    "noAccount": "ليس لديك حساب؟",
+    "hasAccount": "لديك حساب بالفعل؟",
+    "loginSuccess": "تم تسجيل الدخول بنجاح",
+    "signupSuccess": "تم إنشاء الحساب بنجاح",
+    "logoutSuccess": "تم تسجيل الخروج بنجاح"
+  },
+  "messages": {
+    "title": "الرسائل",
+    "noMessages": "لا توجد رسائل بعد",
+    "sendMessage": "إرسال رسالة",
+    "typePlaceholder": "اكتب رسالتك...",
+    "send": "إرسال"
+  },
+  "favorites": {
+    "title": "المفضلة",
+    "noFavorites": "لا توجد مفضلات بعد",
+    "addedToFavorites": "تمت الإضافة للمفضلة",
+    "removedFromFavorites": "تمت الإزالة من المفضلة"
+  },
+  "myListings": {
+    "title": "إعلاناتي",
+    "noListings": "لم تنشئ أي إعلانات بعد",
+    "active": "نشط",
+    "sold": "مباع",
+    "archived": "مؤرشف"
+  },
+  "errors": {
+    "general": "حدث خطأ ما",
+    "notFound": "الصفحة غير موجودة",
+    "unauthorized": "غير مصرح لك",
+    "networkError": "خطأ في الشبكة"
+  },
+  "language": {
+    "select": "اللغة",
+    "english": "الإنجليزية",
+    "french": "الفرنسية",
+    "arabic": "العربية"
+  }
+}
