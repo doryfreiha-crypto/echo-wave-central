@@ -13,6 +13,7 @@ import AnnouncementFilters, { type FilterState } from '@/components/Announcement
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { LanguageSwitcher } from '@/components/LanguageSwitcher';
+import { ScrollAnimate } from '@/hooks/use-scroll-animation';
 
 interface Category {
   id: string;
@@ -459,14 +460,16 @@ export default function Home() {
         <div className="flex gap-6">
           {/* Desktop Filters Sidebar */}
           <aside className="hidden lg:block w-80 shrink-0">
-            <div className="sticky top-24">
-              <AnnouncementFilters
-                categories={categories}
-                filters={filters}
-                onFiltersChange={setFilters}
-                onReset={handleResetFilters}
-              />
-            </div>
+            <ScrollAnimate animation="fade-right">
+              <div className="sticky top-24">
+                <AnnouncementFilters
+                  categories={categories}
+                  filters={filters}
+                  onFiltersChange={setFilters}
+                  onReset={handleResetFilters}
+                />
+              </div>
+            </ScrollAnimate>
           </aside>
 
           {/* Main Content */}
@@ -527,175 +530,178 @@ export default function Home() {
                 </Button>
               </div>
             ) : viewMode === 'compact' ? (
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
-                {announcements.map((announcement, index) => (
-                  <Link 
-                    key={announcement.id} 
-                    to={`/announcement/${announcement.id}`}
-                    className="group opacity-0 fade-in-up"
-                    style={{ animationDelay: `${index * 50}ms`, animationFillMode: 'forwards' }}
-                  >
-                    <Card className="overflow-hidden h-full group-hover:-translate-y-1">
-                      <div className="aspect-square relative overflow-hidden">
-                        {announcement.images && announcement.images.length > 0 ? (
-                          <img
-                            src={announcement.images[0]}
-                            alt={announcement.title}
-                            className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
-                          />
-                        ) : (
-                          <div className="w-full h-full bg-gradient-to-br from-secondary to-muted flex items-center justify-center">
-                            <Megaphone className="w-8 h-8 text-muted-foreground" />
-                          </div>
-                        )}
-                        <div className="absolute inset-0 bg-gradient-to-t from-card/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-                      </div>
-                      <CardContent className="p-3">
-                        <p className="text-sm font-medium line-clamp-1 group-hover:text-primary transition-colors">
-                          {announcement.title}
-                        </p>
-                        <p className="text-sm font-bold gradient-text">
-                          ${announcement.price.toLocaleString()}
-                        </p>
-                      </CardContent>
-                    </Card>
-                  </Link>
-                ))}
-              </div>
-            ) : viewMode === 'grid' ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-                {announcements.map((announcement, index) => (
-                  <Card 
-                    key={announcement.id} 
-                    className="overflow-hidden group opacity-0 fade-in-up"
-                    style={{ animationDelay: `${index * 75}ms`, animationFillMode: 'forwards' }}
-                  >
-                    <CardHeader className="p-0 relative overflow-hidden">
-                      {announcement.images && announcement.images.length > 0 ? (
-                        <img
-                          src={announcement.images[0]}
-                          alt={announcement.title}
-                          className="w-full h-48 object-cover transition-transform duration-500 group-hover:scale-105"
-                        />
-                      ) : (
-                        <div className="w-full h-48 bg-gradient-to-br from-secondary to-muted flex items-center justify-center">
-                          <Megaphone className="w-12 h-12 text-muted-foreground" />
-                        </div>
-                      )}
-                      <div className="absolute top-3 right-3">
-                        <Badge variant="secondary" className="glass-strong text-xs">
-                          {announcement.categories.name}
-                        </Badge>
-                      </div>
-                    </CardHeader>
-                    <CardContent className="p-5">
-                      <CardTitle className="text-lg line-clamp-1 mb-2 group-hover:text-primary transition-colors">
-                        {announcement.title}
-                      </CardTitle>
-                      <p className="text-muted-foreground text-sm line-clamp-2 mb-4">
-                        {announcement.description}
-                      </p>
-                      <div className="flex items-center justify-between mb-3">
-                        <span className="text-2xl font-bold font-display gradient-text">
-                          ${announcement.price.toLocaleString()}
-                        </span>
-                      </div>
-                      {announcement.location && (
-                        <div className="flex items-center text-sm text-muted-foreground mb-2">
-                          <MapPin className="w-4 h-4 mr-1.5 text-primary/60" />
-                          {announcement.location}
-                        </div>
-                      )}
-                      <div className="text-xs text-muted-foreground">
-                        by <span className="text-foreground font-medium">{announcement.profiles.username}</span>
-                      </div>
-                    </CardContent>
-                    <CardFooter className="p-5 pt-0 flex gap-2">
-                      <Link to={`/announcement/${announcement.id}`} className="flex-1">
-                        <Button variant="outline" className="w-full">
-                          View Details
-                        </Button>
-                      </Link>
-                      {user && announcement.user_id !== user.id && (
-                        <Button
-                          variant="gradient"
-                          size="icon"
-                          onClick={() => handleContactSeller(announcement)}
-                        >
-                          <MessageSquare className="w-4 h-4" />
-                        </Button>
-                      )}
-                    </CardFooter>
-                  </Card>
-                ))}
-              </div>
-            ) : (
-              <div className="space-y-4">
-                {announcements.map((announcement, index) => (
-                  <Card 
-                    key={announcement.id} 
-                    className="overflow-hidden group opacity-0 fade-in-up"
-                    style={{ animationDelay: `${index * 75}ms`, animationFillMode: 'forwards' }}
-                  >
-                    <div className="flex flex-col sm:flex-row">
-                      <div className="sm:w-48 shrink-0 relative overflow-hidden">
-                        {announcement.images && announcement.images.length > 0 ? (
-                          <img
-                            src={announcement.images[0]}
-                            alt={announcement.title}
-                            className="w-full h-40 sm:h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                          />
-                        ) : (
-                          <div className="w-full h-40 sm:h-full bg-gradient-to-br from-secondary to-muted flex items-center justify-center">
-                            <Megaphone className="w-10 h-10 text-muted-foreground" />
-                          </div>
-                        )}
-                      </div>
-                      <div className="flex-1 flex flex-col">
-                        <CardContent className="p-5 flex-1">
-                          <div className="flex items-start justify-between mb-2 gap-2">
-                            <CardTitle className="text-xl group-hover:text-primary transition-colors">{announcement.title}</CardTitle>
-                            <Badge variant="secondary" className="shrink-0">{announcement.categories.name}</Badge>
-                          </div>
-                          <p className="text-muted-foreground text-sm mb-3 line-clamp-2">
-                            {announcement.description}
-                          </p>
-                          <div className="flex items-center gap-4 mb-2 flex-wrap">
-                            <span className="text-2xl font-bold font-display gradient-text">
-                              ${announcement.price.toLocaleString()}
-                            </span>
-                            {announcement.location && (
-                              <div className="flex items-center text-sm text-muted-foreground">
-                                <MapPin className="w-4 h-4 mr-1.5 text-primary/60" />
-                                {announcement.location}
-                              </div>
-                            )}
-                          </div>
-                          <div className="text-xs text-muted-foreground">
-                            by <span className="text-foreground font-medium">{announcement.profiles.username}</span>
-                          </div>
-                        </CardContent>
-                        <CardFooter className="p-5 pt-0 flex gap-2">
-                          <Link to={`/announcement/${announcement.id}`} className="flex-1">
-                            <Button variant="outline" className="w-full">
-                              View Details
-                            </Button>
-                          </Link>
-                          {user && announcement.user_id !== user.id && (
-                            <Button
-                              variant="gradient"
-                              onClick={() => handleContactSeller(announcement)}
-                            >
-                              <MessageSquare className="w-4 h-4 mr-2" />
-                              Contact
-                            </Button>
+              <ScrollAnimate animation="fade-up">
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
+                  {announcements.map((announcement, index) => (
+                    <Link 
+                      key={announcement.id} 
+                      to={`/announcement/${announcement.id}`}
+                      className="group"
+                    >
+                      <Card className="overflow-hidden h-full group-hover:-translate-y-1 transition-transform duration-300">
+                        <div className="aspect-square relative overflow-hidden">
+                          {announcement.images && announcement.images.length > 0 ? (
+                            <img
+                              src={announcement.images[0]}
+                              alt={announcement.title}
+                              className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                            />
+                          ) : (
+                            <div className="w-full h-full bg-gradient-to-br from-secondary to-muted flex items-center justify-center">
+                              <Megaphone className="w-8 h-8 text-muted-foreground" />
+                            </div>
                           )}
-                        </CardFooter>
+                          <div className="absolute inset-0 bg-gradient-to-t from-card/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                        </div>
+                        <CardContent className="p-3">
+                          <p className="text-sm font-medium line-clamp-1 group-hover:text-primary transition-colors">
+                            {announcement.title}
+                          </p>
+                          <p className="text-sm font-bold gradient-text">
+                            ${announcement.price.toLocaleString()}
+                          </p>
+                        </CardContent>
+                      </Card>
+                    </Link>
+                  ))}
+                </div>
+              </ScrollAnimate>
+            ) : viewMode === 'grid' ? (
+              <ScrollAnimate animation="fade-up">
+                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+                  {announcements.map((announcement) => (
+                    <Card 
+                      key={announcement.id} 
+                      className="overflow-hidden group"
+                    >
+                      <CardHeader className="p-0 relative overflow-hidden">
+                        {announcement.images && announcement.images.length > 0 ? (
+                          <img
+                            src={announcement.images[0]}
+                            alt={announcement.title}
+                            className="w-full h-48 object-cover transition-transform duration-500 group-hover:scale-105"
+                          />
+                        ) : (
+                          <div className="w-full h-48 bg-gradient-to-br from-secondary to-muted flex items-center justify-center">
+                            <Megaphone className="w-12 h-12 text-muted-foreground" />
+                          </div>
+                        )}
+                        <div className="absolute top-3 right-3">
+                          <Badge variant="secondary" className="glass-strong text-xs">
+                            {announcement.categories.name}
+                          </Badge>
+                        </div>
+                      </CardHeader>
+                      <CardContent className="p-5">
+                        <CardTitle className="text-lg line-clamp-1 mb-2 group-hover:text-primary transition-colors">
+                          {announcement.title}
+                        </CardTitle>
+                        <p className="text-muted-foreground text-sm line-clamp-2 mb-4">
+                          {announcement.description}
+                        </p>
+                        <div className="flex items-center justify-between mb-3">
+                          <span className="text-2xl font-bold font-display gradient-text">
+                            ${announcement.price.toLocaleString()}
+                          </span>
+                        </div>
+                        {announcement.location && (
+                          <div className="flex items-center text-sm text-muted-foreground mb-2">
+                            <MapPin className="w-4 h-4 mr-1.5 text-primary/60" />
+                            {announcement.location}
+                          </div>
+                        )}
+                        <div className="text-xs text-muted-foreground">
+                          by <span className="text-foreground font-medium">{announcement.profiles.username}</span>
+                        </div>
+                      </CardContent>
+                      <CardFooter className="p-5 pt-0 flex gap-2">
+                        <Link to={`/announcement/${announcement.id}`} className="flex-1">
+                          <Button variant="outline" className="w-full">
+                            View Details
+                          </Button>
+                        </Link>
+                        {user && announcement.user_id !== user.id && (
+                          <Button
+                            variant="gradient"
+                            size="icon"
+                            onClick={() => handleContactSeller(announcement)}
+                          >
+                            <MessageSquare className="w-4 h-4" />
+                          </Button>
+                        )}
+                      </CardFooter>
+                    </Card>
+                  ))}
+                </div>
+              </ScrollAnimate>
+            ) : (
+              <ScrollAnimate animation="fade-up">
+                <div className="space-y-4">
+                  {announcements.map((announcement) => (
+                    <Card 
+                      key={announcement.id} 
+                      className="overflow-hidden group"
+                    >
+                      <div className="flex flex-col sm:flex-row">
+                        <div className="sm:w-48 shrink-0 relative overflow-hidden">
+                          {announcement.images && announcement.images.length > 0 ? (
+                            <img
+                              src={announcement.images[0]}
+                              alt={announcement.title}
+                              className="w-full h-40 sm:h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                            />
+                          ) : (
+                            <div className="w-full h-40 sm:h-full bg-gradient-to-br from-secondary to-muted flex items-center justify-center">
+                              <Megaphone className="w-10 h-10 text-muted-foreground" />
+                            </div>
+                          )}
+                        </div>
+                        <div className="flex-1 flex flex-col">
+                          <CardContent className="p-5 flex-1">
+                            <div className="flex items-start justify-between mb-2 gap-2">
+                              <CardTitle className="text-xl group-hover:text-primary transition-colors">{announcement.title}</CardTitle>
+                              <Badge variant="secondary" className="shrink-0">{announcement.categories.name}</Badge>
+                            </div>
+                            <p className="text-muted-foreground text-sm mb-3 line-clamp-2">
+                              {announcement.description}
+                            </p>
+                            <div className="flex items-center gap-4 mb-2 flex-wrap">
+                              <span className="text-2xl font-bold font-display gradient-text">
+                                ${announcement.price.toLocaleString()}
+                              </span>
+                              {announcement.location && (
+                                <div className="flex items-center text-sm text-muted-foreground">
+                                  <MapPin className="w-4 h-4 mr-1.5 text-primary/60" />
+                                  {announcement.location}
+                                </div>
+                              )}
+                            </div>
+                            <div className="text-xs text-muted-foreground">
+                              by <span className="text-foreground font-medium">{announcement.profiles.username}</span>
+                            </div>
+                          </CardContent>
+                          <CardFooter className="p-5 pt-0 flex gap-2">
+                            <Link to={`/announcement/${announcement.id}`} className="flex-1">
+                              <Button variant="outline" className="w-full">
+                                View Details
+                              </Button>
+                            </Link>
+                            {user && announcement.user_id !== user.id && (
+                              <Button
+                                variant="gradient"
+                                onClick={() => handleContactSeller(announcement)}
+                              >
+                                <MessageSquare className="w-4 h-4 mr-2" />
+                                Contact
+                              </Button>
+                            )}
+                          </CardFooter>
+                        </div>
                       </div>
-                    </div>
-                  </Card>
-                ))}
-              </div>
+                    </Card>
+                  ))}
+                </div>
+              </ScrollAnimate>
             )}
           </div>
         </div>
