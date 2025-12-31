@@ -201,9 +201,43 @@
   "myListings": {
     "title": "Mes Annonces",
     "noListings": "Vous n'avez pas encore créé d'annonce",
+    "createFirst": "Créer votre première annonce",
     "active": "Active",
+    "pending": "En attente",
+    "rejected": "Refusée",
     "sold": "Vendu",
-    "archived": "Archivé"
+    "archived": "Archivé",
+    "pendingMessage": "Cette annonce est en attente d'approbation par un administrateur avant d'être visible.",
+    "rejectedMessage": "Cette annonce a été refusée par un administrateur. Veuillez la modifier et la soumettre à nouveau."
+  },
+  "admin": {
+    "title": "Tableau de bord Admin",
+    "pendingReview": "En attente de révision",
+    "allAnnouncements": "Toutes les annonces",
+    "noPending": "Aucune annonce en attente de révision",
+    "approve": "Approuver",
+    "reject": "Refuser",
+    "approved": "Annonce approuvée",
+    "rejected": "Annonce refusée",
+    "approveError": "Échec de l'approbation",
+    "rejectError": "Échec du refus",
+    "deleted": "Annonce supprimée",
+    "deleteConfirmTitle": "Supprimer l'annonce",
+    "deleteConfirmDescription": "Êtes-vous sûr de vouloir supprimer cette annonce ? Cette action est irréversible.",
+    "previewAnnouncement": "Aperçu de l'annonce",
+    "previewDescription": "Vérifiez les détails de l'annonce avant d'approuver ou de refuser.",
+    "title": "Titre",
+    "user": "Utilisateur",
+    "status": "Statut",
+    "created": "Créé",
+    "actions": "Actions",
+    "statuses": {
+      "active": "Active",
+      "pending": "En attente",
+      "rejected": "Refusée",
+      "sold": "Vendu",
+      "archived": "Archivé"
+    }
   },
   "errors": {
     "general": "Une erreur s'est produite",

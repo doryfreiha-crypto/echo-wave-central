@@ -1,11 +1,12 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/components/AuthProvider';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { ArrowLeft, Edit, Trash2 } from 'lucide-react';
+import { ArrowLeft, Edit, Trash2, Clock, CheckCircle, XCircle } from 'lucide-react';
 import { toast } from 'sonner';
 import {
   AlertDialog,
@@ -34,6 +35,7 @@ interface Announcement {
 }
 
 export default function MyListings() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const { user } = useAuth();
   const [announcements, setAnnouncements] = useState<Announcement[]>([]);
@@ -82,8 +84,38 @@ export default function MyListings() {
     }
   };
 
+  const getStatusBadge = (status: string) => {
+    switch (status) {
+      case 'pending':
+        return (
+          <Badge variant="secondary" className="bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200">
+            <Clock className="w-3 h-3 mr-1" />
+            {t('myListings.pending')}
+          </Badge>
+        );
+      case 'active':
+        return (
+          <Badge variant="default" className="bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200">
+            <CheckCircle className="w-3 h-3 mr-1" />
+            {t('myListings.active')}
+          </Badge>
+        );
+      case 'rejected':
+        return (
+          <Badge variant="destructive">
+            <XCircle className="w-3 h-3 mr-1" />
+            {t('myListings.rejected')}
+          </Badge>
+        );
+      case 'sold':
+        return <Badge variant="secondary">{t('myListings.sold')}</Badge>;
+      default:
+        return <Badge variant="outline">{t('myListings.archived')}</Badge>;
+    }
+  };
+
   if (loading) {
-    return <div className="min-h-screen flex items-center justify-center">Loading...</div>;
+    return <div className="min-h-screen flex items-center justify-center">{t('common.loading')}</div>;
   }
 
   return (
@@ -92,15 +124,15 @@ export default function MyListings() {
         <div className="flex items-center gap-4 mb-6">
           <Button variant="ghost" onClick={() => navigate('/')}>
             <ArrowLeft className="w-4 h-4 mr-2" />
-            Back
+            {t('common.back')}
           </Button>
-          <h1 className="text-3xl font-bold">My Listings</h1>
+          <h1 className="text-3xl font-bold">{t('myListings.title')}</h1>
         </div>
 
         {announcements.length === 0 ? (
           <Card className="p-8 text-center">
-            <p className="text-muted-foreground mb-4">You haven't created any listings yet.</p>
-            <Button onClick={() => navigate('/create')}>Create Your First Listing</Button>
+            <p className="text-muted-foreground mb-4">{t('myListings.noListings')}</p>
+            <Button onClick={() => navigate('/create')}>{t('myListings.createFirst')}</Button>
           </Card>
         ) : (
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
@@ -116,16 +148,24 @@ export default function MyListings() {
                 <CardContent className="p-4">
                   <div className="flex items-start justify-between mb-2">
                     <h3 className="font-semibold text-lg line-clamp-1">{announcement.title}</h3>
-                    <Badge variant={announcement.status === 'active' ? 'default' : 'secondary'}>
-                      {announcement.status}
-                    </Badge>
+                    {getStatusBadge(announcement.status)}
                   </div>
+                  {announcement.status === 'pending' && (
+                    <p className="text-xs text-muted-foreground mb-2 bg-yellow-50 dark:bg-yellow-950 p-2 rounded">
+                      {t('myListings.pendingMessage')}
+                    </p>
+                  )}
+                  {announcement.status === 'rejected' && (
+                    <p className="text-xs text-destructive mb-2 bg-red-50 dark:bg-red-950 p-2 rounded">
+                      {t('myListings.rejectedMessage')}
+                    </p>
+                  )}
                   <p className="text-sm text-muted-foreground mb-2 line-clamp-2">
                     {announcement.description}
                   </p>
                   <div className="flex items-center justify-between mb-4">
                     <p className="text-lg font-bold text-primary">
-                      ${announcement.price.toFixed(2)}
+                      ${announcement.price?.toFixed(2) || '0.00'}
                     </p>
                     <Badge variant="outline">{announcement.categories.name}</Badge>
                   </div>

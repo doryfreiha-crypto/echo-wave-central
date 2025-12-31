@@ -201,9 +201,43 @@
   "myListings": {
     "title": "My Listings",
     "noListings": "You haven't created any listings yet",
+    "createFirst": "Create Your First Listing",
     "active": "Active",
+    "pending": "Pending",
+    "rejected": "Rejected",
     "sold": "Sold",
-    "archived": "Archived"
+    "archived": "Archived",
+    "pendingMessage": "This listing is awaiting admin approval before it becomes visible to others.",
+    "rejectedMessage": "This listing was rejected by an admin. Please edit and resubmit."
+  },
+  "admin": {
+    "title": "Admin Dashboard",
+    "pendingReview": "Pending Review",
+    "allAnnouncements": "All Announcements",
+    "noPending": "No announcements pending review",
+    "approve": "Approve",
+    "reject": "Reject",
+    "approved": "Announcement approved",
+    "rejected": "Announcement rejected",
+    "approveError": "Failed to approve announcement",
+    "rejectError": "Failed to reject announcement",
+    "deleted": "Announcement deleted",
+    "deleteConfirmTitle": "Delete Announcement",
+    "deleteConfirmDescription": "Are you sure you want to delete this announcement? This action cannot be undone.",
+    "previewAnnouncement": "Preview Announcement",
+    "previewDescription": "Review the announcement details before approving or rejecting.",
+    "title": "Title",
+    "user": "User",
+    "status": "Status",
+    "created": "Created",
+    "actions": "Actions",
+    "statuses": {
+      "active": "Active",
+      "pending": "Pending",
+      "rejected": "Rejected",
+      "sold": "Sold",
+      "archived": "Archived"
+    }
   },
   "errors": {
     "general": "Something went wrong",
