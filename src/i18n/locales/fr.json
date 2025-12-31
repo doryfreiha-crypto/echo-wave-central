@@ -212,7 +212,9 @@
     "reason": "Raison",
     "resubmit": "Soumettre à nouveau",
     "resubmitSuccess": "Annonce soumise à nouveau pour révision",
-    "resubmitError": "Échec de la soumission"
+    "resubmitError": "Échec de la soumission",
+    "submitted": "Soumis",
+    "published": "Publié"
   },
   "admin": {
     "title": "Tableau de bord Admin",
@@ -238,6 +240,8 @@
     "user": "Utilisateur",
     "status": "Statut",
     "created": "Créé",
+    "submitted": "Soumis",
+    "published": "Publié",
     "actions": "Actions",
     "statuses": {
       "active": "Active",

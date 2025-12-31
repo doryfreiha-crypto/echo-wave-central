@@ -24,6 +24,7 @@ export type Database = {
           images: string[] | null
           location: string | null
           price: number | null
+          published_at: string | null
           rejection_reason: string | null
           status: Database["public"]["Enums"]["announcement_status"]
           title: string
@@ -40,6 +41,7 @@ export type Database = {
           images?: string[] | null
           location?: string | null
           price?: number | null
+          published_at?: string | null
           rejection_reason?: string | null
           status?: Database["public"]["Enums"]["announcement_status"]
           title: string
@@ -56,6 +58,7 @@ export type Database = {
           images?: string[] | null
           location?: string | null
           price?: number | null
+          published_at?: string | null
           rejection_reason?: string | null
           status?: Database["public"]["Enums"]["announcement_status"]
           title?: string
