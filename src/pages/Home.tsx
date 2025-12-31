@@ -387,7 +387,75 @@ export default function Home() {
         </div>
       </header>
 
-      <div className="container mx-auto px-4 py-8">
+      {/* Hero Section */}
+      <section className="relative overflow-hidden border-b border-border/30">
+        {/* Background effects */}
+        <div className="absolute inset-0 overflow-hidden">
+          <div className="absolute top-1/2 left-1/4 -translate-y-1/2 w-[500px] h-[500px] bg-primary/10 rounded-full blur-3xl" />
+          <div className="absolute top-1/3 right-1/4 w-[400px] h-[400px] bg-accent/10 rounded-full blur-3xl" />
+        </div>
+        
+        <div className="container mx-auto px-4 py-16 md:py-24 relative z-10">
+          <div className="max-w-3xl mx-auto text-center">
+            {/* Badge */}
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20 mb-6 opacity-0 fade-in-up" style={{ animationDelay: '0ms', animationFillMode: 'forwards' }}>
+              <div className="w-2 h-2 rounded-full bg-primary animate-pulse" />
+              <span className="text-sm font-medium text-primary">New listings every day</span>
+            </div>
+            
+            {/* Headline */}
+            <h1 className="font-display text-4xl md:text-5xl lg:text-6xl font-bold mb-6 opacity-0 fade-in-up" style={{ animationDelay: '100ms', animationFillMode: 'forwards' }}>
+              Discover <span className="gradient-text">Amazing Deals</span> Near You
+            </h1>
+            
+            {/* Subheadline */}
+            <p className="text-lg md:text-xl text-muted-foreground mb-8 max-w-2xl mx-auto opacity-0 fade-in-up" style={{ animationDelay: '200ms', animationFillMode: 'forwards' }}>
+              Buy, sell, and connect with your local community. Find everything from electronics to real estate in one place.
+            </p>
+            
+            {/* CTA Buttons */}
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 opacity-0 fade-in-up" style={{ animationDelay: '300ms', animationFillMode: 'forwards' }}>
+              {user ? (
+                <Button size="lg" className="bg-gradient-primary hover:opacity-90 shadow-glow" asChild>
+                  <Link to="/create">
+                    <Plus className="w-5 h-5 mr-2" />
+                    Post Your First Listing
+                  </Link>
+                </Button>
+              ) : (
+                <Button size="lg" className="bg-gradient-primary hover:opacity-90 shadow-glow" asChild>
+                  <Link to="/auth">
+                    Get Started Free
+                  </Link>
+                </Button>
+              )}
+              <Button size="lg" variant="outline" onClick={() => document.getElementById('listings')?.scrollIntoView({ behavior: 'smooth' })}>
+                Browse Listings
+              </Button>
+            </div>
+            
+            {/* Stats */}
+            <div className="flex items-center justify-center gap-8 md:gap-12 mt-12 opacity-0 fade-in-up" style={{ animationDelay: '400ms', animationFillMode: 'forwards' }}>
+              <div className="text-center">
+                <div className="text-2xl md:text-3xl font-bold font-display gradient-text">1,000+</div>
+                <div className="text-sm text-muted-foreground">Active Listings</div>
+              </div>
+              <div className="w-px h-10 bg-border" />
+              <div className="text-center">
+                <div className="text-2xl md:text-3xl font-bold font-display gradient-text">500+</div>
+                <div className="text-sm text-muted-foreground">Happy Users</div>
+              </div>
+              <div className="w-px h-10 bg-border" />
+              <div className="text-center">
+                <div className="text-2xl md:text-3xl font-bold font-display gradient-text">50+</div>
+                <div className="text-sm text-muted-foreground">Categories</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <div id="listings" className="container mx-auto px-4 py-8">
         <div className="flex gap-6">
           {/* Desktop Filters Sidebar */}
           <aside className="hidden lg:block w-80 shrink-0">
