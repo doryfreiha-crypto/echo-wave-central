@@ -6,7 +6,7 @@ import { useAuth } from '@/components/AuthProvider';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { ArrowLeft, Edit, Trash2, Clock, CheckCircle, XCircle } from 'lucide-react';
+import { ArrowLeft, Edit, Trash2, Clock, CheckCircle, XCircle, RefreshCw } from 'lucide-react';
 import { toast } from 'sonner';
 import {
   AlertDialog,
@@ -85,6 +85,25 @@ export default function MyListings() {
     }
   };
 
+  const handleResubmit = async (id: string) => {
+    try {
+      const { error } = await supabase
+        .from('announcements')
+        .update({ status: 'pending', rejection_reason: null })
+        .eq('id', id);
+
+      if (error) throw error;
+      
+      toast.success(t('myListings.resubmitSuccess'));
+      setAnnouncements(announcements.map(a => 
+        a.id === id ? { ...a, status: 'pending', rejection_reason: null } : a
+      ));
+    } catch (error) {
+      console.error('Error resubmitting announcement:', error);
+      toast.error(t('myListings.resubmitError'));
+    }
+  };
+
   const getStatusBadge = (status: string) => {
     switch (status) {
       case 'pending':
@@ -157,13 +176,22 @@ export default function MyListings() {
                     </p>
                   )}
                   {announcement.status === 'rejected' && (
-                    <div className="text-xs mb-2 bg-red-50 dark:bg-red-950 p-2 rounded space-y-1">
+                    <div className="text-xs mb-2 bg-red-50 dark:bg-red-950 p-2 rounded space-y-2">
                       <p className="text-destructive font-medium">{t('myListings.rejectedMessage')}</p>
                       {announcement.rejection_reason && (
                         <p className="text-red-600 dark:text-red-400">
                           <span className="font-medium">{t('myListings.reason')}:</span> {announcement.rejection_reason}
                         </p>
                       )}
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        className="w-full mt-1"
+                        onClick={() => handleResubmit(announcement.id)}
+                      >
+                        <RefreshCw className="w-3 h-3 mr-1" />
+                        {t('myListings.resubmit')}
+                      </Button>
                     </div>
                   )}
                   <p className="text-sm text-muted-foreground mb-2 line-clamp-2">
