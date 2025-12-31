@@ -28,6 +28,7 @@ interface Announcement {
   location: string | null;
   images: string[];
   status: string;
+  rejection_reason: string | null;
   created_at: string;
   categories: {
     name: string;
@@ -156,9 +157,14 @@ export default function MyListings() {
                     </p>
                   )}
                   {announcement.status === 'rejected' && (
-                    <p className="text-xs text-destructive mb-2 bg-red-50 dark:bg-red-950 p-2 rounded">
-                      {t('myListings.rejectedMessage')}
-                    </p>
+                    <div className="text-xs mb-2 bg-red-50 dark:bg-red-950 p-2 rounded space-y-1">
+                      <p className="text-destructive font-medium">{t('myListings.rejectedMessage')}</p>
+                      {announcement.rejection_reason && (
+                        <p className="text-red-600 dark:text-red-400">
+                          <span className="font-medium">{t('myListings.reason')}:</span> {announcement.rejection_reason}
+                        </p>
+                      )}
+                    </div>
                   )}
                   <p className="text-sm text-muted-foreground mb-2 line-clamp-2">
                     {announcement.description}
