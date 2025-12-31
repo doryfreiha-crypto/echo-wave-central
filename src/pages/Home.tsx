@@ -358,7 +358,7 @@ export default function Home() {
                 className="cursor-pointer hover:bg-primary/90 transition-colors shrink-0"
                 onClick={() => setFilters({ ...filters, categoryId: '' })}
               >
-                All
+                {t('common.all')}
               </Badge>
               {categories.map((category) => (
                 <Badge
@@ -367,7 +367,7 @@ export default function Home() {
                   className="cursor-pointer hover:bg-primary/90 transition-colors shrink-0"
                   onClick={() => setFilters({ ...filters, categoryId: category.id })}
                 >
-                  {category.name}
+                  {t(`categories.${category.slug}`, category.name)}
                 </Badge>
               ))}
             </div>
