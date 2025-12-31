@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/components/AuthProvider';
 import { Button } from '@/components/ui/button';
@@ -29,6 +29,8 @@ interface Category {
 export default function EditAnnouncement() {
   const navigate = useNavigate();
   const { id } = useParams();
+  const [searchParams] = useSearchParams();
+  const isResubmit = searchParams.get('resubmit') === 'true';
   const { user } = useAuth();
   const [categories, setCategories] = useState<Category[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -169,24 +171,37 @@ export default function EditAnnouncement() {
       // Combine existing and new images
       const allImages = [...existingImages, ...newImageUrls];
 
+      // Build update data
+      const updateData: Record<string, any> = {
+        title: validation.data.title,
+        description: validation.data.description,
+        price: validation.data.price,
+        location: validation.data.location || null,
+        category_id: validation.data.categoryId,
+        images: allImages,
+        attributes: attributes,
+      };
+
+      // If resubmitting, reset status to pending and clear rejection reason
+      if (isResubmit) {
+        updateData.status = 'pending';
+        updateData.rejection_reason = null;
+      }
+
       // Update announcement
       const { error } = await supabase
         .from('announcements')
-        .update({
-          title: validation.data.title,
-          description: validation.data.description,
-          price: validation.data.price,
-          location: validation.data.location || null,
-          category_id: validation.data.categoryId,
-          images: allImages,
-          attributes: attributes,
-        })
+        .update(updateData)
         .eq('id', id);
 
       if (error) throw error;
 
-      toast.success('Listing updated successfully!');
-      navigate('/my-listings');
+      if (isResubmit) {
+        navigate('/my-listings?resubmitted=true');
+      } else {
+        toast.success('Listing updated successfully!');
+        navigate('/my-listings');
+      }
     } catch (error: any) {
       toast.error(error.message || 'Failed to update listing');
     } finally {
@@ -208,7 +223,12 @@ export default function EditAnnouncement() {
 
         <Card>
           <CardHeader>
-            <CardTitle>Edit Listing</CardTitle>
+            <CardTitle>{isResubmit ? 'Edit & Resubmit Listing' : 'Edit Listing'}</CardTitle>
+            {isResubmit && (
+              <p className="text-sm text-muted-foreground">
+                Make your changes and save to resubmit for admin review.
+              </p>
+            )}
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-6">
@@ -409,7 +429,7 @@ export default function EditAnnouncement() {
               </div>
 
               <Button type="submit" className="w-full" disabled={isLoading}>
-                {isLoading ? 'Updating...' : 'Update Listing'}
+                {isLoading ? 'Saving...' : isResubmit ? 'Save & Resubmit for Review' : 'Update Listing'}
               </Button>
             </form>
           </CardContent>

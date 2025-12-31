@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/components/AuthProvider';
@@ -38,9 +38,19 @@ interface Announcement {
 export default function MyListings() {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const { user } = useAuth();
   const [announcements, setAnnouncements] = useState<Announcement[]>([]);
   const [loading, setLoading] = useState(true);
+
+  // Show success toast if redirected after resubmit
+  useEffect(() => {
+    if (searchParams.get('resubmitted') === 'true') {
+      toast.success(t('myListings.resubmitSuccess'));
+      // Clean up URL
+      navigate('/my-listings', { replace: true });
+    }
+  }, [searchParams, navigate, t]);
 
   useEffect(() => {
     if (!user) {
@@ -85,23 +95,9 @@ export default function MyListings() {
     }
   };
 
-  const handleResubmit = async (id: string) => {
-    try {
-      const { error } = await supabase
-        .from('announcements')
-        .update({ status: 'pending', rejection_reason: null })
-        .eq('id', id);
-
-      if (error) throw error;
-      
-      toast.success(t('myListings.resubmitSuccess'));
-      setAnnouncements(announcements.map(a => 
-        a.id === id ? { ...a, status: 'pending', rejection_reason: null } : a
-      ));
-    } catch (error) {
-      console.error('Error resubmitting announcement:', error);
-      toast.error(t('myListings.resubmitError'));
-    }
+  const handleResubmit = (id: string) => {
+    // Navigate to edit page with resubmit flag
+    navigate(`/edit-announcement/${id}?resubmit=true`);
   };
 
   const getStatusBadge = (status: string) => {
