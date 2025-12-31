@@ -14,6 +14,7 @@ import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { LanguageSwitcher } from '@/components/LanguageSwitcher';
 import { ScrollAnimate } from '@/hooks/use-scroll-animation';
+import { Footer } from '@/components/Footer';
 
 interface Category {
   id: string;
@@ -706,6 +707,8 @@ export default function Home() {
           </div>
         </div>
       </div>
+      
+      <Footer />
     </div>
   );
 }
