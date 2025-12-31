@@ -25,9 +25,12 @@ import {
   Dialog,
   DialogContent,
   DialogDescription,
+  DialogFooter,
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
+import { Textarea } from '@/components/ui/textarea';
+import { Label } from '@/components/ui/label';
 
 interface Announcement {
   id: string;
@@ -56,6 +59,9 @@ export default function Admin() {
   const [loading, setLoading] = useState(true);
   const [selectedAnnouncement, setSelectedAnnouncement] = useState<Announcement | null>(null);
   const [previewOpen, setPreviewOpen] = useState(false);
+  const [rejectDialogOpen, setRejectDialogOpen] = useState(false);
+  const [rejectingAnnouncement, setRejectingAnnouncement] = useState<{ id: string; title: string } | null>(null);
+  const [rejectionReason, setRejectionReason] = useState('');
 
   useEffect(() => {
     if (!user) {
@@ -104,19 +110,19 @@ export default function Admin() {
     setLoading(false);
   };
 
-  const sendNotification = async (announcementId: string, status: 'approved' | 'rejected', title: string) => {
+  const sendNotification = async (announcementId: string, status: 'approved' | 'rejected', title: string, reason?: string) => {
     try {
       const { error } = await supabase.functions.invoke('send-announcement-notification', {
         body: {
           announcementId,
           status,
           announcementTitle: title,
+          rejectionReason: reason,
         },
       });
 
       if (error) {
         console.error('Error sending notification:', error);
-        // Don't show error to user - notification is secondary
       } else {
         console.log('Notification sent successfully');
       }
@@ -131,36 +137,48 @@ export default function Admin() {
 
     const { error } = await supabase
       .from('announcements')
-      .update({ status: 'active' })
+      .update({ status: 'active', rejection_reason: null })
       .eq('id', id);
 
     if (error) {
       toast.error(t('admin.approveError'));
     } else {
       toast.success(t('admin.approved'));
-      // Send email notification
       sendNotification(id, 'approved', announcementTitle);
       fetchAllAnnouncements();
     }
   };
 
-  const handleReject = async (id: string, title?: string) => {
-    const announcement = announcements.find(a => a.id === id);
-    const announcementTitle = title || announcement?.title || 'Announcement';
+  const openRejectDialog = (id: string, title: string) => {
+    setRejectingAnnouncement({ id, title });
+    setRejectionReason('');
+    setRejectDialogOpen(true);
+  };
+
+  const handleRejectWithReason = async () => {
+    if (!rejectingAnnouncement) return;
+
+    const { id, title } = rejectingAnnouncement;
 
     const { error } = await supabase
       .from('announcements')
-      .update({ status: 'rejected' })
+      .update({ 
+        status: 'rejected',
+        rejection_reason: rejectionReason.trim() || null
+      })
       .eq('id', id);
 
     if (error) {
       toast.error(t('admin.rejectError'));
     } else {
       toast.success(t('admin.rejected'));
-      // Send email notification
-      sendNotification(id, 'rejected', announcementTitle);
+      sendNotification(id, 'rejected', title, rejectionReason.trim() || undefined);
       fetchAllAnnouncements();
     }
+
+    setRejectDialogOpen(false);
+    setRejectingAnnouncement(null);
+    setRejectionReason('');
   };
 
   const handleDelete = async (id: string) => {
@@ -273,7 +291,7 @@ export default function Admin() {
                               <Button
                                 variant="destructive"
                                 size="sm"
-                                onClick={() => handleReject(announcement.id, announcement.title)}
+                                onClick={() => openRejectDialog(announcement.id, announcement.title)}
                               >
                                 <X className="w-4 h-4" />
                               </Button>
@@ -336,7 +354,7 @@ export default function Admin() {
                                 <Button
                                   variant="destructive"
                                   size="sm"
-                                  onClick={() => handleReject(announcement.id, announcement.title)}
+                                  onClick={() => openRejectDialog(announcement.id, announcement.title)}
                                 >
                                   <X className="w-4 h-4" />
                                 </Button>
@@ -428,8 +446,8 @@ export default function Admin() {
                     variant="destructive"
                     className="flex-1"
                     onClick={() => {
-                      handleReject(selectedAnnouncement.id, selectedAnnouncement.title);
                       setPreviewOpen(false);
+                      openRejectDialog(selectedAnnouncement.id, selectedAnnouncement.title);
                     }}
                   >
                     <X className="w-4 h-4 mr-2" />
@@ -438,6 +456,38 @@ export default function Admin() {
                 </div>
               </div>
             )}
+          </DialogContent>
+        </Dialog>
+
+        {/* Rejection Reason Dialog */}
+        <Dialog open={rejectDialogOpen} onOpenChange={setRejectDialogOpen}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>{t('admin.rejectAnnouncement')}</DialogTitle>
+              <DialogDescription>
+                {t('admin.rejectReasonDescription')}
+              </DialogDescription>
+            </DialogHeader>
+            <div className="space-y-4 py-4">
+              <div className="space-y-2">
+                <Label htmlFor="rejection-reason">{t('admin.rejectionReason')}</Label>
+                <Textarea
+                  id="rejection-reason"
+                  placeholder={t('admin.rejectionReasonPlaceholder')}
+                  value={rejectionReason}
+                  onChange={(e) => setRejectionReason(e.target.value)}
+                  className="min-h-[100px]"
+                />
+              </div>
+            </div>
+            <DialogFooter>
+              <Button variant="outline" onClick={() => setRejectDialogOpen(false)}>
+                {t('common.cancel')}
+              </Button>
+              <Button variant="destructive" onClick={handleRejectWithReason}>
+                {t('admin.reject')}
+              </Button>
+            </DialogFooter>
           </DialogContent>
         </Dialog>
       </div>

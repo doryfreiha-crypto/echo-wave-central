@@ -13,6 +13,7 @@ interface NotificationRequest {
   announcementId: string;
   status: 'approved' | 'rejected';
   announcementTitle: string;
+  rejectionReason?: string;
 }
 
 const handler = async (req: Request): Promise<Response> => {
@@ -24,9 +25,9 @@ const handler = async (req: Request): Promise<Response> => {
   }
 
   try {
-    const { announcementId, status, announcementTitle }: NotificationRequest = await req.json();
+    const { announcementId, status, announcementTitle, rejectionReason }: NotificationRequest = await req.json();
     
-    console.log(`Processing notification for announcement ${announcementId}, status: ${status}`);
+    console.log(`Processing notification for announcement ${announcementId}, status: ${status}, reason: ${rejectionReason || 'N/A'}`);
 
     // Create Supabase client
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
@@ -87,6 +88,12 @@ const handler = async (req: Request): Promise<Response> => {
           <p style="color: #333; font-size: 16px; line-height: 1.6;">
             Unfortunately, your announcement <strong>"${announcementTitle}"</strong> was not approved after review.
           </p>
+          ${rejectionReason ? `
+          <div style="margin: 20px 0; padding: 15px; background-color: #fff7ed; border-left: 4px solid #ea580c; border-radius: 4px;">
+            <p style="color: #9a3412; margin: 0 0 8px 0; font-weight: 600; font-size: 14px;">Reason for rejection:</p>
+            <p style="color: #c2410c; margin: 0; font-size: 14px;">${rejectionReason}</p>
+          </div>
+          ` : `
           <p style="color: #333; font-size: 16px; line-height: 1.6;">
             This could be due to:
           </p>
@@ -95,6 +102,7 @@ const handler = async (req: Request): Promise<Response> => {
             <li>Content that doesn't meet our guidelines</li>
             <li>Images that need improvement</li>
           </ul>
+          `}
           <p style="color: #333; font-size: 16px; line-height: 1.6;">
             Please review your listing, make the necessary changes, and resubmit for approval.
           </p>

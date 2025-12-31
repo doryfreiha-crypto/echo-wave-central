@@ -208,7 +208,8 @@
     "sold": "Vendu",
     "archived": "Archivé",
     "pendingMessage": "Cette annonce est en attente d'approbation par un administrateur avant d'être visible.",
-    "rejectedMessage": "Cette annonce a été refusée par un administrateur. Veuillez la modifier et la soumettre à nouveau."
+    "rejectedMessage": "Cette annonce a été refusée.",
+    "reason": "Raison"
   },
   "admin": {
     "title": "Tableau de bord Admin",
@@ -226,6 +227,10 @@
     "deleteConfirmDescription": "Êtes-vous sûr de vouloir supprimer cette annonce ? Cette action est irréversible.",
     "previewAnnouncement": "Aperçu de l'annonce",
     "previewDescription": "Vérifiez les détails de l'annonce avant d'approuver ou de refuser.",
+    "rejectAnnouncement": "Refuser l'annonce",
+    "rejectReasonDescription": "Veuillez indiquer la raison du refus de cette annonce. Cela aidera l'utilisateur à comprendre ce qui doit être amélioré.",
+    "rejectionReason": "Raison du refus",
+    "rejectionReasonPlaceholder": "ex: Images floues, description incomplète, prix incorrect...",
     "title": "Titre",
     "user": "Utilisateur",
     "status": "Statut",

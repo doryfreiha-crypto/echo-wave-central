@@ -208,7 +208,8 @@
     "sold": "Sold",
     "archived": "Archived",
     "pendingMessage": "This listing is awaiting admin approval before it becomes visible to others.",
-    "rejectedMessage": "This listing was rejected by an admin. Please edit and resubmit."
+    "rejectedMessage": "This listing was rejected.",
+    "reason": "Reason"
   },
   "admin": {
     "title": "Admin Dashboard",
@@ -226,6 +227,10 @@
     "deleteConfirmDescription": "Are you sure you want to delete this announcement? This action cannot be undone.",
     "previewAnnouncement": "Preview Announcement",
     "previewDescription": "Review the announcement details before approving or rejecting.",
+    "rejectAnnouncement": "Reject Announcement",
+    "rejectReasonDescription": "Please provide a reason for rejecting this announcement. This will help the user understand what needs to be improved.",
+    "rejectionReason": "Rejection Reason",
+    "rejectionReasonPlaceholder": "e.g., Images are unclear, description is incomplete, price seems incorrect...",
     "title": "Title",
     "user": "User",
     "status": "Status",
