@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Megaphone, Plus, Search, MapPin, LogOut, LayoutDashboard, MessageSquare, SlidersHorizontal, Grid3x3, List, Heart, LayoutGrid } from 'lucide-react';
+import { Megaphone, Plus, Search, MapPin, LogOut, LayoutDashboard, MessageSquare, SlidersHorizontal, Grid3x3, List, Heart, LayoutGrid, Menu, X } from 'lucide-react';
 import { toast } from 'sonner';
 import AnnouncementFilters, { type FilterState } from '@/components/AnnouncementFilters';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
@@ -256,7 +256,8 @@ export default function Home() {
               </span>
             </Link>
             
-            <div className="flex items-center gap-2">
+            {/* Desktop Navigation */}
+            <div className="hidden md:flex items-center gap-2">
               <LanguageSwitcher />
               {user ? (
                 <>
@@ -301,6 +302,90 @@ export default function Home() {
                   <Link to="/auth">{t('nav.login')}</Link>
                 </Button>
               )}
+            </div>
+
+            {/* Mobile Navigation */}
+            <div className="flex md:hidden items-center gap-2">
+              <LanguageSwitcher />
+              <Sheet>
+                <SheetTrigger asChild>
+                  <Button variant="ghost" size="icon" className="hover:bg-secondary">
+                    <Menu className="w-5 h-5" />
+                  </Button>
+                </SheetTrigger>
+                <SheetContent side="right" className="w-80 glass-strong">
+                  <div className="flex flex-col gap-4 mt-8">
+                    {/* Logo */}
+                    <Link to="/" className="flex items-center gap-3 mb-4">
+                      <div className="bg-gradient-primary rounded-xl p-2">
+                        <Megaphone className="w-5 h-5 text-primary-foreground" />
+                      </div>
+                      <span className="font-display font-bold text-lg">
+                        Echo<span className="gradient-text">Wave</span>
+                      </span>
+                    </Link>
+
+                    {user ? (
+                      <>
+                        {isAdmin && (
+                          <Link 
+                            to="/admin" 
+                            className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-secondary transition-colors"
+                          >
+                            <LayoutDashboard className="w-5 h-5 text-primary" />
+                            <span className="font-medium">{t('nav.admin')}</span>
+                          </Link>
+                        )}
+                        <Link 
+                          to="/messages" 
+                          className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-secondary transition-colors"
+                        >
+                          <MessageSquare className="w-5 h-5 text-primary" />
+                          <span className="font-medium">{t('nav.messages')}</span>
+                        </Link>
+                        <Link 
+                          to="/favorites" 
+                          className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-secondary transition-colors"
+                        >
+                          <Heart className="w-5 h-5 text-primary" />
+                          <span className="font-medium">{t('nav.favorites')}</span>
+                        </Link>
+                        <Link 
+                          to="/my-listings" 
+                          className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-secondary transition-colors"
+                        >
+                          <LayoutGrid className="w-5 h-5 text-primary" />
+                          <span className="font-medium">{t('nav.myListings')}</span>
+                        </Link>
+                        
+                        <div className="border-t border-border/50 my-2" />
+                        
+                        <Link to="/create" className="w-full">
+                          <Button className="w-full bg-gradient-primary hover:opacity-90">
+                            <Plus className="w-4 h-4 mr-2" />
+                            {t('nav.createAnnouncement')}
+                          </Button>
+                        </Link>
+                        
+                        <Button 
+                          variant="outline" 
+                          className="w-full hover:bg-destructive/10 hover:text-destructive hover:border-destructive/50" 
+                          onClick={handleLogout}
+                        >
+                          <LogOut className="w-4 h-4 mr-2" />
+                          {t('nav.logout')}
+                        </Button>
+                      </>
+                    ) : (
+                      <Link to="/auth" className="w-full">
+                        <Button className="w-full bg-gradient-primary hover:opacity-90">
+                          {t('nav.login')}
+                        </Button>
+                      </Link>
+                    )}
+                  </div>
+                </SheetContent>
+              </Sheet>
             </div>
           </div>
 
