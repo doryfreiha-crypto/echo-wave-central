@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -7,7 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Slider } from '@/components/ui/slider';
 import { X } from 'lucide-react';
 import { getCategoryFields, type FieldDefinition } from '@/lib/categoryFields';
-
+import { translateAttribute, translateOption } from '@/lib/translateCategory';
 interface Category {
   id: string;
   name: string;
@@ -36,6 +37,7 @@ export default function AnnouncementFilters({
   onFiltersChange,
   onReset
 }: AnnouncementFiltersProps) {
+  const { t } = useTranslation();
   const [selectedCategoryFields, setSelectedCategoryFields] = useState<FieldDefinition[]>([]);
 
   useEffect(() => {
@@ -101,26 +103,26 @@ export default function AnnouncementFilters({
   return (
     <Card>
       <CardHeader className="flex flex-row items-center justify-between">
-        <CardTitle>Filters</CardTitle>
+        <CardTitle>{t('common.filters')}</CardTitle>
         {hasActiveFilters && (
           <Button variant="ghost" size="sm" onClick={onReset}>
-            Clear all
+            {t('common.clearAll')}
           </Button>
         )}
       </CardHeader>
       <CardContent className="space-y-6">
         {/* Category Filter */}
         <div className="space-y-2">
-          <Label>Category</Label>
+          <Label>{t('filters.category')}</Label>
           <Select value={filters.categoryId} onValueChange={handleCategoryChange}>
             <SelectTrigger>
-              <SelectValue placeholder="All categories" />
+              <SelectValue placeholder={t('categories.all')} />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">All categories</SelectItem>
+              <SelectItem value="all">{t('categories.all')}</SelectItem>
               {categories.map((category) => (
                 <SelectItem key={category.id} value={category.id}>
-                  {category.name}
+                  {t(`categories.${category.slug}`, category.name)}
                 </SelectItem>
               ))}
             </SelectContent>
@@ -129,10 +131,10 @@ export default function AnnouncementFilters({
 
         {/* Location Filter */}
         <div className="space-y-2">
-          <Label htmlFor="location">Location</Label>
+          <Label htmlFor="location">{t('filters.location')}</Label>
           <Input
             id="location"
-            placeholder="Enter city or region"
+            placeholder={t('filters.locationPlaceholder')}
             value={filters.location}
             onChange={(e) => onFiltersChange({ ...filters, location: e.target.value })}
           />
@@ -140,7 +142,7 @@ export default function AnnouncementFilters({
 
         {/* Price Range Filter */}
         <div className="space-y-4">
-          <Label>Price Range</Label>
+          <Label>{t('filters.priceRange')}</Label>
           <div className="px-2">
             <Slider
               min={0}
@@ -161,11 +163,11 @@ export default function AnnouncementFilters({
         {/* Category-Specific Filters */}
         {selectedCategoryFields.length > 0 && (
           <div className="space-y-4 pt-4 border-t">
-            <Label className="text-base font-semibold">Specific Filters</Label>
+            <Label className="text-base font-semibold">{t('attributes.specificFilters')}</Label>
             {selectedCategoryFields.map((field) => (
               <div key={field.name} className="space-y-2">
                 <div className="flex items-center justify-between">
-                  <Label htmlFor={field.name}>{field.label}</Label>
+                  <Label htmlFor={field.name}>{translateAttribute(field.name, t)}</Label>
                   {filters.attributes[field.name] && (
                     <Button
                       variant="ghost"
@@ -183,13 +185,13 @@ export default function AnnouncementFilters({
                     onValueChange={(value) => handleAttributeChange(field.name, value)}
                   >
                     <SelectTrigger>
-                      <SelectValue placeholder={`Select ${field.label.toLowerCase()}`} />
+                      <SelectValue placeholder={`${t('common.all')} ${translateAttribute(field.name, t).toLowerCase()}`} />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="any">Any</SelectItem>
+                      <SelectItem value="any">{t('common.any')}</SelectItem>
                       {field.options.map((option) => (
                         <SelectItem key={option} value={option}>
-                          {option}
+                          {translateOption(option, t)}
                         </SelectItem>
                       ))}
                     </SelectContent>
