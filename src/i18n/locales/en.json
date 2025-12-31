@@ -209,7 +209,10 @@
     "archived": "Archived",
     "pendingMessage": "This listing is awaiting admin approval before it becomes visible to others.",
     "rejectedMessage": "This listing was rejected.",
-    "reason": "Reason"
+    "reason": "Reason",
+    "resubmit": "Resubmit for Review",
+    "resubmitSuccess": "Listing resubmitted for review",
+    "resubmitError": "Failed to resubmit listing"
   },
   "admin": {
     "title": "Admin Dashboard",

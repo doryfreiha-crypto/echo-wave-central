@@ -209,7 +209,10 @@
     "archived": "Archivé",
     "pendingMessage": "Cette annonce est en attente d'approbation par un administrateur avant d'être visible.",
     "rejectedMessage": "Cette annonce a été refusée.",
-    "reason": "Raison"
+    "reason": "Raison",
+    "resubmit": "Soumettre à nouveau",
+    "resubmitSuccess": "Annonce soumise à nouveau pour révision",
+    "resubmitError": "Échec de la soumission"
   },
   "admin": {
     "title": "Tableau de bord Admin",
