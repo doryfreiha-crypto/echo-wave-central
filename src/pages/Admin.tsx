@@ -104,7 +104,31 @@ export default function Admin() {
     setLoading(false);
   };
 
-  const handleApprove = async (id: string) => {
+  const sendNotification = async (announcementId: string, status: 'approved' | 'rejected', title: string) => {
+    try {
+      const { error } = await supabase.functions.invoke('send-announcement-notification', {
+        body: {
+          announcementId,
+          status,
+          announcementTitle: title,
+        },
+      });
+
+      if (error) {
+        console.error('Error sending notification:', error);
+        // Don't show error to user - notification is secondary
+      } else {
+        console.log('Notification sent successfully');
+      }
+    } catch (err) {
+      console.error('Error invoking notification function:', err);
+    }
+  };
+
+  const handleApprove = async (id: string, title?: string) => {
+    const announcement = announcements.find(a => a.id === id);
+    const announcementTitle = title || announcement?.title || 'Announcement';
+
     const { error } = await supabase
       .from('announcements')
       .update({ status: 'active' })
@@ -114,11 +138,16 @@ export default function Admin() {
       toast.error(t('admin.approveError'));
     } else {
       toast.success(t('admin.approved'));
+      // Send email notification
+      sendNotification(id, 'approved', announcementTitle);
       fetchAllAnnouncements();
     }
   };
 
-  const handleReject = async (id: string) => {
+  const handleReject = async (id: string, title?: string) => {
+    const announcement = announcements.find(a => a.id === id);
+    const announcementTitle = title || announcement?.title || 'Announcement';
+
     const { error } = await supabase
       .from('announcements')
       .update({ status: 'rejected' })
@@ -128,6 +157,8 @@ export default function Admin() {
       toast.error(t('admin.rejectError'));
     } else {
       toast.success(t('admin.rejected'));
+      // Send email notification
+      sendNotification(id, 'rejected', announcementTitle);
       fetchAllAnnouncements();
     }
   };
@@ -234,7 +265,7 @@ export default function Admin() {
                               <Button
                                 variant="default"
                                 size="sm"
-                                onClick={() => handleApprove(announcement.id)}
+                                onClick={() => handleApprove(announcement.id, announcement.title)}
                                 className="bg-green-600 hover:bg-green-700"
                               >
                                 <Check className="w-4 h-4" />
@@ -242,7 +273,7 @@ export default function Admin() {
                               <Button
                                 variant="destructive"
                                 size="sm"
-                                onClick={() => handleReject(announcement.id)}
+                                onClick={() => handleReject(announcement.id, announcement.title)}
                               >
                                 <X className="w-4 h-4" />
                               </Button>
@@ -297,7 +328,7 @@ export default function Admin() {
                                 <Button
                                   variant="default"
                                   size="sm"
-                                  onClick={() => handleApprove(announcement.id)}
+                                  onClick={() => handleApprove(announcement.id, announcement.title)}
                                   className="bg-green-600 hover:bg-green-700"
                                 >
                                   <Check className="w-4 h-4" />
@@ -305,7 +336,7 @@ export default function Admin() {
                                 <Button
                                   variant="destructive"
                                   size="sm"
-                                  onClick={() => handleReject(announcement.id)}
+                                  onClick={() => handleReject(announcement.id, announcement.title)}
                                 >
                                   <X className="w-4 h-4" />
                                 </Button>
@@ -386,7 +417,7 @@ export default function Admin() {
                   <Button
                     className="flex-1 bg-green-600 hover:bg-green-700"
                     onClick={() => {
-                      handleApprove(selectedAnnouncement.id);
+                      handleApprove(selectedAnnouncement.id, selectedAnnouncement.title);
                       setPreviewOpen(false);
                     }}
                   >
@@ -397,7 +428,7 @@ export default function Admin() {
                     variant="destructive"
                     className="flex-1"
                     onClick={() => {
-                      handleReject(selectedAnnouncement.id);
+                      handleReject(selectedAnnouncement.id, selectedAnnouncement.title);
                       setPreviewOpen(false);
                     }}
                   >
