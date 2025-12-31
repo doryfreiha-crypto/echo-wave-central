@@ -297,7 +297,12 @@ export type Database = {
       }
     }
     Enums: {
-      announcement_status: "active" | "sold" | "archived" | "pending"
+      announcement_status:
+        | "active"
+        | "sold"
+        | "archived"
+        | "pending"
+        | "rejected"
       app_role: "admin" | "moderator" | "user"
     }
     CompositeTypes: {
@@ -426,7 +431,13 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
-      announcement_status: ["active", "sold", "archived", "pending"],
+      announcement_status: [
+        "active",
+        "sold",
+        "archived",
+        "pending",
+        "rejected",
+      ],
       app_role: ["admin", "moderator", "user"],
     },
   },
