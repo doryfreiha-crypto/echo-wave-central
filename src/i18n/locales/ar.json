@@ -201,9 +201,43 @@
   "myListings": {
     "title": "إعلاناتي",
     "noListings": "لم تنشئ أي إعلانات بعد",
+    "createFirst": "إنشاء إعلانك الأول",
     "active": "نشط",
+    "pending": "قيد المراجعة",
+    "rejected": "مرفوض",
     "sold": "مباع",
-    "archived": "مؤرشف"
+    "archived": "مؤرشف",
+    "pendingMessage": "هذا الإعلان في انتظار موافقة المسؤول قبل أن يصبح مرئياً للآخرين.",
+    "rejectedMessage": "تم رفض هذا الإعلان من قبل المسؤول. يرجى التعديل وإعادة الإرسال."
+  },
+  "admin": {
+    "title": "لوحة تحكم المسؤول",
+    "pendingReview": "في انتظار المراجعة",
+    "allAnnouncements": "جميع الإعلانات",
+    "noPending": "لا توجد إعلانات في انتظار المراجعة",
+    "approve": "قبول",
+    "reject": "رفض",
+    "approved": "تمت الموافقة على الإعلان",
+    "rejected": "تم رفض الإعلان",
+    "approveError": "فشل في قبول الإعلان",
+    "rejectError": "فشل في رفض الإعلان",
+    "deleted": "تم حذف الإعلان",
+    "deleteConfirmTitle": "حذف الإعلان",
+    "deleteConfirmDescription": "هل أنت متأكد من حذف هذا الإعلان؟ لا يمكن التراجع عن هذا الإجراء.",
+    "previewAnnouncement": "معاينة الإعلان",
+    "previewDescription": "راجع تفاصيل الإعلان قبل القبول أو الرفض.",
+    "title": "العنوان",
+    "user": "المستخدم",
+    "status": "الحالة",
+    "created": "تاريخ الإنشاء",
+    "actions": "الإجراءات",
+    "statuses": {
+      "active": "نشط",
+      "pending": "قيد المراجعة",
+      "rejected": "مرفوض",
+      "sold": "مباع",
+      "archived": "مؤرشف"
+    }
   },
   "errors": {
     "general": "حدث خطأ ما",
