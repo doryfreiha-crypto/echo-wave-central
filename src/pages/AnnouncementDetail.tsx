@@ -5,7 +5,7 @@ import { useAuth } from '@/components/AuthProvider';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
-import { Megaphone, MapPin, ArrowLeft, MessageSquare, Calendar, Eye, Heart } from 'lucide-react';
+import { Megaphone, MapPin, ArrowLeft, MessageSquare, Calendar, Eye, Heart, CheckCircle } from 'lucide-react';
 import { toast } from 'sonner';
 import { getCategoryFields } from '@/lib/categoryFields';
 
@@ -23,6 +23,7 @@ interface Announcement {
   location: string;
   images: string[];
   created_at: string;
+  published_at: string | null;
   user_id: string;
   views_count: number;
   attributes: Record<string, any>;
@@ -337,8 +338,15 @@ export default function AnnouncementDetail() {
                   
                   <div className="flex items-center gap-2 text-muted-foreground">
                     <Calendar className="w-5 h-5" />
-                    <span>{new Date(announcement.created_at).toLocaleDateString()}</span>
+                    <span>Submitted: {new Date(announcement.created_at).toLocaleDateString()}</span>
                   </div>
+                  
+                  {announcement.published_at && (
+                    <div className="flex items-center gap-2 text-muted-foreground">
+                      <CheckCircle className="w-5 h-5" />
+                      <span>Published: {new Date(announcement.published_at).toLocaleDateString()}</span>
+                    </div>
+                  )}
                   
                   <div className="flex items-center gap-2 text-muted-foreground">
                     <Eye className="w-5 h-5" />

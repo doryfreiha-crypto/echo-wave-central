@@ -212,7 +212,9 @@
     "reason": "Reason",
     "resubmit": "Resubmit for Review",
     "resubmitSuccess": "Listing resubmitted for review",
-    "resubmitError": "Failed to resubmit listing"
+    "resubmitError": "Failed to resubmit listing",
+    "submitted": "Submitted",
+    "published": "Published"
   },
   "admin": {
     "title": "Admin Dashboard",
@@ -238,6 +240,8 @@
     "user": "User",
     "status": "Status",
     "created": "Created",
+    "submitted": "Submitted",
+    "published": "Published",
     "actions": "Actions",
     "statuses": {
       "active": "Active",

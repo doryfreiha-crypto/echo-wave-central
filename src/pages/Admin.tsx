@@ -39,6 +39,7 @@ interface Announcement {
   price: number;
   status: string;
   created_at: string;
+  published_at: string | null;
   location: string | null;
   images: string[] | null;
   profiles: {
@@ -137,7 +138,11 @@ export default function Admin() {
 
     const { error } = await supabase
       .from('announcements')
-      .update({ status: 'active', rejection_reason: null })
+      .update({ 
+        status: 'active', 
+        rejection_reason: null,
+        published_at: new Date().toISOString()
+      })
       .eq('id', id);
 
     if (error) {
@@ -320,7 +325,8 @@ export default function Admin() {
                       <TableHead>{t('admin.user')}</TableHead>
                       <TableHead>{t('listing.price')}</TableHead>
                       <TableHead>{t('admin.status')}</TableHead>
-                      <TableHead>{t('admin.created')}</TableHead>
+                      <TableHead>{t('admin.submitted')}</TableHead>
+                      <TableHead>{t('admin.published')}</TableHead>
                       <TableHead>{t('admin.actions')}</TableHead>
                     </TableRow>
                   </TableHeader>
@@ -338,6 +344,12 @@ export default function Admin() {
                         </TableCell>
                         <TableCell>
                           {new Date(announcement.created_at).toLocaleDateString()}
+                        </TableCell>
+                        <TableCell>
+                          {announcement.published_at 
+                            ? new Date(announcement.published_at).toLocaleDateString()
+                            : '-'
+                          }
                         </TableCell>
                         <TableCell>
                           <div className="flex gap-2">

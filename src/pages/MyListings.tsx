@@ -6,7 +6,7 @@ import { useAuth } from '@/components/AuthProvider';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { ArrowLeft, Edit, Trash2, Clock, CheckCircle, XCircle, RefreshCw } from 'lucide-react';
+import { ArrowLeft, Edit, Trash2, Clock, CheckCircle, XCircle, RefreshCw, Calendar } from 'lucide-react';
 import { toast } from 'sonner';
 import {
   AlertDialog,
@@ -30,6 +30,7 @@ interface Announcement {
   status: string;
   rejection_reason: string | null;
   created_at: string;
+  published_at: string | null;
   categories: {
     name: string;
   };
@@ -193,6 +194,18 @@ export default function MyListings() {
                   <p className="text-sm text-muted-foreground mb-2 line-clamp-2">
                     {announcement.description}
                   </p>
+                  <div className="flex items-center gap-3 text-xs text-muted-foreground mb-2">
+                    <div className="flex items-center gap-1">
+                      <Calendar className="w-3 h-3" />
+                      <span>{t('myListings.submitted')}: {new Date(announcement.created_at).toLocaleDateString()}</span>
+                    </div>
+                    {announcement.published_at && (
+                      <div className="flex items-center gap-1">
+                        <CheckCircle className="w-3 h-3" />
+                        <span>{t('myListings.published')}: {new Date(announcement.published_at).toLocaleDateString()}</span>
+                      </div>
+                    )}
+                  </div>
                   <div className="flex items-center justify-between mb-4">
                     <p className="text-lg font-bold text-primary">
                       ${announcement.price?.toFixed(2) || '0.00'}
