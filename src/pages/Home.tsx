@@ -237,16 +237,21 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background to-muted">
+    <div className="min-h-screen">
       {/* Header */}
-      <header className="bg-card border-b sticky top-0 z-50 shadow-sm">
+      <header className="glass-strong sticky top-0 z-50 border-b border-border/50">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
-            <Link to="/" className="flex items-center gap-2">
-              <div className="bg-primary rounded-full p-2">
-                <Megaphone className="w-6 h-6 text-primary-foreground" />
+            <Link to="/" className="flex items-center gap-3 group">
+              <div className="relative">
+                <div className="absolute inset-0 bg-gradient-primary rounded-xl blur-lg opacity-50 group-hover:opacity-75 transition-opacity" />
+                <div className="relative bg-gradient-primary rounded-xl p-2.5">
+                  <Megaphone className="w-6 h-6 text-primary-foreground" />
+                </div>
               </div>
-              <span className="font-bold text-xl">Echo Wave Central</span>
+              <span className="font-display font-bold text-xl tracking-tight">
+                Echo<span className="gradient-text">Wave</span>
+              </span>
             </Link>
             
             <div className="flex items-center gap-2">
@@ -254,44 +259,43 @@ export default function Home() {
               {user ? (
                 <>
                   {isAdmin && (
-                    <Button variant="outline" asChild>
+                    <Button variant="ghost" className="hover:bg-secondary" asChild>
                       <Link to="/admin">
                         <LayoutDashboard className="w-4 h-4 mr-2" />
                         {t('nav.admin')}
                       </Link>
                     </Button>
                   )}
-                  <Button variant="outline" asChild>
+                  <Button variant="ghost" className="hover:bg-secondary" asChild>
                     <Link to="/messages">
                       <MessageSquare className="w-4 h-4 mr-2" />
                       {t('nav.messages')}
                     </Link>
                   </Button>
-                  <Button variant="outline" asChild>
+                  <Button variant="ghost" className="hover:bg-secondary" asChild>
                     <Link to="/favorites">
                       <Heart className="w-4 h-4 mr-2" />
                       {t('nav.favorites')}
                     </Link>
                   </Button>
-                  <Button variant="outline" asChild>
+                  <Button variant="ghost" className="hover:bg-secondary" asChild>
                     <Link to="/my-listings">
                       <LayoutDashboard className="w-4 h-4 mr-2" />
                       {t('nav.myListings')}
                     </Link>
                   </Button>
-                  <Button asChild>
+                  <Button className="bg-gradient-primary hover:opacity-90 transition-opacity shadow-glow" asChild>
                     <Link to="/create">
                       <Plus className="w-4 h-4 mr-2" />
                       {t('nav.createAnnouncement')}
                     </Link>
                   </Button>
-                  <Button variant="outline" onClick={handleLogout}>
-                    <LogOut className="w-4 h-4 mr-2" />
-                    {t('nav.logout')}
+                  <Button variant="ghost" className="hover:bg-destructive/10 hover:text-destructive" onClick={handleLogout}>
+                    <LogOut className="w-4 h-4" />
                   </Button>
                 </>
               ) : (
-                <Button asChild>
+                <Button className="bg-gradient-primary hover:opacity-90 transition-opacity" asChild>
                   <Link to="/auth">{t('nav.login')}</Link>
                 </Button>
               )}
@@ -306,27 +310,27 @@ export default function Home() {
                 placeholder={t('home.searchPlaceholder')}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-10"
+                className="pl-10 bg-secondary/50 border-border/50 focus:border-primary focus:ring-primary/20"
               />
             </div>
             <div className="flex items-center gap-2">
               <Select value={sortBy} onValueChange={setSortBy}>
-                <SelectTrigger className="w-[180px]">
+                <SelectTrigger className="w-[180px] bg-secondary/50 border-border/50">
                   <SelectValue placeholder={t('filters.sortBy')} />
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent className="glass-strong">
                   <SelectItem value="newest">{t('filters.newest')}</SelectItem>
                   <SelectItem value="oldest">{t('filters.oldest')}</SelectItem>
                   <SelectItem value="price-low">{t('filters.priceLowHigh')}</SelectItem>
                   <SelectItem value="price-high">{t('filters.priceHighLow')}</SelectItem>
                 </SelectContent>
               </Select>
-              <div className="flex border rounded-md">
+              <div className="flex bg-secondary/50 rounded-lg p-1">
                 <Button
                   variant={viewMode === 'grid' ? 'default' : 'ghost'}
                   size="icon"
                   onClick={() => setViewMode('grid')}
-                  className="rounded-r-none"
+                  className={viewMode === 'grid' ? 'bg-gradient-primary' : ''}
                 >
                   <Grid3x3 className="w-4 h-4" />
                 </Button>
@@ -334,7 +338,7 @@ export default function Home() {
                   variant={viewMode === 'list' ? 'default' : 'ghost'}
                   size="icon"
                   onClick={() => setViewMode('list')}
-                  className="rounded-none border-x-0"
+                  className={viewMode === 'list' ? 'bg-gradient-primary' : ''}
                 >
                   <List className="w-4 h-4" />
                 </Button>
@@ -342,7 +346,7 @@ export default function Home() {
                   variant={viewMode === 'compact' ? 'default' : 'ghost'}
                   size="icon"
                   onClick={() => setViewMode('compact')}
-                  className="rounded-l-none"
+                  className={viewMode === 'compact' ? 'bg-gradient-primary' : ''}
                 >
                   <LayoutGrid className="w-4 h-4" />
                 </Button>
@@ -355,7 +359,11 @@ export default function Home() {
             <div className="mt-3 flex items-center gap-2 overflow-x-auto pb-2 scrollbar-thin scrollbar-thumb-muted">
               <Badge
                 variant={!filters.categoryId || filters.categoryId === 'all' ? 'default' : 'outline'}
-                className="cursor-pointer hover:bg-primary/90 transition-colors shrink-0"
+                className={`cursor-pointer transition-all shrink-0 ${
+                  !filters.categoryId || filters.categoryId === 'all' 
+                    ? 'bg-gradient-primary border-0' 
+                    : 'hover:bg-secondary hover:border-primary/50'
+                }`}
                 onClick={() => setFilters({ ...filters, categoryId: '' })}
               >
                 {t('common.all')}
@@ -364,7 +372,11 @@ export default function Home() {
                 <Badge
                   key={category.id}
                   variant={filters.categoryId === category.id ? 'default' : 'outline'}
-                  className="cursor-pointer hover:bg-primary/90 transition-colors shrink-0"
+                  className={`cursor-pointer transition-all shrink-0 ${
+                    filters.categoryId === category.id 
+                      ? 'bg-gradient-primary border-0' 
+                      : 'hover:bg-secondary hover:border-primary/50'
+                  }`}
                   onClick={() => setFilters({ ...filters, categoryId: category.id })}
                 >
                   {t(`categories.${category.slug}`, category.name)}
@@ -430,41 +442,51 @@ export default function Home() {
 
             {/* Announcements */}
             {loading ? (
-              <div className="text-center py-12">Loading announcements...</div>
-            ) : announcements.length === 0 ? (
               <div className="text-center py-12">
-                <p className="text-muted-foreground">No announcements found matching your filters.</p>
-                <Button variant="link" onClick={handleResetFilters} className="mt-2">
+                <div className="inline-flex items-center gap-2">
+                  <div className="w-5 h-5 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+                  <span className="text-muted-foreground">Loading announcements...</span>
+                </div>
+              </div>
+            ) : announcements.length === 0 ? (
+              <div className="text-center py-16">
+                <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-secondary mb-4">
+                  <Megaphone className="w-8 h-8 text-muted-foreground" />
+                </div>
+                <p className="text-muted-foreground mb-4">No announcements found matching your filters.</p>
+                <Button variant="outline" onClick={handleResetFilters}>
                   Clear all filters
                 </Button>
               </div>
             ) : viewMode === 'compact' ? (
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3">
-                {announcements.map((announcement) => (
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
+                {announcements.map((announcement, index) => (
                   <Link 
                     key={announcement.id} 
                     to={`/announcement/${announcement.id}`}
-                    className="group"
+                    className="group opacity-0 fade-in-up"
+                    style={{ animationDelay: `${index * 50}ms`, animationFillMode: 'forwards' }}
                   >
-                    <Card className="overflow-hidden hover:shadow-md transition-shadow h-full">
-                      <div className="aspect-square relative">
+                    <Card className="overflow-hidden h-full group-hover:-translate-y-1">
+                      <div className="aspect-square relative overflow-hidden">
                         {announcement.images && announcement.images.length > 0 ? (
                           <img
                             src={announcement.images[0]}
                             alt={announcement.title}
-                            className="w-full h-full object-cover"
+                            className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
                           />
                         ) : (
-                          <div className="w-full h-full bg-muted flex items-center justify-center">
+                          <div className="w-full h-full bg-gradient-to-br from-secondary to-muted flex items-center justify-center">
                             <Megaphone className="w-8 h-8 text-muted-foreground" />
                           </div>
                         )}
+                        <div className="absolute inset-0 bg-gradient-to-t from-card/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
                       </div>
-                      <CardContent className="p-2">
+                      <CardContent className="p-3">
                         <p className="text-sm font-medium line-clamp-1 group-hover:text-primary transition-colors">
                           {announcement.title}
                         </p>
-                        <p className="text-sm font-bold text-primary">
+                        <p className="text-sm font-bold gradient-text">
                           ${announcement.price.toLocaleString()}
                         </p>
                       </CardContent>
@@ -474,45 +496,53 @@ export default function Home() {
               </div>
             ) : viewMode === 'grid' ? (
               <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-                {announcements.map((announcement) => (
-                  <Card key={announcement.id} className="overflow-hidden hover:shadow-lg transition-shadow">
-                    <CardHeader className="p-0">
+                {announcements.map((announcement, index) => (
+                  <Card 
+                    key={announcement.id} 
+                    className="overflow-hidden group opacity-0 fade-in-up"
+                    style={{ animationDelay: `${index * 75}ms`, animationFillMode: 'forwards' }}
+                  >
+                    <CardHeader className="p-0 relative overflow-hidden">
                       {announcement.images && announcement.images.length > 0 ? (
                         <img
                           src={announcement.images[0]}
                           alt={announcement.title}
-                          className="w-full h-32 object-cover"
+                          className="w-full h-48 object-cover transition-transform duration-500 group-hover:scale-105"
                         />
                       ) : (
-                        <div className="w-full h-32 bg-muted flex items-center justify-center">
-                          <Megaphone className="w-10 h-10 text-muted-foreground" />
+                        <div className="w-full h-48 bg-gradient-to-br from-secondary to-muted flex items-center justify-center">
+                          <Megaphone className="w-12 h-12 text-muted-foreground" />
                         </div>
                       )}
-                    </CardHeader>
-                    <CardContent className="p-4">
-                      <div className="flex items-start justify-between mb-2">
-                        <CardTitle className="text-lg line-clamp-1">{announcement.title}</CardTitle>
-                        <Badge variant="secondary">{announcement.categories.name}</Badge>
+                      <div className="absolute top-3 right-3">
+                        <Badge variant="secondary" className="glass-strong text-xs">
+                          {announcement.categories.name}
+                        </Badge>
                       </div>
-                      <p className="text-muted-foreground text-sm line-clamp-2 mb-3">
+                    </CardHeader>
+                    <CardContent className="p-5">
+                      <CardTitle className="text-lg line-clamp-1 mb-2 group-hover:text-primary transition-colors">
+                        {announcement.title}
+                      </CardTitle>
+                      <p className="text-muted-foreground text-sm line-clamp-2 mb-4">
                         {announcement.description}
                       </p>
-                      <div className="flex items-center justify-between mb-2">
-                        <span className="text-2xl font-bold text-primary">
+                      <div className="flex items-center justify-between mb-3">
+                        <span className="text-2xl font-bold font-display gradient-text">
                           ${announcement.price.toLocaleString()}
                         </span>
                       </div>
                       {announcement.location && (
                         <div className="flex items-center text-sm text-muted-foreground mb-2">
-                          <MapPin className="w-4 h-4 mr-1" />
+                          <MapPin className="w-4 h-4 mr-1.5 text-primary/60" />
                           {announcement.location}
                         </div>
                       )}
                       <div className="text-xs text-muted-foreground">
-                        by {announcement.profiles.username}
+                        by <span className="text-foreground font-medium">{announcement.profiles.username}</span>
                       </div>
                     </CardContent>
-                    <CardFooter className="p-4 pt-0 flex gap-2">
+                    <CardFooter className="p-5 pt-0 flex gap-2">
                       <Link to={`/announcement/${announcement.id}`} className="flex-1">
                         <Button variant="outline" className="w-full">
                           View Details
@@ -520,7 +550,7 @@ export default function Home() {
                       </Link>
                       {user && announcement.user_id !== user.id && (
                         <Button
-                          variant="default"
+                          variant="gradient"
                           size="icon"
                           onClick={() => handleContactSeller(announcement)}
                         >
@@ -533,47 +563,51 @@ export default function Home() {
               </div>
             ) : (
               <div className="space-y-4">
-                {announcements.map((announcement) => (
-                  <Card key={announcement.id} className="overflow-hidden hover:shadow-lg transition-shadow">
+                {announcements.map((announcement, index) => (
+                  <Card 
+                    key={announcement.id} 
+                    className="overflow-hidden group opacity-0 fade-in-up"
+                    style={{ animationDelay: `${index * 75}ms`, animationFillMode: 'forwards' }}
+                  >
                     <div className="flex flex-col sm:flex-row">
-                      <div className="sm:w-40 shrink-0">
+                      <div className="sm:w-48 shrink-0 relative overflow-hidden">
                         {announcement.images && announcement.images.length > 0 ? (
                           <img
                             src={announcement.images[0]}
                             alt={announcement.title}
-                            className="w-full h-32 sm:h-full object-cover"
+                            className="w-full h-40 sm:h-full object-cover transition-transform duration-500 group-hover:scale-105"
                           />
                         ) : (
-                          <div className="w-full h-32 sm:h-full bg-muted flex items-center justify-center">
+                          <div className="w-full h-40 sm:h-full bg-gradient-to-br from-secondary to-muted flex items-center justify-center">
                             <Megaphone className="w-10 h-10 text-muted-foreground" />
                           </div>
                         )}
                       </div>
                       <div className="flex-1 flex flex-col">
-                        <CardContent className="p-4 flex-1">
+                        <CardContent className="p-5 flex-1">
                           <div className="flex items-start justify-between mb-2 gap-2">
-                            <CardTitle className="text-xl">{announcement.title}</CardTitle>
+                            <CardTitle className="text-xl group-hover:text-primary transition-colors">{announcement.title}</CardTitle>
                             <Badge variant="secondary" className="shrink-0">{announcement.categories.name}</Badge>
                           </div>
                           <p className="text-muted-foreground text-sm mb-3 line-clamp-2">
                             {announcement.description}
                           </p>
                           <div className="flex items-center gap-4 mb-2 flex-wrap">
-                            <span className="text-2xl font-bold text-primary">
+                            <span className="text-2xl font-bold font-display gradient-text">
                               ${announcement.price.toLocaleString()}
                             </span>
                             {announcement.location && (
                               <div className="flex items-center text-sm text-muted-foreground">
-                                <MapPin className="w-4 h-4 mr-1" />
+                                <MapPin className="w-4 h-4 mr-1.5 text-primary/60" />
                                 {announcement.location}
                               </div>
                             )}
                           </div>
                           <div className="text-xs text-muted-foreground">
-                            by {announcement.profiles.username}
+                            by <span className="text-foreground font-medium">{announcement.profiles.username}</span>
                           </div>
                         </CardContent>
-                        <CardFooter className="p-4 pt-0 flex gap-2">
+                        <CardFooter className="p-5 pt-0 flex gap-2">
                           <Link to={`/announcement/${announcement.id}`} className="flex-1">
                             <Button variant="outline" className="w-full">
                               View Details
@@ -581,7 +615,7 @@ export default function Home() {
                           </Link>
                           {user && announcement.user_id !== user.id && (
                             <Button
-                              variant="default"
+                              variant="gradient"
                               onClick={() => handleContactSeller(announcement)}
                             >
                               <MessageSquare className="w-4 h-4 mr-2" />
