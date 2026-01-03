@@ -51,7 +51,15 @@ interface UserWithSubscription {
     tier: SubscriptionTier;
     updated_at: string;
   } | null;
+  announcementCount: number;
+  monthlyCount: number;
 }
+
+const TIER_LIMITS: Record<SubscriptionTier, { announcements: number; images: number }> = {
+  basic: { announcements: 5, images: 3 },
+  gold: { announcements: 15, images: 6 },
+  premium: { announcements: 30, images: 10 },
+};
 
 interface Announcement {
   id: string;
@@ -141,9 +149,27 @@ export default function Admin() {
       return;
     }
 
+    // Fetch all announcements to count per user
+    const { data: allAnnouncements, error: announcementsError } = await supabase
+      .from('announcements')
+      .select('user_id, created_at');
+
+    if (announcementsError) {
+      toast.error(t('errors.general'));
+      setLoadingUsers(false);
+      return;
+    }
+
+    // Calculate current month start
+    const now = new Date();
+    const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+
     // Combine the data
     const usersData: UserWithSubscription[] = (profiles || []).map(profile => {
       const subscription = subscriptions?.find(s => s.user_id === profile.id);
+      const userAnnouncements = allAnnouncements?.filter(a => a.user_id === profile.id) || [];
+      const monthlyAnnouncements = userAnnouncements.filter(a => new Date(a.created_at) >= monthStart);
+      
       return {
         id: profile.id,
         username: profile.username,
@@ -153,6 +179,8 @@ export default function Admin() {
           tier: subscription.tier,
           updated_at: subscription.updated_at,
         } : null,
+        announcementCount: userAnnouncements.length,
+        monthlyCount: monthlyAnnouncements.length,
       };
     });
 
@@ -593,59 +621,86 @@ export default function Admin() {
                         <TableHead>{t('admin.username', 'Username')}</TableHead>
                         <TableHead>{t('admin.fullName', 'Full Name')}</TableHead>
                         <TableHead>{t('admin.currentTier', 'Current Tier')}</TableHead>
+                        <TableHead>{t('admin.totalAnnouncements', 'Total Listings')}</TableHead>
+                        <TableHead>{t('admin.monthlyUsage', 'Monthly Usage')}</TableHead>
                         <TableHead>{t('admin.memberSince', 'Member Since')}</TableHead>
                         <TableHead>{t('admin.changeTier', 'Change Tier')}</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
-                      {usersWithSubscriptions.map((userItem) => (
-                        <TableRow key={userItem.id}>
-                          <TableCell className="font-medium">{userItem.username}</TableCell>
-                          <TableCell>{userItem.full_name || '-'}</TableCell>
-                          <TableCell>
-                            <Badge 
-                              variant={getTierBadgeVariant(userItem.subscription?.tier || 'basic')}
-                              className="flex items-center gap-1 w-fit"
-                            >
-                              {getTierIcon(userItem.subscription?.tier || 'basic')}
-                              {userItem.subscription?.tier || 'basic'}
-                            </Badge>
-                          </TableCell>
-                          <TableCell>
-                            {new Date(userItem.created_at).toLocaleDateString()}
-                          </TableCell>
-                          <TableCell>
-                            <Select
-                              value={userItem.subscription?.tier || 'basic'}
-                              onValueChange={(value) => handleUpdateTier(userItem.id, value as SubscriptionTier)}
-                            >
-                              <SelectTrigger className="w-32">
-                                <SelectValue />
-                              </SelectTrigger>
-                              <SelectContent>
-                                <SelectItem value="basic">
-                                  <div className="flex items-center gap-2">
-                                    <User className="w-4 h-4 text-muted-foreground" />
-                                    Basic
-                                  </div>
-                                </SelectItem>
-                                <SelectItem value="gold">
-                                  <div className="flex items-center gap-2">
-                                    <Star className="w-4 h-4 text-yellow-500" />
-                                    Gold
-                                  </div>
-                                </SelectItem>
-                                <SelectItem value="premium">
-                                  <div className="flex items-center gap-2">
-                                    <Crown className="w-4 h-4 text-purple-500" />
-                                    Premium
-                                  </div>
-                                </SelectItem>
-                              </SelectContent>
-                            </Select>
-                          </TableCell>
-                        </TableRow>
-                      ))}
+                      {usersWithSubscriptions.map((userItem) => {
+                        const tier = userItem.subscription?.tier || 'basic';
+                        const limits = TIER_LIMITS[tier];
+                        const usagePercent = (userItem.monthlyCount / limits.announcements) * 100;
+                        
+                        return (
+                          <TableRow key={userItem.id}>
+                            <TableCell className="font-medium">{userItem.username}</TableCell>
+                            <TableCell>{userItem.full_name || '-'}</TableCell>
+                            <TableCell>
+                              <Badge 
+                                variant={getTierBadgeVariant(tier)}
+                                className="flex items-center gap-1 w-fit"
+                              >
+                                {getTierIcon(tier)}
+                                {tier}
+                              </Badge>
+                            </TableCell>
+                            <TableCell>
+                              <span className="font-medium">{userItem.announcementCount}</span>
+                            </TableCell>
+                            <TableCell>
+                              <div className="flex flex-col gap-1">
+                                <div className="flex items-center gap-2">
+                                  <span className={`font-medium ${usagePercent >= 100 ? 'text-destructive' : usagePercent >= 80 ? 'text-yellow-600' : ''}`}>
+                                    {userItem.monthlyCount}/{limits.announcements}
+                                  </span>
+                                  <span className="text-xs text-muted-foreground">this month</span>
+                                </div>
+                                <div className="w-24 h-1.5 bg-muted rounded-full overflow-hidden">
+                                  <div 
+                                    className={`h-full rounded-full transition-all ${usagePercent >= 100 ? 'bg-destructive' : usagePercent >= 80 ? 'bg-yellow-500' : 'bg-primary'}`}
+                                    style={{ width: `${Math.min(usagePercent, 100)}%` }}
+                                  />
+                                </div>
+                              </div>
+                            </TableCell>
+                            <TableCell>
+                              {new Date(userItem.created_at).toLocaleDateString()}
+                            </TableCell>
+                            <TableCell>
+                              <Select
+                                value={tier}
+                                onValueChange={(value) => handleUpdateTier(userItem.id, value as SubscriptionTier)}
+                              >
+                                <SelectTrigger className="w-32">
+                                  <SelectValue />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  <SelectItem value="basic">
+                                    <div className="flex items-center gap-2">
+                                      <User className="w-4 h-4 text-muted-foreground" />
+                                      Basic
+                                    </div>
+                                  </SelectItem>
+                                  <SelectItem value="gold">
+                                    <div className="flex items-center gap-2">
+                                      <Star className="w-4 h-4 text-yellow-500" />
+                                      Gold
+                                    </div>
+                                  </SelectItem>
+                                  <SelectItem value="premium">
+                                    <div className="flex items-center gap-2">
+                                      <Crown className="w-4 h-4 text-purple-500" />
+                                      Premium
+                                    </div>
+                                  </SelectItem>
+                                </SelectContent>
+                              </Select>
+                            </TableCell>
+                          </TableRow>
+                        );
+                      })}
                     </TableBody>
                   </Table>
                 )}
