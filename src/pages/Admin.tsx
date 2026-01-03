@@ -9,7 +9,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { toast } from 'sonner';
-import { ArrowLeft, Trash2, Check, X, Eye } from 'lucide-react';
+import { ArrowLeft, Trash2, Check, X, Eye, Users, Crown, Star, User } from 'lucide-react';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -31,6 +31,27 @@ import {
 } from '@/components/ui/dialog';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import type { Database } from '@/integrations/supabase/types';
+
+type SubscriptionTier = Database['public']['Enums']['subscription_tier'];
+
+interface UserWithSubscription {
+  id: string;
+  username: string;
+  full_name: string | null;
+  created_at: string;
+  subscription: {
+    tier: SubscriptionTier;
+    updated_at: string;
+  } | null;
+}
 
 interface Announcement {
   id: string;
@@ -63,7 +84,8 @@ export default function Admin() {
   const [rejectDialogOpen, setRejectDialogOpen] = useState(false);
   const [rejectingAnnouncement, setRejectingAnnouncement] = useState<{ id: string; title: string } | null>(null);
   const [rejectionReason, setRejectionReason] = useState('');
-
+  const [usersWithSubscriptions, setUsersWithSubscriptions] = useState<UserWithSubscription[]>([]);
+  const [loadingUsers, setLoadingUsers] = useState(false);
   useEffect(() => {
     if (!user) {
       navigate('/auth');
@@ -90,6 +112,96 @@ export default function Admin() {
 
     setIsAdmin(true);
     fetchAllAnnouncements();
+    fetchUsersWithSubscriptions();
+  };
+
+  const fetchUsersWithSubscriptions = async () => {
+    setLoadingUsers(true);
+    
+    // Fetch all profiles
+    const { data: profiles, error: profilesError } = await supabase
+      .from('profiles')
+      .select('id, username, full_name, created_at')
+      .order('created_at', { ascending: false });
+
+    if (profilesError) {
+      toast.error(t('errors.general'));
+      setLoadingUsers(false);
+      return;
+    }
+
+    // Fetch all subscriptions
+    const { data: subscriptions, error: subscriptionsError } = await supabase
+      .from('user_subscriptions')
+      .select('user_id, tier, updated_at');
+
+    if (subscriptionsError) {
+      toast.error(t('errors.general'));
+      setLoadingUsers(false);
+      return;
+    }
+
+    // Combine the data
+    const usersData: UserWithSubscription[] = (profiles || []).map(profile => {
+      const subscription = subscriptions?.find(s => s.user_id === profile.id);
+      return {
+        id: profile.id,
+        username: profile.username,
+        full_name: profile.full_name,
+        created_at: profile.created_at,
+        subscription: subscription ? {
+          tier: subscription.tier,
+          updated_at: subscription.updated_at,
+        } : null,
+      };
+    });
+
+    setUsersWithSubscriptions(usersData);
+    setLoadingUsers(false);
+  };
+
+  const handleUpdateTier = async (userId: string, newTier: SubscriptionTier) => {
+    const { error } = await supabase
+      .from('user_subscriptions')
+      .update({ tier: newTier, updated_at: new Date().toISOString() })
+      .eq('user_id', userId);
+
+    if (error) {
+      // If no subscription exists, create one
+      const { error: insertError } = await supabase
+        .from('user_subscriptions')
+        .insert({ user_id: userId, tier: newTier });
+
+      if (insertError) {
+        toast.error(t('errors.general'));
+        return;
+      }
+    }
+
+    toast.success(t('admin.tierUpdated', { tier: newTier }));
+    fetchUsersWithSubscriptions();
+  };
+
+  const getTierIcon = (tier: SubscriptionTier) => {
+    switch (tier) {
+      case 'premium':
+        return <Crown className="w-4 h-4 text-purple-500" />;
+      case 'gold':
+        return <Star className="w-4 h-4 text-yellow-500" />;
+      default:
+        return <User className="w-4 h-4 text-muted-foreground" />;
+    }
+  };
+
+  const getTierBadgeVariant = (tier: SubscriptionTier): "default" | "secondary" | "destructive" | "outline" => {
+    switch (tier) {
+      case 'premium':
+        return 'default';
+      case 'gold':
+        return 'secondary';
+      default:
+        return 'outline';
+    }
   };
 
   const fetchAllAnnouncements = async () => {
@@ -241,6 +353,10 @@ export default function Admin() {
               )}
             </TabsTrigger>
             <TabsTrigger value="all">{t('admin.allAnnouncements')}</TabsTrigger>
+            <TabsTrigger value="users" className="flex items-center gap-2">
+              <Users className="w-4 h-4" />
+              {t('admin.userSubscriptions', 'User Subscriptions')}
+            </TabsTrigger>
           </TabsList>
 
           <TabsContent value="pending">
@@ -399,6 +515,86 @@ export default function Admin() {
                     ))}
                   </TableBody>
                 </Table>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="users">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Users className="w-5 h-5" />
+                  {t('admin.userSubscriptions', 'User Subscriptions')}
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                {loadingUsers ? (
+                  <p className="text-muted-foreground text-center py-8">{t('common.loading')}</p>
+                ) : usersWithSubscriptions.length === 0 ? (
+                  <p className="text-muted-foreground text-center py-8">{t('admin.noUsers', 'No users found')}</p>
+                ) : (
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>{t('admin.username', 'Username')}</TableHead>
+                        <TableHead>{t('admin.fullName', 'Full Name')}</TableHead>
+                        <TableHead>{t('admin.currentTier', 'Current Tier')}</TableHead>
+                        <TableHead>{t('admin.memberSince', 'Member Since')}</TableHead>
+                        <TableHead>{t('admin.changeTier', 'Change Tier')}</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {usersWithSubscriptions.map((userItem) => (
+                        <TableRow key={userItem.id}>
+                          <TableCell className="font-medium">{userItem.username}</TableCell>
+                          <TableCell>{userItem.full_name || '-'}</TableCell>
+                          <TableCell>
+                            <Badge 
+                              variant={getTierBadgeVariant(userItem.subscription?.tier || 'basic')}
+                              className="flex items-center gap-1 w-fit"
+                            >
+                              {getTierIcon(userItem.subscription?.tier || 'basic')}
+                              {userItem.subscription?.tier || 'basic'}
+                            </Badge>
+                          </TableCell>
+                          <TableCell>
+                            {new Date(userItem.created_at).toLocaleDateString()}
+                          </TableCell>
+                          <TableCell>
+                            <Select
+                              value={userItem.subscription?.tier || 'basic'}
+                              onValueChange={(value) => handleUpdateTier(userItem.id, value as SubscriptionTier)}
+                            >
+                              <SelectTrigger className="w-32">
+                                <SelectValue />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="basic">
+                                  <div className="flex items-center gap-2">
+                                    <User className="w-4 h-4 text-muted-foreground" />
+                                    Basic
+                                  </div>
+                                </SelectItem>
+                                <SelectItem value="gold">
+                                  <div className="flex items-center gap-2">
+                                    <Star className="w-4 h-4 text-yellow-500" />
+                                    Gold
+                                  </div>
+                                </SelectItem>
+                                <SelectItem value="premium">
+                                  <div className="flex items-center gap-2">
+                                    <Crown className="w-4 h-4 text-purple-500" />
+                                    Premium
+                                  </div>
+                                </SelectItem>
+                              </SelectContent>
+                            </Select>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                )}
               </CardContent>
             </Card>
           </TabsContent>
