@@ -1,5 +1,6 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { z } from "https://deno.land/x/zod@v3.22.4/mod.ts";
 
 const RESEND_API_KEY = Deno.env.get("RESEND_API_KEY");
 
@@ -9,11 +10,22 @@ const corsHeaders = {
     "authorization, x-client-info, apikey, content-type",
 };
 
-interface NotificationRequest {
-  announcementId: string;
-  status: 'approved' | 'rejected';
-  announcementTitle: string;
-  rejectionReason?: string;
+// Input validation schema
+const requestSchema = z.object({
+  announcementId: z.string().uuid("Invalid announcement ID format"),
+  status: z.enum(['approved', 'rejected'], { errorMap: () => ({ message: "Status must be 'approved' or 'rejected'" }) }),
+  announcementTitle: z.string().min(1, "Title is required").max(200, "Title too long"),
+  rejectionReason: z.string().max(1000, "Rejection reason too long").optional(),
+});
+
+// Simple HTML sanitization to prevent XSS
+function sanitizeHtml(str: string): string {
+  return str
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
 }
 
 const handler = async (req: Request): Promise<Response> => {
@@ -25,9 +37,28 @@ const handler = async (req: Request): Promise<Response> => {
   }
 
   try {
-    const { announcementId, status, announcementTitle, rejectionReason }: NotificationRequest = await req.json();
+    // Parse and validate input
+    const rawBody = await req.json();
+    const validationResult = requestSchema.safeParse(rawBody);
     
-    console.log(`Processing notification for announcement ${announcementId}, status: ${status}, reason: ${rejectionReason || 'N/A'}`);
+    if (!validationResult.success) {
+      console.log("Validation failed:", validationResult.error.issues.map(i => i.message).join(", "));
+      return new Response(
+        JSON.stringify({ error: "Invalid request data", details: validationResult.error.issues }),
+        {
+          status: 400,
+          headers: { "Content-Type": "application/json", ...corsHeaders },
+        }
+      );
+    }
+
+    const { announcementId, status, announcementTitle, rejectionReason } = validationResult.data;
+    
+    // Sanitize user-provided content for HTML template
+    const sanitizedTitle = sanitizeHtml(announcementTitle);
+    const sanitizedReason = rejectionReason ? sanitizeHtml(rejectionReason) : undefined;
+    
+    console.log(`Processing notification for announcement ${announcementId}, status: ${status}`);
 
     // Create Supabase client
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
@@ -42,8 +73,14 @@ const handler = async (req: Request): Promise<Response> => {
       .single();
 
     if (announcementError || !announcement) {
-      console.error("Error fetching announcement:", announcementError);
-      throw new Error("Announcement not found");
+      console.log("Announcement not found for ID:", announcementId);
+      return new Response(
+        JSON.stringify({ error: "Announcement not found" }),
+        {
+          status: 404,
+          headers: { "Content-Type": "application/json", ...corsHeaders },
+        }
+      );
     }
 
     // Get user email from auth.users
@@ -52,25 +89,31 @@ const handler = async (req: Request): Promise<Response> => {
     );
 
     if (userError || !userData?.user?.email) {
-      console.error("Error fetching user:", userError);
-      throw new Error("User email not found");
+      console.log("User email not found for user ID:", announcement.user_id);
+      return new Response(
+        JSON.stringify({ error: "User email not found" }),
+        {
+          status: 404,
+          headers: { "Content-Type": "application/json", ...corsHeaders },
+        }
+      );
     }
 
     const userEmail = userData.user.email;
-    console.log(`Sending notification to: ${userEmail}`);
+    console.log(`Sending notification to user`);
 
     // Prepare email content based on status
     const isApproved = status === 'approved';
     const subject = isApproved 
-      ? `Your announcement "${announcementTitle}" has been approved!` 
-      : `Your announcement "${announcementTitle}" needs attention`;
+      ? `Your announcement "${sanitizedTitle}" has been approved!` 
+      : `Your announcement "${sanitizedTitle}" needs attention`;
 
     const html = isApproved
       ? `
         <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
           <h1 style="color: #22c55e; margin-bottom: 20px;">🎉 Announcement Approved!</h1>
           <p style="color: #333; font-size: 16px; line-height: 1.6;">
-            Great news! Your announcement <strong>"${announcementTitle}"</strong> has been reviewed and approved by our team.
+            Great news! Your announcement <strong>"${sanitizedTitle}"</strong> has been reviewed and approved by our team.
           </p>
           <p style="color: #333; font-size: 16px; line-height: 1.6;">
             Your listing is now live and visible to all users on our platform.
@@ -86,12 +129,12 @@ const handler = async (req: Request): Promise<Response> => {
         <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
           <h1 style="color: #ef4444; margin-bottom: 20px;">Announcement Not Approved</h1>
           <p style="color: #333; font-size: 16px; line-height: 1.6;">
-            Unfortunately, your announcement <strong>"${announcementTitle}"</strong> was not approved after review.
+            Unfortunately, your announcement <strong>"${sanitizedTitle}"</strong> was not approved after review.
           </p>
-          ${rejectionReason ? `
+          ${sanitizedReason ? `
           <div style="margin: 20px 0; padding: 15px; background-color: #fff7ed; border-left: 4px solid #ea580c; border-radius: 4px;">
             <p style="color: #9a3412; margin: 0 0 8px 0; font-weight: 600; font-size: 14px;">Reason for rejection:</p>
-            <p style="color: #c2410c; margin: 0; font-size: 14px;">${rejectionReason}</p>
+            <p style="color: #c2410c; margin: 0; font-size: 14px;">${sanitizedReason}</p>
           </div>
           ` : `
           <p style="color: #333; font-size: 16px; line-height: 1.6;">
@@ -132,13 +175,19 @@ const handler = async (req: Request): Promise<Response> => {
     const emailData = await emailResponse.json();
     
     if (!emailResponse.ok) {
-      console.error("Resend API error:", emailData);
-      throw new Error(emailData.message || "Failed to send email");
+      console.log("Email sending failed with status:", emailResponse.status);
+      return new Response(
+        JSON.stringify({ error: "Failed to send email" }),
+        {
+          status: 500,
+          headers: { "Content-Type": "application/json", ...corsHeaders },
+        }
+      );
     }
 
-    console.log("Email sent successfully:", emailData);
+    console.log("Email sent successfully");
 
-    return new Response(JSON.stringify({ success: true, emailData }), {
+    return new Response(JSON.stringify({ success: true }), {
       status: 200,
       headers: {
         "Content-Type": "application/json",
@@ -146,9 +195,9 @@ const handler = async (req: Request): Promise<Response> => {
       },
     });
   } catch (error: any) {
-    console.error("Error in send-announcement-notification function:", error);
+    console.log("Error processing notification request");
     return new Response(
-      JSON.stringify({ error: error.message }),
+      JSON.stringify({ error: "Internal server error" }),
       {
         status: 500,
         headers: { "Content-Type": "application/json", ...corsHeaders },

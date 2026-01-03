@@ -263,12 +263,14 @@ export default function Admin() {
       });
 
       if (error) {
-        console.error('Error sending notification:', error);
-      } else {
-        console.log('Notification sent successfully');
+        if (import.meta.env.DEV) {
+          console.error('Error sending notification:', error);
+        }
       }
     } catch (err) {
-      console.error('Error invoking notification function:', err);
+      if (import.meta.env.DEV) {
+        console.error('Error invoking notification function:', err);
+      }
     }
   };
 

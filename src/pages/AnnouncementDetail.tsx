@@ -204,7 +204,9 @@ export default function AnnouncementDetail() {
 
       navigate(`/chat/${newConv.id}`);
     } catch (error) {
-      console.error('Error creating conversation:', error);
+      if (import.meta.env.DEV) {
+        console.error('Error creating conversation:', error);
+      }
       toast.error('Failed to start conversation');
     }
   };
