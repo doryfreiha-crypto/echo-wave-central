@@ -88,7 +88,9 @@ const Chat = () => {
       if (error) throw error;
       setConversation(data);
     } catch (error) {
-      console.error('Error fetching conversation:', error);
+      if (import.meta.env.DEV) {
+        console.error('Error fetching conversation:', error);
+      }
       toast.error('Failed to load conversation');
       navigate('/messages');
     } finally {
@@ -107,7 +109,9 @@ const Chat = () => {
       if (error) throw error;
       setMessages(data || []);
     } catch (error) {
-      console.error('Error fetching messages:', error);
+      if (import.meta.env.DEV) {
+        console.error('Error fetching messages:', error);
+      }
     }
   };
 
@@ -162,7 +166,9 @@ const Chat = () => {
 
       setNewMessage('');
     } catch (error) {
-      console.error('Error sending message:', error);
+      if (import.meta.env.DEV) {
+        console.error('Error sending message:', error);
+      }
       toast.error('Failed to send message');
     }
   };
