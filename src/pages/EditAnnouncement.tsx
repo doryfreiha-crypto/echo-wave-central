@@ -9,10 +9,12 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { toast } from 'sonner';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, Crown } from 'lucide-react';
 import { z } from 'zod';
 import { getCategoryFields, type FieldDefinition } from '@/lib/categoryFields';
 import ImageUpload from '@/components/ImageUpload';
+import { useSubscriptionLimits, getTierDisplayName, getTierColor } from '@/hooks/useSubscriptionLimits';
+import { Badge } from '@/components/ui/badge';
 
 const announcementSchema = z.object({
   title: z.string().trim().min(5, 'Title must be at least 5 characters').max(100, 'Title too long'),
@@ -33,6 +35,7 @@ export default function EditAnnouncement() {
   const [searchParams] = useSearchParams();
   const isResubmit = searchParams.get('resubmit') === 'true';
   const { user } = useAuth();
+  const subscriptionInfo = useSubscriptionLimits();
   const [categories, setCategories] = useState<Category[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -203,7 +206,13 @@ export default function EditAnnouncement() {
 
         <Card>
           <CardHeader>
-            <CardTitle>{isResubmit ? 'Edit & Resubmit Listing' : 'Edit Listing'}</CardTitle>
+            <div className="flex items-center justify-between">
+              <CardTitle>{isResubmit ? 'Edit & Resubmit Listing' : 'Edit Listing'}</CardTitle>
+              <Badge className={getTierColor(subscriptionInfo.tier)}>
+                <Crown className="w-3 h-3 mr-1" />
+                {getTierDisplayName(subscriptionInfo.tier)}
+              </Badge>
+            </div>
             {isResubmit && (
               <p className="text-sm text-muted-foreground">
                 Make your changes and save to resubmit for admin review.
@@ -335,9 +344,9 @@ export default function EditAnnouncement() {
               })()}
 
               <div className="space-y-2">
-                <Label>Images (max 5)</Label>
+                <Label>Images (max {subscriptionInfo.limits.max_images})</Label>
                 <ImageUpload
-                  maxImages={5}
+                  maxImages={subscriptionInfo.limits.max_images}
                   existingImages={existingImages}
                   onExistingImagesChange={setExistingImages}
                   selectedFiles={selectedImages}

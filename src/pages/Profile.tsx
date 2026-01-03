@@ -13,8 +13,9 @@ import { Separator } from '@/components/ui/separator';
 import { toast } from 'sonner';
 import { 
   ArrowLeft, User, Settings, Activity, Camera, Save, 
-  Package, Heart, MessageSquare, Eye, Calendar, MapPin, LogOut
+  Package, Heart, MessageSquare, Eye, Calendar, MapPin, LogOut, Crown
 } from 'lucide-react';
+import { useSubscriptionLimits, getTierDisplayName, getTierColor } from '@/hooks/useSubscriptionLimits';
 import { z } from 'zod';
 
 const profileSchema = z.object({
@@ -52,6 +53,7 @@ interface ActivityStats {
 export default function Profile() {
   const navigate = useNavigate();
   const { user } = useAuth();
+  const subscriptionInfo = useSubscriptionLimits();
   const fileInputRef = useRef<HTMLInputElement>(null);
   
   const [profile, setProfile] = useState<Profile | null>(null);
@@ -313,12 +315,20 @@ export default function Profile() {
               <div className="flex-1 text-center sm:text-left">
                 <h1 className="text-2xl font-bold">{profile?.full_name || profile?.username}</h1>
                 <p className="text-muted-foreground">@{profile?.username}</p>
-                <div className="flex items-center justify-center sm:justify-start gap-4 mt-3 text-sm text-muted-foreground">
+                <div className="flex items-center justify-center sm:justify-start gap-4 mt-3 text-sm text-muted-foreground flex-wrap">
                   <span className="flex items-center gap-1">
                     <Calendar className="w-4 h-4" />
                     Joined {new Date(profile?.created_at || '').toLocaleDateString()}
                   </span>
+                  <Badge className={getTierColor(subscriptionInfo.tier)}>
+                    <Crown className="w-3 h-3 mr-1" />
+                    {getTierDisplayName(subscriptionInfo.tier)}
+                  </Badge>
                 </div>
+                <p className="text-xs text-muted-foreground mt-2">
+                  {subscriptionInfo.remainingAnnouncements} of {subscriptionInfo.limits.max_announcements} announcements remaining this month • 
+                  Max {subscriptionInfo.limits.max_images} images per listing
+                </p>
               </div>
 
               {/* Stats */}
