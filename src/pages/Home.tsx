@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/components/AuthProvider';
+import { useMessageNotificationContext } from '@/components/MessageNotificationProvider';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
@@ -41,6 +42,7 @@ interface Announcement {
 export default function Home() {
   const { t } = useTranslation();
   const { user } = useAuth();
+  const { unreadCount } = useMessageNotificationContext();
   const [announcements, setAnnouncements] = useState<Announcement[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
@@ -269,10 +271,15 @@ export default function Home() {
                       </Link>
                     </Button>
                   )}
-                  <Button variant="ghost" className="hover:bg-secondary" asChild>
+                  <Button variant="ghost" className="hover:bg-secondary relative" asChild>
                     <Link to="/messages">
                       <MessageSquare className="w-4 h-4 mr-2" />
                       {t('nav.messages')}
+                      {unreadCount > 0 && (
+                        <span className="absolute -top-1 -right-1 bg-destructive text-destructive-foreground text-xs font-bold rounded-full h-5 min-w-5 flex items-center justify-center px-1">
+                          {unreadCount > 99 ? '99+' : unreadCount}
+                        </span>
+                      )}
                     </Link>
                   </Button>
                   <Button variant="ghost" className="hover:bg-secondary" asChild>
@@ -343,10 +350,15 @@ export default function Home() {
                         )}
                         <Link 
                           to="/messages" 
-                          className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-secondary transition-colors"
+                          className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-secondary transition-colors relative"
                         >
                           <MessageSquare className="w-5 h-5 text-primary" />
                           <span className="font-medium">{t('nav.messages')}</span>
+                          {unreadCount > 0 && (
+                            <span className="ml-auto bg-destructive text-destructive-foreground text-xs font-bold rounded-full h-5 min-w-5 flex items-center justify-center px-1">
+                              {unreadCount > 99 ? '99+' : unreadCount}
+                            </span>
+                          )}
                         </Link>
                         <Link 
                           to="/favorites" 

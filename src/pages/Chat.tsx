@@ -2,6 +2,7 @@ import { useEffect, useState, useRef } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/components/AuthProvider';
+import { useMessageNotificationContext } from '@/components/MessageNotificationProvider';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -41,6 +42,7 @@ const Chat = () => {
   const { conversationId } = useParams();
   const navigate = useNavigate();
   const { user } = useAuth();
+  const { markAsRead } = useMessageNotificationContext();
   const [messages, setMessages] = useState<Message[]>([]);
   const [conversation, setConversation] = useState<ConversationDetails | null>(null);
   const [newMessage, setNewMessage] = useState('');
@@ -55,6 +57,11 @@ const Chat = () => {
     fetchConversation();
     fetchMessages();
     setupRealtimeSubscription();
+    
+    // Mark messages as read when entering the chat
+    if (conversationId) {
+      markAsRead(conversationId);
+    }
   }, [user, conversationId, navigate]);
 
   useEffect(() => {
