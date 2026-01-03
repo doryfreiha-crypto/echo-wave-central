@@ -520,6 +520,60 @@ export default function Admin() {
           </TabsContent>
 
           <TabsContent value="users">
+            {/* Tier Statistics */}
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+              <Card>
+                <CardContent className="pt-6">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm font-medium text-muted-foreground">{t('admin.totalUsers', 'Total Users')}</p>
+                      <p className="text-3xl font-bold">{usersWithSubscriptions.length}</p>
+                    </div>
+                    <Users className="w-8 h-8 text-muted-foreground" />
+                  </div>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardContent className="pt-6">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm font-medium text-muted-foreground">Basic</p>
+                      <p className="text-3xl font-bold">
+                        {usersWithSubscriptions.filter(u => !u.subscription?.tier || u.subscription.tier === 'basic').length}
+                      </p>
+                    </div>
+                    <User className="w-8 h-8 text-muted-foreground" />
+                  </div>
+                </CardContent>
+              </Card>
+              <Card className="border-yellow-200 dark:border-yellow-900">
+                <CardContent className="pt-6">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm font-medium text-muted-foreground">Gold</p>
+                      <p className="text-3xl font-bold text-yellow-600">
+                        {usersWithSubscriptions.filter(u => u.subscription?.tier === 'gold').length}
+                      </p>
+                    </div>
+                    <Star className="w-8 h-8 text-yellow-500" />
+                  </div>
+                </CardContent>
+              </Card>
+              <Card className="border-purple-200 dark:border-purple-900">
+                <CardContent className="pt-6">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm font-medium text-muted-foreground">Premium</p>
+                      <p className="text-3xl font-bold text-purple-600">
+                        {usersWithSubscriptions.filter(u => u.subscription?.tier === 'premium').length}
+                      </p>
+                    </div>
+                    <Crown className="w-8 h-8 text-purple-500" />
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
