@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Megaphone, Plus, Search, MapPin, LogOut, LayoutDashboard, MessageSquare, SlidersHorizontal, Grid3x3, List, Heart, LayoutGrid, Menu, X } from 'lucide-react';
+import { Megaphone, Plus, Search, MapPin, LogOut, LayoutDashboard, MessageSquare, SlidersHorizontal, Grid3x3, List, Heart, LayoutGrid, Menu, X, User } from 'lucide-react';
 import { toast } from 'sonner';
 import AnnouncementFilters, { type FilterState } from '@/components/AnnouncementFilters';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
@@ -293,7 +293,12 @@ export default function Home() {
                       {t('nav.createAnnouncement')}
                     </Link>
                   </Button>
-                  <Button variant="ghost" className="hover:bg-destructive/10 hover:text-destructive" onClick={handleLogout}>
+                  <Button variant="ghost" size="icon" className="hover:bg-secondary" asChild>
+                    <Link to="/profile">
+                      <User className="w-4 h-4" />
+                    </Link>
+                  </Button>
+                  <Button variant="ghost" size="icon" className="hover:bg-destructive/10 hover:text-destructive" onClick={handleLogout}>
                     <LogOut className="w-4 h-4" />
                   </Button>
                 </>
@@ -356,6 +361,13 @@ export default function Home() {
                         >
                           <LayoutGrid className="w-5 h-5 text-primary" />
                           <span className="font-medium">{t('nav.myListings')}</span>
+                        </Link>
+                        <Link 
+                          to="/profile" 
+                          className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-secondary transition-colors"
+                        >
+                          <User className="w-5 h-5 text-primary" />
+                          <span className="font-medium">{t('nav.profile')}</span>
                         </Link>
                         
                         <div className="border-t border-border/50 my-2" />
