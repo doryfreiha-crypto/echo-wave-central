@@ -9,9 +9,10 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { toast } from 'sonner';
-import { ArrowLeft, Upload } from 'lucide-react';
+import { ArrowLeft } from 'lucide-react';
 import { z } from 'zod';
 import { getCategoryFields, type FieldDefinition } from '@/lib/categoryFields';
+import ImageUpload from '@/components/ImageUpload';
 
 const announcementSchema = z.object({
   title: z.string().trim().min(5, 'Title must be at least 5 characters').max(100, 'Title too long'),
@@ -52,11 +53,6 @@ export default function CreateAnnouncement() {
     setCategories(data || []);
   };
 
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files) {
-      setSelectedImages(Array.from(e.target.files).slice(0, 5));
-    }
-  };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -273,30 +269,12 @@ export default function CreateAnnouncement() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="images">Images (max 5)</Label>
-                <div className="flex items-center gap-4">
-                  <Input
-                    id="images"
-                    type="file"
-                    accept="image/*"
-                    multiple
-                    onChange={handleImageChange}
-                    className="hidden"
-                  />
-                  <Button
-                    type="button"
-                    variant="outline"
-                    onClick={() => document.getElementById('images')?.click()}
-                  >
-                    <Upload className="w-4 h-4 mr-2" />
-                    Upload Images
-                  </Button>
-                  {selectedImages.length > 0 && (
-                    <span className="text-sm text-muted-foreground">
-                      {selectedImages.length} image(s) selected
-                    </span>
-                  )}
-                </div>
+                <Label>Images (max 5)</Label>
+                <ImageUpload
+                  maxImages={5}
+                  selectedFiles={selectedImages}
+                  onFilesChange={setSelectedImages}
+                />
               </div>
 
               <Button type="submit" className="w-full" disabled={isLoading}>

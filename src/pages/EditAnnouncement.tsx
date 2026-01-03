@@ -9,9 +9,10 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { toast } from 'sonner';
-import { ArrowLeft, Upload, X } from 'lucide-react';
+import { ArrowLeft } from 'lucide-react';
 import { z } from 'zod';
 import { getCategoryFields, type FieldDefinition } from '@/lib/categoryFields';
+import ImageUpload from '@/components/ImageUpload';
 
 const announcementSchema = z.object({
   title: z.string().trim().min(5, 'Title must be at least 5 characters').max(100, 'Title too long'),
@@ -98,27 +99,6 @@ export default function EditAnnouncement() {
     }
   };
 
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files) {
-      const newFiles = Array.from(e.target.files);
-      const totalImages = existingImages.length + selectedImages.length + newFiles.length;
-      
-      if (totalImages > 5) {
-        toast.error('Maximum 5 images allowed');
-        return;
-      }
-      
-      setSelectedImages([...selectedImages, ...newFiles]);
-    }
-  };
-
-  const removeExistingImage = (index: number) => {
-    setExistingImages(existingImages.filter((_, i) => i !== index));
-  };
-
-  const removeNewImage = (index: number) => {
-    setSelectedImages(selectedImages.filter((_, i) => i !== index));
-  };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -356,76 +336,13 @@ export default function EditAnnouncement() {
 
               <div className="space-y-2">
                 <Label>Images (max 5)</Label>
-                
-                {/* Existing images */}
-                {existingImages.length > 0 && (
-                  <div className="grid grid-cols-3 gap-2 mb-2">
-                    {existingImages.map((image, index) => (
-                      <div key={index} className="relative group">
-                        <img
-                          src={image}
-                          alt={`Existing ${index + 1}`}
-                          className="w-full h-24 object-cover rounded"
-                        />
-                        <Button
-                          type="button"
-                          variant="destructive"
-                          size="icon"
-                          className="absolute top-1 right-1 opacity-0 group-hover:opacity-100 transition-opacity"
-                          onClick={() => removeExistingImage(index)}
-                        >
-                          <X className="w-4 h-4" />
-                        </Button>
-                      </div>
-                    ))}
-                  </div>
-                )}
-
-                {/* New images preview */}
-                {selectedImages.length > 0 && (
-                  <div className="grid grid-cols-3 gap-2 mb-2">
-                    {selectedImages.map((file, index) => (
-                      <div key={index} className="relative group">
-                        <img
-                          src={URL.createObjectURL(file)}
-                          alt={`New ${index + 1}`}
-                          className="w-full h-24 object-cover rounded"
-                        />
-                        <Button
-                          type="button"
-                          variant="destructive"
-                          size="icon"
-                          className="absolute top-1 right-1 opacity-0 group-hover:opacity-100 transition-opacity"
-                          onClick={() => removeNewImage(index)}
-                        >
-                          <X className="w-4 h-4" />
-                        </Button>
-                      </div>
-                    ))}
-                  </div>
-                )}
-
-                {/* Upload button */}
-                {(existingImages.length + selectedImages.length) < 5 && (
-                  <div>
-                    <input
-                      type="file"
-                      id="images"
-                      accept="image/*"
-                      multiple
-                      onChange={handleImageChange}
-                      className="hidden"
-                    />
-                    <Button
-                      type="button"
-                      variant="outline"
-                      onClick={() => document.getElementById('images')?.click()}
-                    >
-                      <Upload className="w-4 h-4 mr-2" />
-                      Add Images
-                    </Button>
-                  </div>
-                )}
+                <ImageUpload
+                  maxImages={5}
+                  existingImages={existingImages}
+                  onExistingImagesChange={setExistingImages}
+                  selectedFiles={selectedImages}
+                  onFilesChange={setSelectedImages}
+                />
               </div>
 
               <Button type="submit" className="w-full" disabled={isLoading}>
