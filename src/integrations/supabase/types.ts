@@ -295,11 +295,43 @@ export type Database = {
           },
         ]
       }
+      user_subscriptions: {
+        Row: {
+          created_at: string
+          id: string
+          tier: Database["public"]["Enums"]["subscription_tier"]
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          tier?: Database["public"]["Enums"]["subscription_tier"]
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          tier?: Database["public"]["Enums"]["subscription_tier"]
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
+      get_monthly_announcement_count: {
+        Args: { p_user_id: string }
+        Returns: number
+      }
+      get_tier_limits: {
+        Args: { tier_name: Database["public"]["Enums"]["subscription_tier"] }
+        Returns: Json
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
@@ -316,6 +348,7 @@ export type Database = {
         | "pending"
         | "rejected"
       app_role: "admin" | "moderator" | "user"
+      subscription_tier: "basic" | "gold" | "premium"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -451,6 +484,7 @@ export const Constants = {
         "rejected",
       ],
       app_role: ["admin", "moderator", "user"],
+      subscription_tier: ["basic", "gold", "premium"],
     },
   },
 } as const

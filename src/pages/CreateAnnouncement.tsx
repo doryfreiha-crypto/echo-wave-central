@@ -9,11 +9,13 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { toast } from 'sonner';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, Crown, AlertCircle } from 'lucide-react';
 import { z } from 'zod';
 import { getCategoryFields, type FieldDefinition } from '@/lib/categoryFields';
 import ImageUpload from '@/components/ImageUpload';
-
+import { useSubscriptionLimits, getTierDisplayName, getTierColor } from '@/hooks/useSubscriptionLimits';
+import { Badge } from '@/components/ui/badge';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 const announcementSchema = z.object({
   title: z.string().trim().min(5, 'Title must be at least 5 characters').max(100, 'Title too long'),
   description: z.string().trim().min(20, 'Description must be at least 20 characters').max(5000, 'Description too long'),
@@ -30,12 +32,12 @@ interface Category {
 export default function CreateAnnouncement() {
   const navigate = useNavigate();
   const { user } = useAuth();
+  const subscriptionInfo = useSubscriptionLimits();
   const [categories, setCategories] = useState<Category[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [selectedImages, setSelectedImages] = useState<File[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<string>('');
   const [attributes, setAttributes] = useState<Record<string, any>>({});
-
   useEffect(() => {
     if (!user) {
       navigate('/auth');
@@ -144,9 +146,27 @@ export default function CreateAnnouncement() {
 
         <Card>
           <CardHeader>
-            <CardTitle>Create New Announcement</CardTitle>
+            <div className="flex items-center justify-between">
+              <CardTitle>Create New Announcement</CardTitle>
+              <Badge className={getTierColor(subscriptionInfo.tier)}>
+                <Crown className="w-3 h-3 mr-1" />
+                {getTierDisplayName(subscriptionInfo.tier)}
+              </Badge>
+            </div>
+            <p className="text-sm text-muted-foreground">
+              {subscriptionInfo.remainingAnnouncements} of {subscriptionInfo.limits.max_announcements} announcements remaining this month
+            </p>
           </CardHeader>
           <CardContent>
+            {!subscriptionInfo.canCreate && (
+              <Alert variant="destructive" className="mb-6">
+                <AlertCircle className="h-4 w-4" />
+                <AlertDescription>
+                  You've reached your monthly limit of {subscriptionInfo.limits.max_announcements} announcements. 
+                  Upgrade your plan to create more announcements.
+                </AlertDescription>
+              </Alert>
+            )}
             <form onSubmit={handleSubmit} className="space-y-6">
               <div className="space-y-2">
                 <Label htmlFor="title">Title *</Label>
@@ -269,15 +289,19 @@ export default function CreateAnnouncement() {
               </div>
 
               <div className="space-y-2">
-                <Label>Images (max 5)</Label>
+                <Label>Images (max {subscriptionInfo.limits.max_images})</Label>
                 <ImageUpload
-                  maxImages={5}
+                  maxImages={subscriptionInfo.limits.max_images}
                   selectedFiles={selectedImages}
                   onFilesChange={setSelectedImages}
                 />
               </div>
 
-              <Button type="submit" className="w-full" disabled={isLoading}>
+              <Button 
+                type="submit" 
+                className="w-full" 
+                disabled={isLoading || !subscriptionInfo.canCreate}
+              >
                 {isLoading ? 'Creating...' : 'Create Announcement'}
               </Button>
             </form>
