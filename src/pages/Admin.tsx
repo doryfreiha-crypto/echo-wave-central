@@ -9,6 +9,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { toast } from 'sonner';
+import { getCategoryFields } from '@/lib/categoryFields';
 import { ArrowLeft, Trash2, Check, X, Eye, Users, Crown, Star, User } from 'lucide-react';
 import {
   AlertDialog,
@@ -71,8 +72,11 @@ interface Announcement {
   published_at: string | null;
   location: string | null;
   images: string[] | null;
+  attributes: Record<string, any> | null;
+  views_count: number;
   profiles: {
     username: string;
+    full_name: string | null;
   };
   categories: {
     name: string;
@@ -238,7 +242,7 @@ export default function Admin() {
       .from('announcements')
       .select(`
         *,
-        profiles (username),
+        profiles (username, full_name),
         categories (name, slug)
       `)
       .order('created_at', { ascending: false });
@@ -246,7 +250,10 @@ export default function Admin() {
     if (error) {
       toast.error(t('errors.general'));
     } else {
-      setAnnouncements(data || []);
+      setAnnouncements((data || []).map(item => ({
+        ...item,
+        attributes: (item.attributes as Record<string, any>) || null
+      })));
     }
     setLoading(false);
   };
@@ -722,6 +729,7 @@ export default function Admin() {
             </DialogHeader>
             {selectedAnnouncement && (
               <div className="space-y-4">
+                {/* Images */}
                 {selectedAnnouncement.images && selectedAnnouncement.images.length > 0 && (
                   <div className="grid grid-cols-2 gap-2">
                     {selectedAnnouncement.images.map((img, index) => (
@@ -734,23 +742,83 @@ export default function Admin() {
                     ))}
                   </div>
                 )}
+
+                {/* Title & Price */}
                 <div>
                   <h3 className="text-xl font-semibold">{selectedAnnouncement.title}</h3>
                   <p className="text-2xl font-bold text-primary mt-2">
                     €{selectedAnnouncement.price?.toFixed(2) || '0.00'}
                   </p>
                 </div>
-                <div>
-                  <h4 className="font-medium text-muted-foreground">{t('listing.description')}</h4>
-                  <p className="mt-1">{selectedAnnouncement.description}</p>
+
+                {/* Meta info grid */}
+                <div className="grid grid-cols-2 gap-3 text-sm">
+                  <div className="bg-muted/50 rounded-lg p-3">
+                    <p className="text-xs text-muted-foreground uppercase tracking-wide">{t('filters.category')}</p>
+                    <p className="font-medium mt-1">{t(`categories.${selectedAnnouncement.categories.slug}`, selectedAnnouncement.categories.name)}</p>
+                  </div>
+                  <div className="bg-muted/50 rounded-lg p-3">
+                    <p className="text-xs text-muted-foreground uppercase tracking-wide">{t('admin.user')}</p>
+                    <p className="font-medium mt-1">
+                      {selectedAnnouncement.profiles.full_name || selectedAnnouncement.profiles.username}
+                      <span className="text-muted-foreground text-xs ml-1">(@{selectedAnnouncement.profiles.username})</span>
+                    </p>
+                  </div>
+                  {selectedAnnouncement.location && (
+                    <div className="bg-muted/50 rounded-lg p-3">
+                      <p className="text-xs text-muted-foreground uppercase tracking-wide">{t('listing.location')}</p>
+                      <p className="font-medium mt-1">{selectedAnnouncement.location}</p>
+                    </div>
+                  )}
+                  <div className="bg-muted/50 rounded-lg p-3">
+                    <p className="text-xs text-muted-foreground uppercase tracking-wide">{t('admin.created')}</p>
+                    <p className="font-medium mt-1">{new Date(selectedAnnouncement.created_at).toLocaleString()}</p>
+                  </div>
+                  <div className="bg-muted/50 rounded-lg p-3">
+                    <p className="text-xs text-muted-foreground uppercase tracking-wide">{t('admin.status')}</p>
+                    <Badge variant={getStatusBadgeVariant(selectedAnnouncement.status)} className="mt-1">
+                      {t(`admin.statuses.${selectedAnnouncement.status}`, selectedAnnouncement.status)}
+                    </Badge>
+                  </div>
+                  <div className="bg-muted/50 rounded-lg p-3">
+                    <p className="text-xs text-muted-foreground uppercase tracking-wide">{t('listing.views', 'Views')}</p>
+                    <p className="font-medium mt-1">{selectedAnnouncement.views_count}</p>
+                  </div>
                 </div>
-                {selectedAnnouncement.location && (
+
+                {/* Description */}
+                <div>
+                  <h4 className="font-medium text-muted-foreground mb-1">{t('listing.description')}</h4>
+                  <p className="text-sm whitespace-pre-wrap">{selectedAnnouncement.description}</p>
+                </div>
+
+                {/* Category-specific attributes */}
+                {selectedAnnouncement.attributes && Object.keys(selectedAnnouncement.attributes).length > 0 && (
                   <div>
-                    <h4 className="font-medium text-muted-foreground">{t('listing.location')}</h4>
-                    <p className="mt-1">{selectedAnnouncement.location}</p>
+                    <h4 className="font-medium text-muted-foreground mb-2">{t('listing.details', 'Details')}</h4>
+                    <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
+                      {(() => {
+                        const categoryName = selectedAnnouncement.categories?.name || '';
+                        const fieldDefs = getCategoryFields(categoryName);
+                        const fieldMap = new Map(fieldDefs.map(f => [f.name, f.label]));
+                        
+                        return Object.entries(selectedAnnouncement.attributes).map(([key, value]) => {
+                          if (value === null || value === undefined || value === '') return null;
+                          const label = fieldMap.get(key) || key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase());
+                          return (
+                            <div key={key} className="bg-muted/50 rounded-lg p-2">
+                              <p className="text-xs text-muted-foreground uppercase tracking-wide">{label}</p>
+                              <p className="font-medium text-sm mt-0.5">{String(value)}</p>
+                            </div>
+                          );
+                        });
+                      })()}
+                    </div>
                   </div>
                 )}
-                <div className="flex gap-2 pt-4">
+
+                {/* Action buttons */}
+                <div className="flex gap-2 pt-4 border-t">
                   <Button
                     className="flex-1 bg-green-600 hover:bg-green-700"
                     onClick={() => {
