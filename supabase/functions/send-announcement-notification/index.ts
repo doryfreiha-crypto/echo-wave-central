@@ -175,9 +175,16 @@ const handler = async (req: Request): Promise<Response> => {
     const emailData = await emailResponse.json();
     
     if (!emailResponse.ok) {
-      console.log("Email sending failed with status:", emailResponse.status);
+      console.log("Email sending failed with status:", emailResponse.status, "Response:", JSON.stringify(emailData));
+      // Return more details about the failure
       return new Response(
-        JSON.stringify({ error: "Failed to send email" }),
+        JSON.stringify({ 
+          error: "Failed to send email", 
+          details: emailData,
+          hint: emailResponse.status === 403 
+            ? "The 'from' email domain may not be verified in Resend. Using onboarding@resend.dev only works for sending to the Resend account owner's email."
+            : undefined
+        }),
         {
           status: 500,
           headers: { "Content-Type": "application/json", ...corsHeaders },
