@@ -262,5 +262,139 @@
     "english": "Anglais",
     "french": "Français",
     "arabic": "Arabe"
+  },
+  "footer": {
+    "about": {
+      "title": "À Propos",
+      "subtitle": "Notre Histoire",
+      "description": "Connecter les communautés à travers le commerce local",
+      "mission": "Notre Mission",
+      "missionText": "Créer une marketplace de confiance où les gens peuvent acheter, vendre et se connecter localement.",
+      "vision": "Notre Vision",
+      "visionText": "Autonomiser les communautés du monde entier grâce au commerce local.",
+      "values": "Nos Valeurs",
+      "trust": "Confiance & Sécurité",
+      "community": "Communauté d'Abord",
+      "innovation": "Innovation",
+      "sustainability": "Durabilité"
+    },
+    "careers": {
+      "title": "Carrières",
+      "subtitle": "Rejoignez Notre Équipe",
+      "description": "Aidez-nous à construire l'avenir du commerce local",
+      "openPositions": "Postes Ouverts",
+      "noPositions": "Aucun poste ouvert pour le moment",
+      "benefits": "Avantages",
+      "remoteWork": "Télétravail",
+      "healthInsurance": "Assurance Santé",
+      "learningBudget": "Budget Formation",
+      "flexibleHours": "Horaires Flexibles",
+      "apply": "Postuler"
+    },
+    "blog": {
+      "title": "Blog",
+      "subtitle": "Dernières Nouvelles",
+      "description": "Conseils, histoires et mises à jour de notre communauté",
+      "readMore": "Lire la Suite",
+      "categories": "Catégories",
+      "recentPosts": "Articles Récents"
+    },
+    "press": {
+      "title": "Presse",
+      "subtitle": "Presse & Médias",
+      "description": "Actualités, communiqués de presse et ressources médias",
+      "mediaInquiries": "Contact Presse",
+      "pressKit": "Kit Presse",
+      "downloadPressKit": "Télécharger le Kit Presse",
+      "pressReleases": "Communiqués de Presse",
+      "inTheMedia": "Dans les Médias"
+    },
+    "helpCenter": {
+      "title": "Centre d'Aide",
+      "subtitle": "Comment Pouvons-Nous Aider ?",
+      "description": "Trouvez des réponses aux questions courantes",
+      "searchPlaceholder": "Rechercher de l'aide...",
+      "gettingStarted": "Commencer",
+      "buyingGuide": "Guide d'Achat",
+      "sellingGuide": "Guide de Vente",
+      "accountSettings": "Paramètres du Compte",
+      "contactSupport": "Contacter le Support"
+    },
+    "safetyTips": {
+      "title": "Conseils de Sécurité",
+      "subtitle": "Restez en Sécurité",
+      "description": "Conseils pour acheter et vendre en toute sécurité",
+      "meetingSafely": "Rencontres Sécurisées",
+      "avoidScams": "Éviter les Arnaques",
+      "securePayments": "Paiements Sécurisés",
+      "reportIssues": "Signaler des Problèmes"
+    },
+    "contact": {
+      "title": "Nous Contacter",
+      "subtitle": "Contactez-Nous",
+      "description": "Nous serions ravis de vous entendre",
+      "name": "Votre Nom",
+      "email": "Votre Email",
+      "subject": "Sujet",
+      "message": "Message",
+      "send": "Envoyer",
+      "success": "Message envoyé avec succès",
+      "error": "Échec de l'envoi du message"
+    },
+    "faq": {
+      "title": "FAQ",
+      "subtitle": "Questions Fréquentes",
+      "description": "Trouvez des réponses aux questions courantes",
+      "general": "Général",
+      "account": "Compte",
+      "buying": "Achat",
+      "selling": "Vente",
+      "payments": "Paiements"
+    },
+    "terms": {
+      "title": "Conditions d'Utilisation",
+      "subtitle": "Termes et Conditions",
+      "description": "Veuillez lire attentivement ces conditions",
+      "lastUpdated": "Dernière Mise à Jour",
+      "acceptance": "Acceptation des Conditions",
+      "userConduct": "Conduite de l'Utilisateur",
+      "intellectualProperty": "Propriété Intellectuelle",
+      "limitation": "Limitation de Responsabilité"
+    },
+    "privacy": {
+      "title": "Politique de Confidentialité",
+      "subtitle": "Votre Vie Privée Compte",
+      "description": "Comment nous collectons, utilisons et protégeons vos données",
+      "dataCollection": "Collecte de Données",
+      "dataUsage": "Utilisation des Données",
+      "dataSecurity": "Sécurité des Données",
+      "yourRights": "Vos Droits",
+      "cookies": "Cookies"
+    },
+    "cookies": {
+      "title": "Politique des Cookies",
+      "subtitle": "Utilisation des Cookies",
+      "description": "Comment nous utilisons les cookies sur notre plateforme",
+      "whatAreCookies": "Qu'est-ce que les Cookies",
+      "typesOfCookies": "Types de Cookies",
+      "essential": "Essentiels",
+      "analytics": "Analytiques",
+      "marketing": "Marketing",
+      "manageCookies": "Gérer les Cookies"
+    },
+    "pricing": {
+      "title": "Tarifs",
+      "subtitle": "Tarification Simple et Transparente",
+      "description": "Choisissez le forfait qui vous convient",
+      "free": "Gratuit",
+      "basic": "Basique",
+      "gold": "Gold",
+      "premium": "Premium",
+      "perMonth": "par mois",
+      "features": "Fonctionnalités",
+      "getStarted": "Commencer",
+      "currentPlan": "Forfait Actuel",
+      "upgrade": "Mettre à Niveau"
+    }
   }
 }
