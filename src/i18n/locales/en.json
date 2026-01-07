@@ -262,5 +262,139 @@
     "english": "English",
     "french": "French",
     "arabic": "Arabic"
+  },
+  "footer": {
+    "about": {
+      "title": "About Us",
+      "subtitle": "Our Story",
+      "description": "Connecting communities through local commerce",
+      "mission": "Our Mission",
+      "missionText": "To create a trusted marketplace where people can buy, sell, and connect locally.",
+      "vision": "Our Vision",
+      "visionText": "Empowering communities worldwide through seamless local commerce.",
+      "values": "Our Values",
+      "trust": "Trust & Safety",
+      "community": "Community First",
+      "innovation": "Innovation",
+      "sustainability": "Sustainability"
+    },
+    "careers": {
+      "title": "Careers",
+      "subtitle": "Join Our Team",
+      "description": "Help us build the future of local commerce",
+      "openPositions": "Open Positions",
+      "noPositions": "No open positions at the moment",
+      "benefits": "Benefits",
+      "remoteWork": "Remote Work",
+      "healthInsurance": "Health Insurance",
+      "learningBudget": "Learning Budget",
+      "flexibleHours": "Flexible Hours",
+      "apply": "Apply Now"
+    },
+    "blog": {
+      "title": "Blog",
+      "subtitle": "Latest News & Updates",
+      "description": "Tips, stories, and updates from our community",
+      "readMore": "Read More",
+      "categories": "Categories",
+      "recentPosts": "Recent Posts"
+    },
+    "press": {
+      "title": "Press",
+      "subtitle": "Press & Media",
+      "description": "News, press releases, and media resources",
+      "mediaInquiries": "Media Inquiries",
+      "pressKit": "Press Kit",
+      "downloadPressKit": "Download Press Kit",
+      "pressReleases": "Press Releases",
+      "inTheMedia": "In the Media"
+    },
+    "helpCenter": {
+      "title": "Help Center",
+      "subtitle": "How Can We Help?",
+      "description": "Find answers to common questions",
+      "searchPlaceholder": "Search for help...",
+      "gettingStarted": "Getting Started",
+      "buyingGuide": "Buying Guide",
+      "sellingGuide": "Selling Guide",
+      "accountSettings": "Account Settings",
+      "contactSupport": "Contact Support"
+    },
+    "safetyTips": {
+      "title": "Safety Tips",
+      "subtitle": "Stay Safe",
+      "description": "Tips for safe buying and selling",
+      "meetingSafely": "Meeting Safely",
+      "avoidScams": "Avoid Scams",
+      "securePayments": "Secure Payments",
+      "reportIssues": "Report Issues"
+    },
+    "contact": {
+      "title": "Contact Us",
+      "subtitle": "Get in Touch",
+      "description": "We'd love to hear from you",
+      "name": "Your Name",
+      "email": "Your Email",
+      "subject": "Subject",
+      "message": "Message",
+      "send": "Send Message",
+      "success": "Message sent successfully",
+      "error": "Failed to send message"
+    },
+    "faq": {
+      "title": "FAQ",
+      "subtitle": "Frequently Asked Questions",
+      "description": "Find answers to common questions",
+      "general": "General",
+      "account": "Account",
+      "buying": "Buying",
+      "selling": "Selling",
+      "payments": "Payments"
+    },
+    "terms": {
+      "title": "Terms of Service",
+      "subtitle": "Terms & Conditions",
+      "description": "Please read these terms carefully",
+      "lastUpdated": "Last Updated",
+      "acceptance": "Acceptance of Terms",
+      "userConduct": "User Conduct",
+      "intellectualProperty": "Intellectual Property",
+      "limitation": "Limitation of Liability"
+    },
+    "privacy": {
+      "title": "Privacy Policy",
+      "subtitle": "Your Privacy Matters",
+      "description": "How we collect, use, and protect your data",
+      "dataCollection": "Data Collection",
+      "dataUsage": "Data Usage",
+      "dataSecurity": "Data Security",
+      "yourRights": "Your Rights",
+      "cookies": "Cookies"
+    },
+    "cookies": {
+      "title": "Cookie Policy",
+      "subtitle": "Cookie Usage",
+      "description": "How we use cookies on our platform",
+      "whatAreCookies": "What Are Cookies",
+      "typesOfCookies": "Types of Cookies",
+      "essential": "Essential",
+      "analytics": "Analytics",
+      "marketing": "Marketing",
+      "manageCookies": "Manage Cookies"
+    },
+    "pricing": {
+      "title": "Pricing",
+      "subtitle": "Simple, Transparent Pricing",
+      "description": "Choose the plan that works for you",
+      "free": "Free",
+      "basic": "Basic",
+      "gold": "Gold",
+      "premium": "Premium",
+      "perMonth": "per month",
+      "features": "Features",
+      "getStarted": "Get Started",
+      "currentPlan": "Current Plan",
+      "upgrade": "Upgrade"
+    }
   }
 }

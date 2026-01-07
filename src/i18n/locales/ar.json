@@ -262,5 +262,139 @@
     "english": "الإنجليزية",
     "french": "الفرنسية",
     "arabic": "العربية"
+  },
+  "footer": {
+    "about": {
+      "title": "من نحن",
+      "subtitle": "قصتنا",
+      "description": "ربط المجتمعات من خلال التجارة المحلية",
+      "mission": "مهمتنا",
+      "missionText": "إنشاء سوق موثوق حيث يمكن للناس الشراء والبيع والتواصل محلياً.",
+      "vision": "رؤيتنا",
+      "visionText": "تمكين المجتمعات في جميع أنحاء العالم من خلال التجارة المحلية السلسة.",
+      "values": "قيمنا",
+      "trust": "الثقة والأمان",
+      "community": "المجتمع أولاً",
+      "innovation": "الابتكار",
+      "sustainability": "الاستدامة"
+    },
+    "careers": {
+      "title": "الوظائف",
+      "subtitle": "انضم إلى فريقنا",
+      "description": "ساعدنا في بناء مستقبل التجارة المحلية",
+      "openPositions": "الوظائف المتاحة",
+      "noPositions": "لا توجد وظائف متاحة حالياً",
+      "benefits": "المزايا",
+      "remoteWork": "العمل عن بُعد",
+      "healthInsurance": "التأمين الصحي",
+      "learningBudget": "ميزانية التعلم",
+      "flexibleHours": "ساعات مرنة",
+      "apply": "تقدم الآن"
+    },
+    "blog": {
+      "title": "المدونة",
+      "subtitle": "آخر الأخبار والتحديثات",
+      "description": "نصائح وقصص وتحديثات من مجتمعنا",
+      "readMore": "اقرأ المزيد",
+      "categories": "الفئات",
+      "recentPosts": "المقالات الأخيرة"
+    },
+    "press": {
+      "title": "الصحافة",
+      "subtitle": "الصحافة والإعلام",
+      "description": "الأخبار والبيانات الصحفية وموارد الإعلام",
+      "mediaInquiries": "استفسارات إعلامية",
+      "pressKit": "الحقيبة الصحفية",
+      "downloadPressKit": "تحميل الحقيبة الصحفية",
+      "pressReleases": "البيانات الصحفية",
+      "inTheMedia": "في وسائل الإعلام"
+    },
+    "helpCenter": {
+      "title": "مركز المساعدة",
+      "subtitle": "كيف يمكننا مساعدتك؟",
+      "description": "اعثر على إجابات للأسئلة الشائعة",
+      "searchPlaceholder": "ابحث عن المساعدة...",
+      "gettingStarted": "البدء",
+      "buyingGuide": "دليل الشراء",
+      "sellingGuide": "دليل البيع",
+      "accountSettings": "إعدادات الحساب",
+      "contactSupport": "التواصل مع الدعم"
+    },
+    "safetyTips": {
+      "title": "نصائح الأمان",
+      "subtitle": "ابق آمناً",
+      "description": "نصائح للشراء والبيع الآمن",
+      "meetingSafely": "اللقاء بأمان",
+      "avoidScams": "تجنب الاحتيال",
+      "securePayments": "المدفوعات الآمنة",
+      "reportIssues": "الإبلاغ عن المشاكل"
+    },
+    "contact": {
+      "title": "اتصل بنا",
+      "subtitle": "تواصل معنا",
+      "description": "يسعدنا سماع رأيك",
+      "name": "اسمك",
+      "email": "بريدك الإلكتروني",
+      "subject": "الموضوع",
+      "message": "الرسالة",
+      "send": "إرسال الرسالة",
+      "success": "تم إرسال الرسالة بنجاح",
+      "error": "فشل في إرسال الرسالة"
+    },
+    "faq": {
+      "title": "الأسئلة الشائعة",
+      "subtitle": "الأسئلة المتكررة",
+      "description": "اعثر على إجابات للأسئلة الشائعة",
+      "general": "عام",
+      "account": "الحساب",
+      "buying": "الشراء",
+      "selling": "البيع",
+      "payments": "المدفوعات"
+    },
+    "terms": {
+      "title": "شروط الخدمة",
+      "subtitle": "الشروط والأحكام",
+      "description": "يرجى قراءة هذه الشروط بعناية",
+      "lastUpdated": "آخر تحديث",
+      "acceptance": "قبول الشروط",
+      "userConduct": "سلوك المستخدم",
+      "intellectualProperty": "الملكية الفكرية",
+      "limitation": "حدود المسؤولية"
+    },
+    "privacy": {
+      "title": "سياسة الخصوصية",
+      "subtitle": "خصوصيتك مهمة",
+      "description": "كيف نجمع ونستخدم ونحمي بياناتك",
+      "dataCollection": "جمع البيانات",
+      "dataUsage": "استخدام البيانات",
+      "dataSecurity": "أمان البيانات",
+      "yourRights": "حقوقك",
+      "cookies": "ملفات تعريف الارتباط"
+    },
+    "cookies": {
+      "title": "سياسة ملفات تعريف الارتباط",
+      "subtitle": "استخدام ملفات تعريف الارتباط",
+      "description": "كيف نستخدم ملفات تعريف الارتباط على منصتنا",
+      "whatAreCookies": "ما هي ملفات تعريف الارتباط",
+      "typesOfCookies": "أنواع ملفات تعريف الارتباط",
+      "essential": "أساسية",
+      "analytics": "تحليلية",
+      "marketing": "تسويقية",
+      "manageCookies": "إدارة ملفات تعريف الارتباط"
+    },
+    "pricing": {
+      "title": "الأسعار",
+      "subtitle": "أسعار بسيطة وشفافة",
+      "description": "اختر الخطة المناسبة لك",
+      "free": "مجاني",
+      "basic": "أساسي",
+      "gold": "ذهبي",
+      "premium": "مميز",
+      "perMonth": "شهرياً",
+      "features": "الميزات",
+      "getStarted": "ابدأ الآن",
+      "currentPlan": "الخطة الحالية",
+      "upgrade": "ترقية"
+    }
   }
 }
