@@ -17,6 +17,18 @@ import Chat from "./pages/Chat";
 import Favorites from "./pages/Favorites";
 import Profile from "./pages/Profile";
 import NotFound from "./pages/NotFound";
+import About from "./pages/About";
+import Careers from "./pages/Careers";
+import Blog from "./pages/Blog";
+import Press from "./pages/Press";
+import HelpCenter from "./pages/HelpCenter";
+import SafetyTips from "./pages/SafetyTips";
+import Contact from "./pages/Contact";
+import FAQ from "./pages/FAQ";
+import Terms from "./pages/Terms";
+import Privacy from "./pages/Privacy";
+import Cookies from "./pages/Cookies";
+import Pricing from "./pages/Pricing";
 
 const queryClient = new QueryClient();
 
@@ -40,6 +52,18 @@ const App = () => (
               <Route path="/chat/:conversationId" element={<Chat />} />
               <Route path="/favorites" element={<Favorites />} />
               <Route path="/profile" element={<Profile />} />
+              <Route path="/about" element={<About />} />
+              <Route path="/careers" element={<Careers />} />
+              <Route path="/blog" element={<Blog />} />
+              <Route path="/press" element={<Press />} />
+              <Route path="/help" element={<HelpCenter />} />
+              <Route path="/safety" element={<SafetyTips />} />
+              <Route path="/contact" element={<Contact />} />
+              <Route path="/faq" element={<FAQ />} />
+              <Route path="/terms" element={<Terms />} />
+              <Route path="/privacy" element={<Privacy />} />
+              <Route path="/cookies" element={<Cookies />} />
+              <Route path="/pricing" element={<Pricing />} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
             </Routes>
