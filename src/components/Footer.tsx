@@ -33,24 +33,24 @@ export function Footer() {
       { label: 'Browse Listings', href: '/' },
       { label: 'Categories', href: '/' },
       { label: 'Post an Ad', href: '/create' },
-      { label: 'Pricing', href: '/' },
+      { label: 'Pricing', href: '/pricing' },
     ],
     company: [
-      { label: 'About Us', href: '/' },
-      { label: 'Careers', href: '/' },
-      { label: 'Blog', href: '/' },
-      { label: 'Press', href: '/' },
+      { label: 'About Us', href: '/about' },
+      { label: 'Careers', href: '/careers' },
+      { label: 'Blog', href: '/blog' },
+      { label: 'Press', href: '/press' },
     ],
     support: [
-      { label: 'Help Center', href: '/' },
-      { label: 'Safety Tips', href: '/' },
-      { label: 'Contact Us', href: '/' },
-      { label: 'FAQ', href: '/' },
+      { label: 'Help Center', href: '/help' },
+      { label: 'Safety Tips', href: '/safety' },
+      { label: 'Contact Us', href: '/contact' },
+      { label: 'FAQ', href: '/faq' },
     ],
     legal: [
-      { label: 'Terms of Service', href: '/' },
-      { label: 'Privacy Policy', href: '/' },
-      { label: 'Cookie Policy', href: '/' },
+      { label: 'Terms of Service', href: '/terms' },
+      { label: 'Privacy Policy', href: '/privacy' },
+      { label: 'Cookie Policy', href: '/cookies' },
     ],
   };
 
@@ -211,11 +211,11 @@ export function Footer() {
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-muted-foreground">
             <p>© {currentYear} EchoWave. All rights reserved.</p>
             <div className="flex items-center gap-4">
-              <Link to="/" className="hover:text-primary transition-colors">Terms</Link>
+              <Link to="/terms" className="hover:text-primary transition-colors">Terms</Link>
               <span>·</span>
-              <Link to="/" className="hover:text-primary transition-colors">Privacy</Link>
+              <Link to="/privacy" className="hover:text-primary transition-colors">Privacy</Link>
               <span>·</span>
-              <Link to="/" className="hover:text-primary transition-colors">Cookies</Link>
+              <Link to="/cookies" className="hover:text-primary transition-colors">Cookies</Link>
             </div>
           </div>
         </div>
