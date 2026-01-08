@@ -2,21 +2,16 @@ import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { ArrowLeft, MapPin, Clock, Briefcase } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
 import { Footer } from '@/components/Footer';
 
 export default function Careers() {
   const { t } = useTranslation();
 
   const benefits = [
-    'Competitive salary & equity',
-    'Remote-first culture',
-    'Unlimited PTO',
-    'Health, dental & vision',
-    'Learning & development budget',
-    '401(k) matching',
-    'Home office stipend',
-    'Team retreats',
+    t('footer.careers.remoteWork'),
+    t('footer.careers.healthInsurance'),
+    t('footer.careers.learningBudget'),
+    t('footer.careers.flexibleHours'),
   ];
 
   const openings = [
@@ -70,18 +65,17 @@ export default function Careers() {
         {/* Hero Section */}
         <div className="max-w-4xl mx-auto text-center mb-16">
           <h1 className="font-display text-4xl md:text-5xl font-bold mb-6">
-            Join Our <span className="gradient-text">Team</span>
+            {t('footer.careers.subtitle')}
           </h1>
           <p className="text-xl text-muted-foreground leading-relaxed">
-            Help us build the future of local commerce. We're looking for passionate 
-            people who want to make a difference.
+            {t('footer.careers.description')}
           </p>
         </div>
 
         {/* Benefits Section */}
         <div className="max-w-4xl mx-auto mb-20">
           <div className="bg-card rounded-2xl border border-border/50 p-8 md:p-12">
-            <h2 className="font-display text-2xl font-bold mb-8 text-center">Why Work With Us?</h2>
+            <h2 className="font-display text-2xl font-bold mb-8 text-center">{t('footer.careers.benefits')}</h2>
             <div className="grid sm:grid-cols-2 md:grid-cols-4 gap-4">
               {benefits.map((benefit) => (
                 <div 
@@ -97,7 +91,7 @@ export default function Careers() {
 
         {/* Open Positions */}
         <div className="max-w-4xl mx-auto">
-          <h2 className="font-display text-3xl font-bold text-center mb-12">Open Positions</h2>
+          <h2 className="font-display text-3xl font-bold text-center mb-12">{t('footer.careers.openPositions')}</h2>
           <div className="space-y-4">
             {openings.map((job) => (
               <div 
@@ -123,7 +117,7 @@ export default function Careers() {
                     </div>
                   </div>
                   <Button className="bg-gradient-primary hover:opacity-90">
-                    Apply Now
+                    {t('footer.careers.apply')}
                   </Button>
                 </div>
               </div>
@@ -132,10 +126,10 @@ export default function Careers() {
 
           <div className="text-center mt-12">
             <p className="text-muted-foreground mb-4">
-              Don't see a position that fits? We're always looking for talented people.
+              {t('footer.careers.noPositions')}
             </p>
             <Button variant="outline">
-              Send General Application
+              {t('footer.contact.send')}
             </Button>
           </div>
         </div>

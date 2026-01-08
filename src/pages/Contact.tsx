@@ -27,7 +27,7 @@ export default function Contact() {
     // Simulate form submission
     await new Promise(resolve => setTimeout(resolve, 1500));
     
-    toast.success('Message sent! We\'ll get back to you soon.');
+    toast.success(t('footer.contact.success'));
     setFormData({ name: '', email: '', subject: '', message: '' });
     setIsSubmitting(false);
   };
@@ -35,8 +35,8 @@ export default function Contact() {
   const contactMethods = [
     {
       icon: Mail,
-      title: 'Email',
-      value: 'support@echowave.com',
+      titleKey: 'footer.contact.email',
+      value: 'support@example.com',
       description: 'We respond within 24 hours',
     },
     {
@@ -71,25 +71,27 @@ export default function Contact() {
         {/* Hero Section */}
         <div className="max-w-4xl mx-auto text-center mb-16">
           <h1 className="font-display text-4xl md:text-5xl font-bold mb-6">
-            Contact <span className="gradient-text">Us</span>
+            {t('footer.contact.title')}
           </h1>
           <p className="text-xl text-muted-foreground leading-relaxed">
-            Have a question or need help? We're here for you.
+            {t('footer.contact.description')}
           </p>
         </div>
 
         {/* Contact Methods */}
         <div className="max-w-4xl mx-auto mb-16">
           <div className="grid md:grid-cols-3 gap-6">
-            {contactMethods.map((method) => (
+            {contactMethods.map((method, index) => (
               <div 
-                key={method.title}
+                key={index}
                 className="bg-card rounded-xl border border-border/50 p-6 text-center hover:shadow-lg transition-shadow"
               >
                 <div className="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-primary/10 mb-4">
                   <method.icon className="w-6 h-6 text-primary" />
                 </div>
-                <h3 className="font-display font-semibold mb-1">{method.title}</h3>
+                <h3 className="font-display font-semibold mb-1">
+                  {method.titleKey ? t(method.titleKey) : method.title}
+                </h3>
                 <p className="font-medium mb-1">{method.value}</p>
                 <p className="text-sm text-muted-foreground">{method.description}</p>
               </div>
@@ -100,11 +102,11 @@ export default function Contact() {
         {/* Contact Form */}
         <div className="max-w-2xl mx-auto mb-16">
           <div className="bg-card rounded-2xl border border-border/50 p-8 md:p-12">
-            <h2 className="font-display text-2xl font-bold mb-8 text-center">Send us a Message</h2>
+            <h2 className="font-display text-2xl font-bold mb-8 text-center">{t('footer.contact.send')}</h2>
             <form onSubmit={handleSubmit} className="space-y-6">
               <div className="grid md:grid-cols-2 gap-6">
                 <div className="space-y-2">
-                  <Label htmlFor="name">Your Name</Label>
+                  <Label htmlFor="name">{t('footer.contact.name')}</Label>
                   <Input
                     id="name"
                     placeholder="John Doe"
@@ -114,7 +116,7 @@ export default function Contact() {
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="email">Email Address</Label>
+                  <Label htmlFor="email">{t('footer.contact.email')}</Label>
                   <Input
                     id="email"
                     type="email"
@@ -126,14 +128,14 @@ export default function Contact() {
                 </div>
               </div>
               <div className="space-y-2">
-                <Label htmlFor="subject">Subject</Label>
+                <Label htmlFor="subject">{t('footer.contact.subject')}</Label>
                 <Select
                   value={formData.subject}
                   onValueChange={(value) => setFormData({ ...formData, subject: value })}
                   required
                 >
                   <SelectTrigger>
-                    <SelectValue placeholder="Select a subject" />
+                    <SelectValue placeholder={t('footer.contact.subject')} />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="general">General Inquiry</SelectItem>
@@ -146,10 +148,10 @@ export default function Contact() {
                 </Select>
               </div>
               <div className="space-y-2">
-                <Label htmlFor="message">Message</Label>
+                <Label htmlFor="message">{t('footer.contact.message')}</Label>
                 <Textarea
                   id="message"
-                  placeholder="How can we help you?"
+                  placeholder={t('footer.contact.message')}
                   rows={6}
                   value={formData.message}
                   onChange={(e) => setFormData({ ...formData, message: e.target.value })}
@@ -165,7 +167,7 @@ export default function Contact() {
                   <div className="w-5 h-5 border-2 border-primary-foreground border-t-transparent rounded-full animate-spin" />
                 ) : (
                   <>
-                    Send Message
+                    {t('footer.contact.send')}
                     <Send className="w-4 h-4 ml-2" />
                   </>
                 )}
@@ -179,7 +181,7 @@ export default function Contact() {
           <div className="bg-secondary/30 rounded-2xl p-8 md:p-12">
             <div className="grid md:grid-cols-2 gap-8">
               <div>
-                <h3 className="font-display text-xl font-bold mb-4">Our Office</h3>
+                <h3 className="font-display text-xl font-bold mb-4">{t('footer.about.title')}</h3>
                 <div className="space-y-3 text-muted-foreground">
                   <p className="flex items-center gap-3">
                     <MapPin className="w-5 h-5 text-primary" />

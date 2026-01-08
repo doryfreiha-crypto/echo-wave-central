@@ -13,37 +13,37 @@ export default function HelpCenter() {
   const categories = [
     {
       icon: ShoppingCart,
-      title: 'Buying',
+      titleKey: 'footer.helpCenter.buyingGuide',
       description: 'How to find, purchase, and receive items',
       articles: 12,
     },
     {
       icon: CreditCard,
-      title: 'Selling',
+      titleKey: 'footer.helpCenter.sellingGuide',
       description: 'Create listings, manage sales, and get paid',
       articles: 15,
     },
     {
       icon: User,
-      title: 'Account',
+      titleKey: 'footer.helpCenter.accountSettings',
       description: 'Profile settings, verification, and security',
       articles: 8,
     },
     {
       icon: Shield,
-      title: 'Safety',
+      titleKey: 'footer.safetyTips.title',
       description: 'Stay safe while buying and selling',
       articles: 10,
     },
     {
       icon: MessageCircle,
-      title: 'Messaging',
+      titleKey: 'messages.title',
       description: 'Communicate with buyers and sellers',
       articles: 6,
     },
     {
       icon: Settings,
-      title: 'Technical',
+      titleKey: 'footer.helpCenter.gettingStarted',
       description: 'App issues, troubleshooting, and bugs',
       articles: 9,
     },
@@ -52,7 +52,7 @@ export default function HelpCenter() {
   const popularArticles = [
     'How do I create a listing?',
     'How do I contact a seller?',
-    'Is EchoWave safe to use?',
+    'Is the platform safe to use?',
     'How do I report a suspicious listing?',
     'How do I delete my account?',
     'Why was my listing removed?',
@@ -76,13 +76,14 @@ export default function HelpCenter() {
         {/* Hero Section */}
         <div className="max-w-4xl mx-auto text-center mb-12">
           <h1 className="font-display text-4xl md:text-5xl font-bold mb-6">
-            How can we <span className="gradient-text">help?</span>
+            {t('footer.helpCenter.subtitle')}
           </h1>
+          <p className="text-muted-foreground mb-8">{t('footer.helpCenter.description')}</p>
           <div className="relative max-w-xl mx-auto">
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
             <Input
               type="text"
-              placeholder="Search for help articles..."
+              placeholder={t('footer.helpCenter.searchPlaceholder')}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="pl-12 h-14 text-lg"
@@ -92,11 +93,11 @@ export default function HelpCenter() {
 
         {/* Categories */}
         <div className="max-w-6xl mx-auto mb-16">
-          <h2 className="font-display text-2xl font-bold mb-8">Browse by Topic</h2>
+          <h2 className="font-display text-2xl font-bold mb-8">{t('footer.blog.categories')}</h2>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {categories.map((category) => (
               <div 
-                key={category.title}
+                key={category.titleKey}
                 className="bg-card rounded-xl border border-border/50 p-6 hover:shadow-lg transition-shadow cursor-pointer group"
               >
                 <div className="flex items-start gap-4">
@@ -105,7 +106,7 @@ export default function HelpCenter() {
                   </div>
                   <div className="flex-1">
                     <h3 className="font-display font-semibold mb-1 flex items-center gap-2">
-                      {category.title}
+                      {t(category.titleKey)}
                       <ChevronRight className="w-4 h-4 opacity-0 group-hover:opacity-100 transition-opacity" />
                     </h3>
                     <p className="text-sm text-muted-foreground mb-2">{category.description}</p>
@@ -119,7 +120,7 @@ export default function HelpCenter() {
 
         {/* Popular Articles */}
         <div className="max-w-4xl mx-auto mb-16">
-          <h2 className="font-display text-2xl font-bold mb-8">Popular Articles</h2>
+          <h2 className="font-display text-2xl font-bold mb-8">{t('footer.blog.recentPosts')}</h2>
           <div className="bg-card rounded-xl border border-border/50 divide-y divide-border/50">
             {popularArticles.map((article) => (
               <div 
@@ -136,13 +137,13 @@ export default function HelpCenter() {
         {/* Contact Support */}
         <div className="max-w-4xl mx-auto">
           <div className="bg-gradient-primary rounded-2xl p-8 md:p-12 text-center text-primary-foreground">
-            <h2 className="font-display text-2xl font-bold mb-4">Still need help?</h2>
+            <h2 className="font-display text-2xl font-bold mb-4">{t('footer.helpCenter.contactSupport')}</h2>
             <p className="mb-6 opacity-90">
-              Our support team is here to assist you 24/7.
+              {t('footer.contact.description')}
             </p>
             <Link to="/contact">
               <Button variant="secondary" size="lg">
-                Contact Support
+                {t('footer.contact.title')}
               </Button>
             </Link>
           </div>

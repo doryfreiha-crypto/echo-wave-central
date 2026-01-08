@@ -11,11 +11,11 @@ export default function FAQ() {
   const faqs = {
     general: [
       {
-        question: 'What is EchoWave?',
-        answer: 'EchoWave is a trusted online marketplace where you can buy and sell items locally. We connect buyers and sellers in your community, making it easy to find great deals and sell items you no longer need.',
+        question: 'What is this platform?',
+        answer: 'This is a trusted online marketplace where you can buy and sell items locally. We connect buyers and sellers in your community, making it easy to find great deals and sell items you no longer need.',
       },
       {
-        question: 'Is EchoWave free to use?',
+        question: 'Is it free to use?',
         answer: 'Yes! Creating an account and browsing listings is completely free. We offer optional premium features for sellers who want more visibility for their listings.',
       },
       {
@@ -92,10 +92,10 @@ export default function FAQ() {
             <HelpCircle className="w-8 h-8 text-primary-foreground" />
           </div>
           <h1 className="font-display text-4xl md:text-5xl font-bold mb-6">
-            Frequently Asked <span className="gradient-text">Questions</span>
+            {t('footer.faq.subtitle')}
           </h1>
           <p className="text-xl text-muted-foreground">
-            Find answers to common questions about using EchoWave.
+            {t('footer.faq.description')}
           </p>
         </div>
 
@@ -103,7 +103,7 @@ export default function FAQ() {
         <div className="max-w-3xl mx-auto space-y-12">
           {/* General */}
           <div>
-            <h2 className="font-display text-2xl font-bold mb-6">General</h2>
+            <h2 className="font-display text-2xl font-bold mb-6">{t('footer.faq.general')}</h2>
             <Accordion type="single" collapsible className="bg-card rounded-xl border border-border/50">
               {faqs.general.map((faq, index) => (
                 <AccordionItem key={index} value={`general-${index}`} className="border-border/50">
@@ -120,7 +120,7 @@ export default function FAQ() {
 
           {/* Buying */}
           <div>
-            <h2 className="font-display text-2xl font-bold mb-6">Buying</h2>
+            <h2 className="font-display text-2xl font-bold mb-6">{t('footer.faq.buying')}</h2>
             <Accordion type="single" collapsible className="bg-card rounded-xl border border-border/50">
               {faqs.buying.map((faq, index) => (
                 <AccordionItem key={index} value={`buying-${index}`} className="border-border/50">
@@ -137,7 +137,7 @@ export default function FAQ() {
 
           {/* Selling */}
           <div>
-            <h2 className="font-display text-2xl font-bold mb-6">Selling</h2>
+            <h2 className="font-display text-2xl font-bold mb-6">{t('footer.faq.selling')}</h2>
             <Accordion type="single" collapsible className="bg-card rounded-xl border border-border/50">
               {faqs.selling.map((faq, index) => (
                 <AccordionItem key={index} value={`selling-${index}`} className="border-border/50">
@@ -154,7 +154,7 @@ export default function FAQ() {
 
           {/* Safety */}
           <div>
-            <h2 className="font-display text-2xl font-bold mb-6">Safety</h2>
+            <h2 className="font-display text-2xl font-bold mb-6">{t('footer.safetyTips.title')}</h2>
             <Accordion type="single" collapsible className="bg-card rounded-xl border border-border/50">
               {faqs.safety.map((faq, index) => (
                 <AccordionItem key={index} value={`safety-${index}`} className="border-border/50">
@@ -173,13 +173,13 @@ export default function FAQ() {
         {/* Still Have Questions */}
         <div className="max-w-4xl mx-auto mt-16">
           <div className="bg-gradient-primary rounded-2xl p-8 md:p-12 text-center text-primary-foreground">
-            <h2 className="font-display text-2xl font-bold mb-4">Still have questions?</h2>
+            <h2 className="font-display text-2xl font-bold mb-4">{t('footer.helpCenter.contactSupport')}</h2>
             <p className="mb-6 opacity-90">
-              Can't find the answer you're looking for? Our support team is here to help.
+              {t('footer.contact.description')}
             </p>
             <Link to="/contact">
               <Button variant="secondary" size="lg">
-                Contact Support
+                {t('footer.contact.title')}
               </Button>
             </Link>
           </div>

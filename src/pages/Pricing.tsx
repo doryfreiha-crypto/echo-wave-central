@@ -10,9 +10,9 @@ export default function Pricing() {
 
   const plans = [
     {
-      name: 'Basic',
+      nameKey: 'footer.pricing.basic',
       icon: Zap,
-      price: 'Free',
+      priceKey: 'footer.pricing.free',
       period: '',
       description: 'Perfect for occasional sellers',
       features: [
@@ -22,14 +22,14 @@ export default function Pricing() {
         'Email notifications',
         '30-day listing duration',
       ],
-      cta: 'Get Started',
+      ctaKey: 'footer.pricing.getStarted',
       popular: false,
     },
     {
-      name: 'Gold',
+      nameKey: 'footer.pricing.gold',
       icon: Crown,
       price: '$9.99',
-      period: '/month',
+      periodKey: 'footer.pricing.perMonth',
       description: 'For regular sellers who want more',
       features: [
         'Up to 15 active listings',
@@ -40,14 +40,14 @@ export default function Pricing() {
         '60-day listing duration',
         'No commission fees',
       ],
-      cta: 'Upgrade to Gold',
+      ctaKey: 'footer.pricing.upgrade',
       popular: true,
     },
     {
-      name: 'Premium',
+      nameKey: 'footer.pricing.premium',
       icon: Rocket,
       price: '$24.99',
-      period: '/month',
+      periodKey: 'footer.pricing.perMonth',
       description: 'For power sellers and businesses',
       features: [
         'Unlimited active listings',
@@ -60,7 +60,7 @@ export default function Pricing() {
         'Custom branding',
         'API access',
       ],
-      cta: 'Go Premium',
+      ctaKey: 'footer.pricing.upgrade',
       popular: false,
     },
   ];
@@ -102,10 +102,10 @@ export default function Pricing() {
         {/* Hero Section */}
         <div className="max-w-4xl mx-auto text-center mb-16">
           <h1 className="font-display text-4xl md:text-5xl font-bold mb-6">
-            Simple, Transparent <span className="gradient-text">Pricing</span>
+            {t('footer.pricing.subtitle')}
           </h1>
           <p className="text-xl text-muted-foreground leading-relaxed">
-            Choose the plan that works best for you. All plans include a 14-day free trial.
+            {t('footer.pricing.description')}
           </p>
         </div>
 
@@ -114,7 +114,7 @@ export default function Pricing() {
           <div className="grid md:grid-cols-3 gap-8">
             {plans.map((plan) => (
               <div 
-                key={plan.name}
+                key={plan.nameKey}
                 className={`relative bg-card rounded-2xl border p-8 ${
                   plan.popular 
                     ? 'border-primary shadow-lg shadow-primary/10 scale-105' 
@@ -132,11 +132,15 @@ export default function Pricing() {
                   }`}>
                     <plan.icon className={`w-7 h-7 ${plan.popular ? 'text-primary-foreground' : 'text-primary'}`} />
                   </div>
-                  <h3 className="font-display text-2xl font-bold mb-2">{plan.name}</h3>
+                  <h3 className="font-display text-2xl font-bold mb-2">{t(plan.nameKey)}</h3>
                   <p className="text-sm text-muted-foreground mb-4">{plan.description}</p>
                   <div className="flex items-baseline justify-center gap-1">
-                    <span className="font-display text-4xl font-bold">{plan.price}</span>
-                    <span className="text-muted-foreground">{plan.period}</span>
+                    <span className="font-display text-4xl font-bold">
+                      {plan.priceKey ? t(plan.priceKey) : plan.price}
+                    </span>
+                    <span className="text-muted-foreground">
+                      {plan.periodKey ? t(plan.periodKey) : plan.period}
+                    </span>
                   </div>
                 </div>
                 <ul className="space-y-3 mb-8">
@@ -151,7 +155,7 @@ export default function Pricing() {
                   className={`w-full ${plan.popular ? 'bg-gradient-primary hover:opacity-90' : ''}`}
                   variant={plan.popular ? 'default' : 'outline'}
                 >
-                  {plan.cta}
+                  {t(plan.ctaKey)}
                 </Button>
               </div>
             ))}
@@ -161,7 +165,7 @@ export default function Pricing() {
         {/* FAQ */}
         <div className="max-w-3xl mx-auto">
           <h2 className="font-display text-3xl font-bold text-center mb-12">
-            Frequently Asked Questions
+            {t('footer.faq.subtitle')}
           </h2>
           <div className="grid md:grid-cols-2 gap-6">
             {faqs.map((faq) => (
@@ -179,13 +183,13 @@ export default function Pricing() {
         {/* CTA */}
         <div className="max-w-4xl mx-auto mt-20">
           <div className="bg-gradient-primary rounded-2xl p-8 md:p-12 text-center text-primary-foreground">
-            <h2 className="font-display text-2xl font-bold mb-4">Ready to get started?</h2>
+            <h2 className="font-display text-2xl font-bold mb-4">{t('footer.pricing.getStarted')}</h2>
             <p className="mb-6 opacity-90">
-              Join thousands of sellers who trust EchoWave for their marketplace needs.
+              {t('footer.pricing.description')}
             </p>
             <Link to="/auth">
               <Button variant="secondary" size="lg">
-                Start Your Free Trial
+                {t('footer.pricing.getStarted')}
               </Button>
             </Link>
           </div>
