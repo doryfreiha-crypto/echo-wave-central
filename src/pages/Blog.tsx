@@ -9,7 +9,7 @@ export default function Blog() {
   const { t } = useTranslation();
 
   const featuredPost = {
-    title: '10 Tips for Selling Your Items Faster on EchoWave',
+    title: '10 Tips for Selling Your Items Faster',
     excerpt: 'Learn the secrets to creating listings that attract buyers and close deals quickly. From photography tips to pricing strategies.',
     category: 'Selling Tips',
     date: 'Jan 5, 2026',
@@ -54,7 +54,7 @@ export default function Blog() {
       readTime: '5 min read',
     },
     {
-      title: 'Year in Review: EchoWave 2025',
+      title: 'Year in Review: 2025',
       excerpt: 'A look back at the milestones, features, and community achievements of the past year.',
       category: 'Company News',
       date: 'Dec 5, 2025',
@@ -80,10 +80,10 @@ export default function Blog() {
         {/* Hero Section */}
         <div className="max-w-4xl mx-auto text-center mb-16">
           <h1 className="font-display text-4xl md:text-5xl font-bold mb-6">
-            EchoWave <span className="gradient-text">Blog</span>
+            {t('footer.blog.title')}
           </h1>
           <p className="text-xl text-muted-foreground">
-            Tips, updates, and stories from our marketplace community.
+            {t('footer.blog.description')}
           </p>
         </div>
 
@@ -113,7 +113,7 @@ export default function Blog() {
                   </span>
                 </div>
                 <Button className="bg-gradient-primary hover:opacity-90 w-fit">
-                  Read More
+                  {t('footer.blog.readMore')}
                   <ArrowRight className="w-4 h-4 ml-2" />
                 </Button>
               </div>
@@ -123,7 +123,7 @@ export default function Blog() {
 
         {/* Posts Grid */}
         <div className="max-w-6xl mx-auto">
-          <h2 className="font-display text-2xl font-bold mb-8">Latest Articles</h2>
+          <h2 className="font-display text-2xl font-bold mb-8">{t('footer.blog.recentPosts')}</h2>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {posts.map((post) => (
               <article 
@@ -149,7 +149,7 @@ export default function Blog() {
 
           <div className="text-center mt-12">
             <Button variant="outline" size="lg">
-              Load More Articles
+              {t('footer.blog.readMore')}
             </Button>
           </div>
         </div>
