@@ -10,7 +10,7 @@ export default function SafetyTips() {
   const tips = [
     {
       icon: MapPin,
-      title: 'Meet in Public Places',
+      titleKey: 'footer.safetyTips.meetingSafely',
       description: 'Always meet buyers and sellers in well-lit, public locations like coffee shops, shopping centers, or police station parking lots.',
       color: 'text-blue-500',
     },
@@ -28,7 +28,7 @@ export default function SafetyTips() {
     },
     {
       icon: CreditCard,
-      title: 'Use Safe Payment Methods',
+      titleKey: 'footer.safetyTips.securePayments',
       description: 'Prefer cash for in-person transactions. Be wary of wire transfers, gift cards, or unusual payment requests.',
       color: 'text-orange-500',
     },
@@ -40,7 +40,7 @@ export default function SafetyTips() {
     },
     {
       icon: AlertTriangle,
-      title: 'Trust Your Instincts',
+      titleKey: 'footer.safetyTips.avoidScams',
       description: 'If something feels off about a deal or person, walk away. Your safety is more important than any transaction.',
       color: 'text-red-500',
     },
@@ -78,25 +78,27 @@ export default function SafetyTips() {
             <Shield className="w-8 h-8 text-primary-foreground" />
           </div>
           <h1 className="font-display text-4xl md:text-5xl font-bold mb-6">
-            Safety <span className="gradient-text">Tips</span>
+            {t('footer.safetyTips.title')}
           </h1>
           <p className="text-xl text-muted-foreground leading-relaxed">
-            Your safety is our priority. Follow these guidelines for secure transactions.
+            {t('footer.safetyTips.description')}
           </p>
         </div>
 
         {/* Safety Tips Grid */}
         <div className="max-w-6xl mx-auto mb-16">
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {tips.map((tip) => (
+            {tips.map((tip, index) => (
               <div 
-                key={tip.title}
+                key={index}
                 className="bg-card rounded-xl border border-border/50 p-6 hover:shadow-lg transition-shadow"
               >
                 <div className={`w-12 h-12 rounded-xl bg-secondary flex items-center justify-center mb-4 ${tip.color}`}>
                   <tip.icon className="w-6 h-6" />
                 </div>
-                <h3 className="font-display font-semibold mb-2">{tip.title}</h3>
+                <h3 className="font-display font-semibold mb-2">
+                  {tip.titleKey ? t(tip.titleKey) : tip.title}
+                </h3>
                 <p className="text-sm text-muted-foreground">{tip.description}</p>
               </div>
             ))}
@@ -108,7 +110,7 @@ export default function SafetyTips() {
           <div className="bg-destructive/5 border border-destructive/20 rounded-2xl p-8 md:p-12">
             <div className="flex items-center gap-3 mb-6">
               <AlertTriangle className="w-8 h-8 text-destructive" />
-              <h2 className="font-display text-2xl font-bold">Warning Signs to Watch For</h2>
+              <h2 className="font-display text-2xl font-bold">{t('footer.safetyTips.avoidScams')}</h2>
             </div>
             <div className="grid sm:grid-cols-2 gap-3">
               {warningSignals.map((signal) => (
@@ -128,7 +130,7 @@ export default function SafetyTips() {
           <div className="bg-primary/5 border border-primary/20 rounded-2xl p-8 md:p-12">
             <div className="flex items-center gap-3 mb-6">
               <CheckCircle className="w-8 h-8 text-primary" />
-              <h2 className="font-display text-2xl font-bold">Best Practices</h2>
+              <h2 className="font-display text-2xl font-bold">{t('footer.safetyTips.subtitle')}</h2>
             </div>
             <ul className="space-y-4">
               <li className="flex items-start gap-3">
@@ -145,7 +147,7 @@ export default function SafetyTips() {
               </li>
               <li className="flex items-start gap-3">
                 <CheckCircle className="w-5 h-5 text-primary shrink-0 mt-0.5" />
-                <span>Report suspicious activity immediately using our reporting tools</span>
+                <span>{t('footer.safetyTips.reportIssues')}</span>
               </li>
             </ul>
           </div>
@@ -154,13 +156,13 @@ export default function SafetyTips() {
         {/* Report Section */}
         <div className="max-w-4xl mx-auto">
           <div className="bg-gradient-primary rounded-2xl p-8 md:p-12 text-center text-primary-foreground">
-            <h2 className="font-display text-2xl font-bold mb-4">See Something Suspicious?</h2>
+            <h2 className="font-display text-2xl font-bold mb-4">{t('footer.safetyTips.reportIssues')}</h2>
             <p className="mb-6 opacity-90">
-              Help keep our community safe by reporting suspicious listings or users.
+              {t('footer.contact.description')}
             </p>
             <Link to="/contact">
               <Button variant="secondary" size="lg">
-                Report an Issue
+                {t('footer.contact.title')}
               </Button>
             </Link>
           </div>
