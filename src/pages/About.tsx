@@ -10,22 +10,22 @@ export default function About() {
   const values = [
     {
       icon: Users,
-      title: 'Community First',
+      titleKey: 'footer.about.community',
       description: 'We believe in building strong local communities through trusted connections.',
     },
     {
       icon: Target,
-      title: 'Simplicity',
+      titleKey: 'footer.about.innovation',
       description: 'Making buying and selling as easy and straightforward as possible.',
     },
     {
       icon: Heart,
-      title: 'Trust & Safety',
+      titleKey: 'footer.about.trust',
       description: 'Creating a secure environment where everyone can trade with confidence.',
     },
     {
       icon: Award,
-      title: 'Quality',
+      titleKey: 'footer.about.sustainability',
       description: 'Maintaining high standards in everything we do, from our platform to our support.',
     },
   ];
@@ -55,52 +55,51 @@ export default function About() {
         {/* Hero Section */}
         <div className="max-w-4xl mx-auto text-center mb-16">
           <h1 className="font-display text-4xl md:text-5xl font-bold mb-6">
-            About <span className="gradient-text">EchoWave</span>
+            {t('footer.about.title')}
           </h1>
           <p className="text-xl text-muted-foreground leading-relaxed">
-            We're on a mission to revolutionize local commerce by connecting buyers and sellers 
-            in a trusted, easy-to-use marketplace. Since our founding, we've helped millions 
-            of people find great deals and sell their items quickly.
+            {t('footer.about.description')}
           </p>
         </div>
 
         {/* Story Section */}
         <div className="max-w-4xl mx-auto mb-20">
           <div className="bg-card rounded-2xl border border-border/50 p-8 md:p-12">
-            <h2 className="font-display text-2xl font-bold mb-6">Our Story</h2>
+            <h2 className="font-display text-2xl font-bold mb-6">{t('footer.about.subtitle')}</h2>
             <div className="space-y-4 text-muted-foreground">
-              <p>
-                EchoWave was born from a simple idea: buying and selling locally should be 
-                easy, safe, and enjoyable. Our founders experienced firsthand the frustrations 
-                of outdated classifieds platforms and knew there had to be a better way.
-              </p>
-              <p>
-                We launched in 2020 with a vision to create the most user-friendly marketplace 
-                that puts community first. Today, we serve millions of users across the globe, 
-                helping them connect with their neighbors and discover amazing deals.
-              </p>
-              <p>
-                Our platform is built on trust, transparency, and the belief that when people 
-                come together, amazing things happen. We're proud to be a part of so many 
-                successful transactions and the stories behind them.
-              </p>
+              <p>{t('footer.about.missionText')}</p>
+              <p>{t('footer.about.visionText')}</p>
+            </div>
+          </div>
+        </div>
+
+        {/* Mission & Vision Section */}
+        <div className="max-w-4xl mx-auto mb-20">
+          <div className="grid md:grid-cols-2 gap-6">
+            <div className="bg-card rounded-xl border border-border/50 p-8">
+              <h2 className="font-display text-xl font-bold mb-4">{t('footer.about.mission')}</h2>
+              <p className="text-muted-foreground">{t('footer.about.missionText')}</p>
+            </div>
+            <div className="bg-card rounded-xl border border-border/50 p-8">
+              <h2 className="font-display text-xl font-bold mb-4">{t('footer.about.vision')}</h2>
+              <p className="text-muted-foreground">{t('footer.about.visionText')}</p>
             </div>
           </div>
         </div>
 
         {/* Values Section */}
         <div className="max-w-6xl mx-auto mb-20">
-          <h2 className="font-display text-3xl font-bold text-center mb-12">Our Values</h2>
+          <h2 className="font-display text-3xl font-bold text-center mb-12">{t('footer.about.values')}</h2>
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
             {values.map((value) => (
               <div 
-                key={value.title}
+                key={value.titleKey}
                 className="bg-card rounded-xl border border-border/50 p-6 text-center hover:shadow-lg transition-shadow"
               >
                 <div className="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-gradient-primary mb-4">
                   <value.icon className="w-6 h-6 text-primary-foreground" />
                 </div>
-                <h3 className="font-display font-semibold mb-2">{value.title}</h3>
+                <h3 className="font-display font-semibold mb-2">{t(value.titleKey)}</h3>
                 <p className="text-sm text-muted-foreground">{value.description}</p>
               </div>
             ))}

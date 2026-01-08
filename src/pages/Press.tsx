@@ -9,22 +9,22 @@ export default function Press() {
 
   const pressReleases = [
     {
-      title: 'EchoWave Reaches 10 Million Users Milestone',
+      title: 'Platform Reaches 10 Million Users Milestone',
       date: 'January 2, 2026',
       summary: 'The marketplace platform celebrates a major milestone in its growth journey.',
     },
     {
-      title: 'EchoWave Launches Enhanced Safety Features',
+      title: 'Enhanced Safety Features Launch',
       date: 'December 15, 2025',
       summary: 'New verification badges and safety tools to protect buyers and sellers.',
     },
     {
-      title: 'EchoWave Expands to 15 New Countries',
+      title: 'Expansion to 15 New Countries',
       date: 'November 20, 2025',
       summary: 'International expansion brings local commerce to more communities worldwide.',
     },
     {
-      title: 'EchoWave Raises Series B Funding',
+      title: 'Series B Funding Announcement',
       date: 'October 5, 2025',
       summary: '$50M raised to accelerate product development and market expansion.',
     },
@@ -33,7 +33,7 @@ export default function Press() {
   const mediaFeatures = [
     { outlet: 'TechCrunch', title: 'The Future of Local Commerce', date: 'Dec 2025' },
     { outlet: 'Forbes', title: 'Top 50 Startups to Watch', date: 'Nov 2025' },
-    { outlet: 'Wired', title: 'How EchoWave is Changing C2C', date: 'Oct 2025' },
+    { outlet: 'Wired', title: 'How Marketplaces are Changing C2C', date: 'Oct 2025' },
     { outlet: 'Bloomberg', title: 'Marketplace Trends 2025', date: 'Sep 2025' },
   ];
 
@@ -55,23 +55,23 @@ export default function Press() {
         {/* Hero Section */}
         <div className="max-w-4xl mx-auto text-center mb-16">
           <h1 className="font-display text-4xl md:text-5xl font-bold mb-6">
-            Press & <span className="gradient-text">Media</span>
+            {t('footer.press.subtitle')}
           </h1>
           <p className="text-xl text-muted-foreground leading-relaxed">
-            News, press releases, and media resources about EchoWave.
+            {t('footer.press.description')}
           </p>
         </div>
 
         {/* Media Contact */}
         <div className="max-w-4xl mx-auto mb-16">
           <div className="bg-gradient-primary rounded-2xl p-8 md:p-12 text-center text-primary-foreground">
-            <h2 className="font-display text-2xl font-bold mb-4">Media Inquiries</h2>
+            <h2 className="font-display text-2xl font-bold mb-4">{t('footer.press.mediaInquiries')}</h2>
             <p className="mb-6 opacity-90">
-              For press inquiries, interviews, or media requests, please contact our press team.
+              {t('footer.contact.description')}
             </p>
             <Button variant="secondary" size="lg">
               <Mail className="w-4 h-4 mr-2" />
-              press@echowave.com
+              press@example.com
             </Button>
           </div>
         </div>
@@ -81,14 +81,14 @@ export default function Press() {
           <div className="bg-card rounded-2xl border border-border/50 p-8">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
               <div>
-                <h2 className="font-display text-2xl font-bold mb-2">Press Kit</h2>
+                <h2 className="font-display text-2xl font-bold mb-2">{t('footer.press.pressKit')}</h2>
                 <p className="text-muted-foreground">
                   Download logos, brand guidelines, and executive photos.
                 </p>
               </div>
               <Button className="bg-gradient-primary hover:opacity-90">
                 <Download className="w-4 h-4 mr-2" />
-                Download Press Kit
+                {t('footer.press.downloadPressKit')}
               </Button>
             </div>
           </div>
@@ -96,7 +96,7 @@ export default function Press() {
 
         {/* Press Releases */}
         <div className="max-w-4xl mx-auto mb-16">
-          <h2 className="font-display text-2xl font-bold mb-8">Press Releases</h2>
+          <h2 className="font-display text-2xl font-bold mb-8">{t('footer.press.pressReleases')}</h2>
           <div className="space-y-4">
             {pressReleases.map((release) => (
               <div 
@@ -110,7 +110,7 @@ export default function Press() {
                     <p className="text-sm text-muted-foreground">{release.summary}</p>
                   </div>
                   <Button variant="ghost" size="sm">
-                    Read More
+                    {t('footer.blog.readMore')}
                     <ExternalLink className="w-4 h-4 ml-2" />
                   </Button>
                 </div>
@@ -121,7 +121,7 @@ export default function Press() {
 
         {/* Media Features */}
         <div className="max-w-4xl mx-auto">
-          <h2 className="font-display text-2xl font-bold mb-8">In the Media</h2>
+          <h2 className="font-display text-2xl font-bold mb-8">{t('footer.press.inTheMedia')}</h2>
           <div className="grid sm:grid-cols-2 gap-4">
             {mediaFeatures.map((feature) => (
               <div 
