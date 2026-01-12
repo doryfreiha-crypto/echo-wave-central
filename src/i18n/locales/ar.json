@@ -414,6 +414,24 @@
   "ads": {
     "advertisement": "إعلان",
     "yourAdHere": "إعلانك هنا",
-    "sponsoredContent": "محتوى مدعوم"
+    "sponsoredContent": "محتوى مدعوم",
+    "adCampaigns": "الحملات الإعلانية",
+    "newCampaign": "حملة جديدة",
+    "editCampaign": "تعديل الحملة",
+    "campaignName": "اسم الحملة",
+    "targetUrl": "رابط الوجهة",
+    "adSize": "حجم الإعلان",
+    "placement": "موضع الإعلان",
+    "startDate": "تاريخ البدء",
+    "endDate": "تاريخ الانتهاء",
+    "budget": "الميزانية",
+    "costPerClick": "تكلفة النقرة",
+    "costPerImpression": "تكلفة الظهور",
+    "impressions": "مرات الظهور",
+    "clicks": "النقرات",
+    "ctr": "معدل النقر",
+    "spend": "الإنفاق",
+    "active": "نشط",
+    "paused": "متوقف"
   }
 }

@@ -570,7 +570,7 @@ export default function Home() {
       {/* Top Ad Banner */}
       <div className="container mx-auto px-4 py-6">
         <div className="flex justify-center">
-          <AdBanner size="leaderboard" slot="home-top" />
+          <AdBanner size="leaderboard" slot="home-top" placement="home" />
         </div>
       </div>
 

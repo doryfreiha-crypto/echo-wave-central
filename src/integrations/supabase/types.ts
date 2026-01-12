@@ -14,6 +14,98 @@ export type Database = {
   }
   public: {
     Tables: {
+      ad_campaigns: {
+        Row: {
+          budget: number | null
+          cost_per_click: number | null
+          cost_per_impression: number | null
+          created_at: string
+          created_by: string
+          description: string | null
+          end_date: string | null
+          id: string
+          image_url: string | null
+          is_active: boolean
+          name: string
+          placement: string
+          size: string
+          start_date: string
+          target_url: string
+          updated_at: string
+        }
+        Insert: {
+          budget?: number | null
+          cost_per_click?: number | null
+          cost_per_impression?: number | null
+          created_at?: string
+          created_by: string
+          description?: string | null
+          end_date?: string | null
+          id?: string
+          image_url?: string | null
+          is_active?: boolean
+          name: string
+          placement?: string
+          size?: string
+          start_date?: string
+          target_url: string
+          updated_at?: string
+        }
+        Update: {
+          budget?: number | null
+          cost_per_click?: number | null
+          cost_per_impression?: number | null
+          created_at?: string
+          created_by?: string
+          description?: string | null
+          end_date?: string | null
+          id?: string
+          image_url?: string | null
+          is_active?: boolean
+          name?: string
+          placement?: string
+          size?: string
+          start_date?: string
+          target_url?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      ad_metrics: {
+        Row: {
+          campaign_id: string
+          created_at: string
+          event_type: string
+          id: string
+          page_url: string | null
+          user_id: string | null
+        }
+        Insert: {
+          campaign_id: string
+          created_at?: string
+          event_type: string
+          id?: string
+          page_url?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          campaign_id?: string
+          created_at?: string
+          event_type?: string
+          id?: string
+          page_url?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ad_metrics_campaign_id_fkey"
+            columns: ["campaign_id"]
+            isOneToOne: false
+            referencedRelation: "ad_campaigns"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       announcements: {
         Row: {
           attributes: Json | null

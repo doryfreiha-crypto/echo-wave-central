@@ -332,7 +332,7 @@ export default function AnnouncementDetail() {
 
             {/* Ad Banner after content */}
             <div className="flex justify-center">
-              <AdBanner size="leaderboard" slot="detail-bottom" />
+              <AdBanner size="leaderboard" slot="detail-bottom" placement="detail" />
             </div>
           </div>
 
@@ -427,7 +427,7 @@ export default function AnnouncementDetail() {
             />
 
             {/* Sidebar Ad Banner */}
-            <AdBanner size="rectangle" slot="detail-sidebar" className="mx-auto" />
+            <AdBanner size="rectangle" slot="detail-sidebar" placement="sidebar" className="mx-auto" />
           </div>
         </div>
       </div>

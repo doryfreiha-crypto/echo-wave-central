@@ -10,7 +10,8 @@ import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { toast } from 'sonner';
 import { getCategoryFields } from '@/lib/categoryFields';
-import { ArrowLeft, Trash2, Check, X, Eye, Users, Crown, Star, User, Flag, AlertTriangle, Shield, Ban } from 'lucide-react';
+import { ArrowLeft, Trash2, Check, X, Eye, Users, Crown, Star, User, Flag, AlertTriangle, Shield, Ban, Megaphone } from 'lucide-react';
+import { AdCampaignManager } from '@/components/admin/AdCampaignManager';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -583,6 +584,10 @@ export default function Admin() {
                 </Badge>
               )}
             </TabsTrigger>
+            <TabsTrigger value="ads" className="flex items-center gap-2">
+              <Megaphone className="w-4 h-4" />
+              {t('admin.adCampaigns', 'Ad Campaigns')}
+            </TabsTrigger>
           </TabsList>
 
           <TabsContent value="pending">
@@ -1047,6 +1052,11 @@ export default function Admin() {
                 )}
               </CardContent>
             </Card>
+          </TabsContent>
+
+          {/* Ad Campaigns Tab */}
+          <TabsContent value="ads">
+            <AdCampaignManager />
           </TabsContent>
         </Tabs>
 
