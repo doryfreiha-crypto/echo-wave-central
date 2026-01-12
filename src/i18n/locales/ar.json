@@ -396,5 +396,19 @@
       "currentPlan": "الخطة الحالية",
       "upgrade": "ترقية"
     }
+  },
+  "warnings": {
+    "warning": "تحذير",
+    "temporaryBan": "حظر مؤقت",
+    "permanentBan": "حظر دائم",
+    "accountWarnings": "تحذيرات الحساب ({{count}})",
+    "accountTemporarilyBanned": "تم حظر حسابك مؤقتاً",
+    "accountPermanentlyBanned": "تم حظر حسابك نهائياً",
+    "banExpiresIn": "ينتهي الحظر خلال {{time}}",
+    "expiresIn": "ينتهي خلال {{time}}",
+    "expired": "منتهي",
+    "actionBlockedTemporary": "الإجراء محظور - حظر مؤقت",
+    "actionBlockedPermanent": "الإجراء محظور - حظر دائم",
+    "userBanned": "مستخدم محظور"
   }
 }
