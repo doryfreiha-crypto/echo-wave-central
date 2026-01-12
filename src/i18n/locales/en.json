@@ -529,6 +529,24 @@
   "ads": {
     "advertisement": "Advertisement",
     "yourAdHere": "Your Ad Here",
-    "sponsoredContent": "Sponsored Content"
+    "sponsoredContent": "Sponsored Content",
+    "adCampaigns": "Ad Campaigns",
+    "newCampaign": "New Campaign",
+    "editCampaign": "Edit Campaign",
+    "campaignName": "Campaign Name",
+    "targetUrl": "Target URL",
+    "adSize": "Ad Size",
+    "placement": "Placement",
+    "startDate": "Start Date",
+    "endDate": "End Date",
+    "budget": "Budget",
+    "costPerClick": "Cost per Click",
+    "costPerImpression": "Cost per Impression",
+    "impressions": "Impressions",
+    "clicks": "Clicks",
+    "ctr": "CTR",
+    "spend": "Spend",
+    "active": "Active",
+    "paused": "Paused"
   }
 }
