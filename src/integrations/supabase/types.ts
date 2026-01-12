@@ -194,6 +194,59 @@ export type Database = {
           },
         ]
       }
+      fraud_reports: {
+        Row: {
+          admin_notes: string | null
+          category: string
+          created_at: string
+          description: string
+          id: string
+          reported_announcement_id: string | null
+          reported_user_id: string | null
+          reporter_id: string
+          resolved_at: string | null
+          resolved_by: string | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          admin_notes?: string | null
+          category: string
+          created_at?: string
+          description: string
+          id?: string
+          reported_announcement_id?: string | null
+          reported_user_id?: string | null
+          reporter_id: string
+          resolved_at?: string | null
+          resolved_by?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          admin_notes?: string | null
+          category?: string
+          created_at?: string
+          description?: string
+          id?: string
+          reported_announcement_id?: string | null
+          reported_user_id?: string | null
+          reporter_id?: string
+          resolved_at?: string | null
+          resolved_by?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fraud_reports_reported_announcement_id_fkey"
+            columns: ["reported_announcement_id"]
+            isOneToOne: false
+            referencedRelation: "announcements"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       messages: {
         Row: {
           content: string
@@ -243,6 +296,7 @@ export type Database = {
           full_name: string | null
           id: string
           phone: string | null
+          phone_verified: boolean | null
           updated_at: string
           username: string
         }
@@ -252,6 +306,7 @@ export type Database = {
           full_name?: string | null
           id: string
           phone?: string | null
+          phone_verified?: boolean | null
           updated_at?: string
           username: string
         }
@@ -261,10 +316,55 @@ export type Database = {
           full_name?: string | null
           id?: string
           phone?: string | null
+          phone_verified?: boolean | null
           updated_at?: string
           username?: string
         }
         Relationships: []
+      }
+      user_reviews: {
+        Row: {
+          announcement_id: string | null
+          created_at: string
+          id: string
+          rating: number
+          review_text: string | null
+          review_type: string
+          reviewed_user_id: string
+          reviewer_id: string
+          updated_at: string
+        }
+        Insert: {
+          announcement_id?: string | null
+          created_at?: string
+          id?: string
+          rating: number
+          review_text?: string | null
+          review_type: string
+          reviewed_user_id: string
+          reviewer_id: string
+          updated_at?: string
+        }
+        Update: {
+          announcement_id?: string | null
+          created_at?: string
+          id?: string
+          rating?: number
+          review_text?: string | null
+          review_type?: string
+          reviewed_user_id?: string
+          reviewer_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_reviews_announcement_id_fkey"
+            columns: ["announcement_id"]
+            isOneToOne: false
+            referencedRelation: "announcements"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       user_roles: {
         Row: {
@@ -319,6 +419,47 @@ export type Database = {
         }
         Relationships: []
       }
+      user_warnings: {
+        Row: {
+          created_at: string
+          expires_at: string | null
+          fraud_report_id: string | null
+          id: string
+          issued_by: string
+          reason: string
+          user_id: string
+          warning_type: string
+        }
+        Insert: {
+          created_at?: string
+          expires_at?: string | null
+          fraud_report_id?: string | null
+          id?: string
+          issued_by: string
+          reason: string
+          user_id: string
+          warning_type: string
+        }
+        Update: {
+          created_at?: string
+          expires_at?: string | null
+          fraud_report_id?: string | null
+          id?: string
+          issued_by?: string
+          reason?: string
+          user_id?: string
+          warning_type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_warnings_fraud_report_id_fkey"
+            columns: ["fraud_report_id"]
+            isOneToOne: false
+            referencedRelation: "fraud_reports"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
@@ -332,6 +473,7 @@ export type Database = {
         Args: { tier_name: Database["public"]["Enums"]["subscription_tier"] }
         Returns: Json
       }
+      get_user_rating: { Args: { p_user_id: string }; Returns: Json }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]

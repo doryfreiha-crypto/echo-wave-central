@@ -16,6 +16,7 @@ import Messages from "./pages/Messages";
 import Chat from "./pages/Chat";
 import Favorites from "./pages/Favorites";
 import Profile from "./pages/Profile";
+import UserProfile from "./pages/UserProfile";
 import NotFound from "./pages/NotFound";
 import About from "./pages/About";
 import Careers from "./pages/Careers";
@@ -52,6 +53,7 @@ const App = () => (
               <Route path="/chat/:conversationId" element={<Chat />} />
               <Route path="/favorites" element={<Favorites />} />
               <Route path="/profile" element={<Profile />} />
+              <Route path="/user/:userId" element={<UserProfile />} />
               <Route path="/about" element={<About />} />
               <Route path="/careers" element={<Careers />} />
               <Route path="/blog" element={<Blog />} />

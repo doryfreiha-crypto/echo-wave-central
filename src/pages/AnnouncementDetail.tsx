@@ -5,9 +5,12 @@ import { useAuth } from '@/components/AuthProvider';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
-import { Megaphone, MapPin, ArrowLeft, MessageSquare, Calendar, Eye, Heart, CheckCircle } from 'lucide-react';
+import { SellerCard } from '@/components/SellerCard';
+import { ReportButton } from '@/components/ReportButton';
+import { Megaphone, MapPin, ArrowLeft, Calendar, Eye, Heart, CheckCircle, MessageSquare } from 'lucide-react';
 import { toast } from 'sonner';
 import { getCategoryFields } from '@/lib/categoryFields';
+import { useTranslation } from 'react-i18next';
 
 interface Category {
   id: string;
@@ -29,13 +32,17 @@ interface Announcement {
   attributes: Record<string, any>;
   categories: Category;
   profiles: {
+    id: string;
     username: string;
     full_name: string | null;
     phone: string | null;
+    phone_verified: boolean;
+    avatar_url: string | null;
   };
 }
 
 export default function AnnouncementDetail() {
+  const { t } = useTranslation();
   const { id } = useParams<{ id: string }>();
   const { user } = useAuth();
   const navigate = useNavigate();
@@ -82,7 +89,7 @@ export default function AnnouncementDetail() {
       .select(`
         *,
         categories (id, name, slug),
-        profiles (username, full_name, phone)
+        profiles (id, username, full_name, phone, phone_verified, avatar_url)
       `)
       .eq('id', id)
       .eq('status', 'active')
@@ -356,8 +363,11 @@ export default function AnnouncementDetail() {
                   </div>
                 </div>
 
-                <div className="pt-4 border-t">
+                <div className="pt-4 border-t flex items-center justify-between">
                   <Badge variant="outline">{announcement.categories.name}</Badge>
+                  {user && announcement.user_id !== user.id && (
+                    <ReportButton announcementId={announcement.id} userId={announcement.user_id} variant="link" />
+                  )}
                 </div>
 
                 {user && announcement.user_id !== user.id && (
@@ -396,29 +406,19 @@ export default function AnnouncementDetail() {
             </Card>
 
             {/* Seller Info */}
-            <Card>
-              <CardContent className="p-6">
-                <h3 className="font-semibold mb-3">Seller Information</h3>
-                <div className="space-y-2">
-                  <p className="text-sm">
-                    <span className="text-muted-foreground">Username: </span>
-                    <span className="font-medium">{announcement.profiles.username}</span>
-                  </p>
-                  {announcement.profiles.full_name && (
-                    <p className="text-sm">
-                      <span className="text-muted-foreground">Name: </span>
-                      <span className="font-medium">{announcement.profiles.full_name}</span>
-                    </p>
-                  )}
-                  {announcement.profiles.phone && user && (
-                    <p className="text-sm">
-                      <span className="text-muted-foreground">Phone: </span>
-                      <span className="font-medium">{announcement.profiles.phone}</span>
-                    </p>
-                  )}
-                </div>
-              </CardContent>
-            </Card>
+            <SellerCard
+              seller={{
+                id: announcement.user_id,
+                username: announcement.profiles.username,
+                full_name: announcement.profiles.full_name,
+                avatar_url: announcement.profiles.avatar_url,
+                phone: announcement.profiles.phone,
+                phone_verified: announcement.profiles.phone_verified || false,
+              }}
+              showPhone={!!user}
+              onContact={user && announcement.user_id !== user.id ? handleContactSeller : undefined}
+              isOwnListing={announcement.user_id === user?.id}
+            />
           </div>
         </div>
       </div>
