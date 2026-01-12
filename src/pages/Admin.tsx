@@ -10,7 +10,7 @@ import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { toast } from 'sonner';
 import { getCategoryFields } from '@/lib/categoryFields';
-import { ArrowLeft, Trash2, Check, X, Eye, Users, Crown, Star, User } from 'lucide-react';
+import { ArrowLeft, Trash2, Check, X, Eye, Users, Crown, Star, User, Flag, AlertTriangle, Shield, Ban } from 'lucide-react';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -84,6 +84,38 @@ interface Announcement {
   };
 }
 
+interface FraudReport {
+  id: string;
+  reporter_id: string;
+  reported_user_id: string | null;
+  reported_announcement_id: string | null;
+  category: string;
+  description: string;
+  status: 'pending' | 'reviewing' | 'resolved' | 'dismissed';
+  admin_notes: string | null;
+  resolved_by: string | null;
+  resolved_at: string | null;
+  created_at: string;
+  reporter?: {
+    username: string;
+  };
+  reported_user?: {
+    username: string;
+  };
+  reported_announcement?: {
+    title: string;
+  };
+}
+
+interface UserWarning {
+  id: string;
+  user_id: string;
+  warning_type: 'warning' | 'temporary_ban' | 'permanent_ban';
+  reason: string;
+  expires_at: string | null;
+  created_at: string;
+}
+
 export default function Admin() {
   const { t } = useTranslation();
   const navigate = useNavigate();
@@ -98,6 +130,16 @@ export default function Admin() {
   const [rejectionReason, setRejectionReason] = useState('');
   const [usersWithSubscriptions, setUsersWithSubscriptions] = useState<UserWithSubscription[]>([]);
   const [loadingUsers, setLoadingUsers] = useState(false);
+  const [fraudReports, setFraudReports] = useState<FraudReport[]>([]);
+  const [loadingReports, setLoadingReports] = useState(false);
+  const [selectedReport, setSelectedReport] = useState<FraudReport | null>(null);
+  const [reportDetailOpen, setReportDetailOpen] = useState(false);
+  const [warningDialogOpen, setWarningDialogOpen] = useState(false);
+  const [warningUserId, setWarningUserId] = useState<string | null>(null);
+  const [warningType, setWarningType] = useState<'warning' | 'temporary_ban' | 'permanent_ban'>('warning');
+  const [warningReason, setWarningReason] = useState('');
+  const [warningExpiry, setWarningExpiry] = useState('');
+  const [adminNotes, setAdminNotes] = useState('');
   useEffect(() => {
     if (!user) {
       navigate('/auth');
@@ -125,6 +167,144 @@ export default function Admin() {
     setIsAdmin(true);
     fetchAllAnnouncements();
     fetchUsersWithSubscriptions();
+    fetchFraudReports();
+  };
+
+  const fetchFraudReports = async () => {
+    setLoadingReports(true);
+    try {
+      const { data, error } = await supabase
+        .from('fraud_reports')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+
+      // Fetch related data
+      if (data && data.length > 0) {
+        const reporterIds = [...new Set(data.map(r => r.reporter_id).filter(Boolean))];
+        const reportedUserIds = [...new Set(data.map(r => r.reported_user_id).filter(Boolean))] as string[];
+        const announcementIds = [...new Set(data.map(r => r.reported_announcement_id).filter(Boolean))] as string[];
+
+        const [reporterProfiles, reportedProfiles, announcements] = await Promise.all([
+          supabase.from('profiles').select('id, username').in('id', reporterIds),
+          reportedUserIds.length > 0 ? supabase.from('profiles').select('id, username').in('id', reportedUserIds) : { data: [] },
+          announcementIds.length > 0 ? supabase.from('announcements').select('id, title').in('id', announcementIds) : { data: [] },
+        ]);
+
+        const reporterMap = new Map((reporterProfiles.data || []).map(p => [p.id, p]));
+        const reportedMap = new Map((reportedProfiles.data || []).map(p => [p.id, p]));
+        const announcementMap = new Map((announcements.data || []).map(a => [a.id, a]));
+
+        const enrichedReports = data.map(report => ({
+          ...report,
+          status: report.status as FraudReport['status'],
+          reporter: reporterMap.get(report.reporter_id),
+          reported_user: report.reported_user_id ? reportedMap.get(report.reported_user_id) : undefined,
+          reported_announcement: report.reported_announcement_id ? announcementMap.get(report.reported_announcement_id) : undefined,
+        }));
+
+        setFraudReports(enrichedReports);
+      } else {
+        setFraudReports([]);
+      }
+    } catch (error) {
+      console.error('Error fetching fraud reports:', error);
+      toast.error(t('errors.general'));
+    } finally {
+      setLoadingReports(false);
+    }
+  };
+
+  const handleUpdateReportStatus = async (reportId: string, status: FraudReport['status'], notes?: string) => {
+    try {
+      const updateData: any = { 
+        status,
+        admin_notes: notes || null,
+      };
+
+      if (status === 'resolved' || status === 'dismissed') {
+        updateData.resolved_by = user?.id;
+        updateData.resolved_at = new Date().toISOString();
+      }
+
+      const { error } = await supabase
+        .from('fraud_reports')
+        .update(updateData)
+        .eq('id', reportId);
+
+      if (error) throw error;
+
+      toast.success(t('admin.reportUpdated'));
+      fetchFraudReports();
+      setReportDetailOpen(false);
+      setSelectedReport(null);
+    } catch (error) {
+      console.error('Error updating report:', error);
+      toast.error(t('errors.general'));
+    }
+  };
+
+  const handleIssueWarning = async () => {
+    if (!warningUserId || !warningReason.trim()) {
+      toast.error(t('admin.warningReasonRequired'));
+      return;
+    }
+
+    try {
+      const { error } = await supabase.from('user_warnings').insert({
+        user_id: warningUserId,
+        issued_by: user?.id,
+        fraud_report_id: selectedReport?.id || null,
+        warning_type: warningType,
+        reason: warningReason.trim(),
+        expires_at: warningExpiry ? new Date(warningExpiry).toISOString() : null,
+      });
+
+      if (error) throw error;
+
+      toast.success(t('admin.warningIssued'));
+      setWarningDialogOpen(false);
+      setWarningUserId(null);
+      setWarningType('warning');
+      setWarningReason('');
+      setWarningExpiry('');
+    } catch (error) {
+      console.error('Error issuing warning:', error);
+      toast.error(t('errors.general'));
+    }
+  };
+
+  const openWarningDialog = (userId: string) => {
+    setWarningUserId(userId);
+    setWarningDialogOpen(true);
+  };
+
+  const getReportStatusBadge = (status: FraudReport['status']) => {
+    switch (status) {
+      case 'pending':
+        return <Badge variant="secondary">{t('admin.reportPending')}</Badge>;
+      case 'reviewing':
+        return <Badge className="bg-blue-500">{t('admin.reportReviewing')}</Badge>;
+      case 'resolved':
+        return <Badge className="bg-green-500">{t('admin.reportResolved')}</Badge>;
+      case 'dismissed':
+        return <Badge variant="outline">{t('admin.reportDismissed')}</Badge>;
+      default:
+        return <Badge variant="outline">{status}</Badge>;
+    }
+  };
+
+  const getCategoryLabel = (category: string) => {
+    const labels: Record<string, string> = {
+      scam: t('report.scam'),
+      fake_photos: t('report.fakePhotos'),
+      wrong_info: t('report.wrongInfo'),
+      suspicious_behavior: t('report.suspicious'),
+      spam: t('report.spam'),
+      other: t('report.other'),
+    };
+    return labels[category] || category;
   };
 
   const fetchUsersWithSubscriptions = async () => {
@@ -393,6 +573,15 @@ export default function Admin() {
             <TabsTrigger value="users" className="flex items-center gap-2">
               <Users className="w-4 h-4" />
               {t('admin.userSubscriptions', 'User Subscriptions')}
+            </TabsTrigger>
+            <TabsTrigger value="reports" className="relative flex items-center gap-2">
+              <Flag className="w-4 h-4" />
+              {t('admin.fraudReports', 'Fraud Reports')}
+              {fraudReports.filter(r => r.status === 'pending').length > 0 && (
+                <Badge variant="destructive" className="ml-2 h-5 w-5 p-0 flex items-center justify-center text-xs">
+                  {fraudReports.filter(r => r.status === 'pending').length}
+                </Badge>
+              )}
             </TabsTrigger>
           </TabsList>
 
@@ -716,6 +905,149 @@ export default function Admin() {
               </CardContent>
             </Card>
           </TabsContent>
+
+          {/* Fraud Reports Tab */}
+          <TabsContent value="reports">
+            {/* Report Statistics */}
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+              <Card>
+                <CardContent className="pt-6">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm font-medium text-muted-foreground">{t('admin.pendingReports', 'Pending')}</p>
+                      <p className="text-3xl font-bold text-yellow-600">
+                        {fraudReports.filter(r => r.status === 'pending').length}
+                      </p>
+                    </div>
+                    <AlertTriangle className="w-8 h-8 text-yellow-500" />
+                  </div>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardContent className="pt-6">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm font-medium text-muted-foreground">{t('admin.reviewingReports', 'Reviewing')}</p>
+                      <p className="text-3xl font-bold text-blue-600">
+                        {fraudReports.filter(r => r.status === 'reviewing').length}
+                      </p>
+                    </div>
+                    <Eye className="w-8 h-8 text-blue-500" />
+                  </div>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardContent className="pt-6">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm font-medium text-muted-foreground">{t('admin.resolvedReports', 'Resolved')}</p>
+                      <p className="text-3xl font-bold text-green-600">
+                        {fraudReports.filter(r => r.status === 'resolved').length}
+                      </p>
+                    </div>
+                    <Check className="w-8 h-8 text-green-500" />
+                  </div>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardContent className="pt-6">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm font-medium text-muted-foreground">{t('admin.totalReports', 'Total Reports')}</p>
+                      <p className="text-3xl font-bold">{fraudReports.length}</p>
+                    </div>
+                    <Flag className="w-8 h-8 text-muted-foreground" />
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Flag className="w-5 h-5" />
+                  {t('admin.fraudReports', 'Fraud Reports')}
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                {loadingReports ? (
+                  <p className="text-muted-foreground text-center py-8">{t('common.loading')}</p>
+                ) : fraudReports.length === 0 ? (
+                  <p className="text-muted-foreground text-center py-8">{t('admin.noReports', 'No fraud reports')}</p>
+                ) : (
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>{t('admin.reportCategory', 'Category')}</TableHead>
+                        <TableHead>{t('admin.reportedUser', 'Reported User')}</TableHead>
+                        <TableHead>{t('admin.reportedItem', 'Reported Item')}</TableHead>
+                        <TableHead>{t('admin.reportedBy', 'Reported By')}</TableHead>
+                        <TableHead>{t('admin.status', 'Status')}</TableHead>
+                        <TableHead>{t('admin.created', 'Created')}</TableHead>
+                        <TableHead>{t('admin.actions', 'Actions')}</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {fraudReports.map((report) => (
+                        <TableRow key={report.id}>
+                          <TableCell>
+                            <Badge variant="outline" className="flex items-center gap-1 w-fit">
+                              <AlertTriangle className="w-3 h-3" />
+                              {getCategoryLabel(report.category)}
+                            </Badge>
+                          </TableCell>
+                          <TableCell>
+                            {report.reported_user?.username || '-'}
+                          </TableCell>
+                          <TableCell className="max-w-[200px] truncate">
+                            {report.reported_announcement?.title || '-'}
+                          </TableCell>
+                          <TableCell>{report.reporter?.username || 'Unknown'}</TableCell>
+                          <TableCell>{getReportStatusBadge(report.status)}</TableCell>
+                          <TableCell>
+                            {new Date(report.created_at).toLocaleDateString()}
+                          </TableCell>
+                          <TableCell>
+                            <div className="flex gap-2">
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => {
+                                  setSelectedReport(report);
+                                  setAdminNotes(report.admin_notes || '');
+                                  setReportDetailOpen(true);
+                                }}
+                              >
+                                <Eye className="w-4 h-4" />
+                              </Button>
+                              {report.status === 'pending' && (
+                                <Button
+                                  variant="secondary"
+                                  size="sm"
+                                  onClick={() => handleUpdateReportStatus(report.id, 'reviewing')}
+                                >
+                                  {t('admin.startReview', 'Review')}
+                                </Button>
+                              )}
+                              {report.reported_user_id && (
+                                <Button
+                                  variant="destructive"
+                                  size="sm"
+                                  onClick={() => openWarningDialog(report.reported_user_id!)}
+                                >
+                                  <Ban className="w-4 h-4" />
+                                </Button>
+                              )}
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                )}
+              </CardContent>
+            </Card>
+          </TabsContent>
         </Tabs>
 
         {/* Preview Dialog */}
@@ -873,6 +1205,181 @@ export default function Admin() {
               </Button>
               <Button variant="destructive" onClick={handleRejectWithReason}>
                 {t('admin.reject')}
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+
+        {/* Report Detail Dialog */}
+        <Dialog open={reportDetailOpen} onOpenChange={setReportDetailOpen}>
+          <DialogContent className="max-w-lg">
+            <DialogHeader>
+              <DialogTitle className="flex items-center gap-2">
+                <Flag className="w-5 h-5 text-destructive" />
+                {t('admin.reportDetails', 'Report Details')}
+              </DialogTitle>
+            </DialogHeader>
+            {selectedReport && (
+              <div className="space-y-4">
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="bg-muted/50 rounded-lg p-3">
+                    <p className="text-xs text-muted-foreground uppercase">{t('admin.reportCategory', 'Category')}</p>
+                    <p className="font-medium mt-1">{getCategoryLabel(selectedReport.category)}</p>
+                  </div>
+                  <div className="bg-muted/50 rounded-lg p-3">
+                    <p className="text-xs text-muted-foreground uppercase">{t('admin.status', 'Status')}</p>
+                    <div className="mt-1">{getReportStatusBadge(selectedReport.status)}</div>
+                  </div>
+                  <div className="bg-muted/50 rounded-lg p-3">
+                    <p className="text-xs text-muted-foreground uppercase">{t('admin.reportedBy', 'Reported By')}</p>
+                    <p className="font-medium mt-1">{selectedReport.reporter?.username || 'Unknown'}</p>
+                  </div>
+                  <div className="bg-muted/50 rounded-lg p-3">
+                    <p className="text-xs text-muted-foreground uppercase">{t('admin.created', 'Created')}</p>
+                    <p className="font-medium mt-1">{new Date(selectedReport.created_at).toLocaleString()}</p>
+                  </div>
+                  {selectedReport.reported_user && (
+                    <div className="bg-muted/50 rounded-lg p-3">
+                      <p className="text-xs text-muted-foreground uppercase">{t('admin.reportedUser', 'Reported User')}</p>
+                      <p className="font-medium mt-1">{selectedReport.reported_user.username}</p>
+                    </div>
+                  )}
+                  {selectedReport.reported_announcement && (
+                    <div className="bg-muted/50 rounded-lg p-3">
+                      <p className="text-xs text-muted-foreground uppercase">{t('admin.reportedItem', 'Reported Item')}</p>
+                      <p className="font-medium mt-1 truncate">{selectedReport.reported_announcement.title}</p>
+                    </div>
+                  )}
+                </div>
+
+                <div>
+                  <Label className="text-muted-foreground">{t('admin.reportDescription', 'Description')}</Label>
+                  <p className="mt-1 text-sm bg-muted/50 rounded-lg p-3 whitespace-pre-wrap">
+                    {selectedReport.description}
+                  </p>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="admin-notes">{t('admin.adminNotes', 'Admin Notes')}</Label>
+                  <Textarea
+                    id="admin-notes"
+                    value={adminNotes}
+                    onChange={(e) => setAdminNotes(e.target.value)}
+                    placeholder={t('admin.adminNotesPlaceholder', 'Add notes about this report...')}
+                    rows={3}
+                  />
+                </div>
+
+                <div className="flex gap-2 pt-4 border-t">
+                  {selectedReport.status !== 'resolved' && (
+                    <Button
+                      className="flex-1 bg-green-600 hover:bg-green-700"
+                      onClick={() => handleUpdateReportStatus(selectedReport.id, 'resolved', adminNotes)}
+                    >
+                      <Check className="w-4 h-4 mr-2" />
+                      {t('admin.resolveReport', 'Resolve')}
+                    </Button>
+                  )}
+                  {selectedReport.status !== 'dismissed' && (
+                    <Button
+                      variant="outline"
+                      className="flex-1"
+                      onClick={() => handleUpdateReportStatus(selectedReport.id, 'dismissed', adminNotes)}
+                    >
+                      <X className="w-4 h-4 mr-2" />
+                      {t('admin.dismissReport', 'Dismiss')}
+                    </Button>
+                  )}
+                  {selectedReport.reported_user_id && (
+                    <Button
+                      variant="destructive"
+                      onClick={() => {
+                        setReportDetailOpen(false);
+                        openWarningDialog(selectedReport.reported_user_id!);
+                      }}
+                    >
+                      <Ban className="w-4 h-4 mr-2" />
+                      {t('admin.issueWarning', 'Warn/Ban')}
+                    </Button>
+                  )}
+                </div>
+              </div>
+            )}
+          </DialogContent>
+        </Dialog>
+
+        {/* Warning/Ban Dialog */}
+        <Dialog open={warningDialogOpen} onOpenChange={setWarningDialogOpen}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle className="flex items-center gap-2 text-destructive">
+                <Shield className="w-5 h-5" />
+                {t('admin.issueWarningTitle', 'Issue Warning or Ban')}
+              </DialogTitle>
+              <DialogDescription>
+                {t('admin.issueWarningDescription', 'Take action against this user for policy violations.')}
+              </DialogDescription>
+            </DialogHeader>
+            <div className="space-y-4 py-4">
+              <div className="space-y-2">
+                <Label>{t('admin.actionType', 'Action Type')}</Label>
+                <Select value={warningType} onValueChange={(v) => setWarningType(v as typeof warningType)}>
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="warning">
+                      <div className="flex items-center gap-2">
+                        <AlertTriangle className="w-4 h-4 text-yellow-500" />
+                        {t('admin.warningOnly', 'Warning Only')}
+                      </div>
+                    </SelectItem>
+                    <SelectItem value="temporary_ban">
+                      <div className="flex items-center gap-2">
+                        <Ban className="w-4 h-4 text-orange-500" />
+                        {t('admin.temporaryBan', 'Temporary Ban')}
+                      </div>
+                    </SelectItem>
+                    <SelectItem value="permanent_ban">
+                      <div className="flex items-center gap-2">
+                        <Ban className="w-4 h-4 text-red-500" />
+                        {t('admin.permanentBan', 'Permanent Ban')}
+                      </div>
+                    </SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {warningType === 'temporary_ban' && (
+                <div className="space-y-2">
+                  <Label htmlFor="warning-expiry">{t('admin.banExpiry', 'Ban Expiry Date')}</Label>
+                  <input
+                    type="datetime-local"
+                    id="warning-expiry"
+                    value={warningExpiry}
+                    onChange={(e) => setWarningExpiry(e.target.value)}
+                    className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+                  />
+                </div>
+              )}
+
+              <div className="space-y-2">
+                <Label htmlFor="warning-reason">{t('admin.warningReason', 'Reason')} *</Label>
+                <Textarea
+                  id="warning-reason"
+                  value={warningReason}
+                  onChange={(e) => setWarningReason(e.target.value)}
+                  placeholder={t('admin.warningReasonPlaceholder', 'Explain the reason for this action...')}
+                  rows={4}
+                />
+              </div>
+            </div>
+            <DialogFooter>
+              <Button variant="outline" onClick={() => setWarningDialogOpen(false)}>
+                {t('common.cancel')}
+              </Button>
+              <Button variant="destructive" onClick={handleIssueWarning}>
+                {t('admin.confirmAction', 'Confirm Action')}
               </Button>
             </DialogFooter>
           </DialogContent>
