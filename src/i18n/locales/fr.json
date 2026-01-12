@@ -396,5 +396,19 @@
       "currentPlan": "Forfait Actuel",
       "upgrade": "Mettre à Niveau"
     }
+  },
+  "warnings": {
+    "warning": "Avertissement",
+    "temporaryBan": "Suspension temporaire",
+    "permanentBan": "Suspension permanente",
+    "accountWarnings": "Avertissements du compte ({{count}})",
+    "accountTemporarilyBanned": "Votre compte est temporairement suspendu",
+    "accountPermanentlyBanned": "Votre compte est définitivement suspendu",
+    "banExpiresIn": "La suspension expire dans {{time}}",
+    "expiresIn": "Expire dans {{time}}",
+    "expired": "Expiré",
+    "actionBlockedTemporary": "Action bloquée - Suspension temporaire",
+    "actionBlockedPermanent": "Action bloquée - Suspension permanente",
+    "userBanned": "Utilisateur suspendu"
   }
 }
