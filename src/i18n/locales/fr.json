@@ -410,5 +410,10 @@
     "actionBlockedTemporary": "Action bloquée - Suspension temporaire",
     "actionBlockedPermanent": "Action bloquée - Suspension permanente",
     "userBanned": "Utilisateur suspendu"
+  },
+  "ads": {
+    "advertisement": "Publicité",
+    "yourAdHere": "Votre Publicité Ici",
+    "sponsoredContent": "Contenu Sponsorisé"
   }
 }
