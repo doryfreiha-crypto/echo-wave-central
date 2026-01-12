@@ -3,6 +3,8 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/components/AuthProvider';
 import { useMessageNotificationContext } from '@/components/MessageNotificationProvider';
+import { useUserWarnings } from '@/hooks/useUserWarnings';
+import { BannedUserAlert } from '@/components/BannedUserAlert';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -43,6 +45,7 @@ const Chat = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
   const { markAsRead } = useMessageNotificationContext();
+  const { activeBan, isBanned } = useUserWarnings();
   const [messages, setMessages] = useState<Message[]>([]);
   const [conversation, setConversation] = useState<ConversationDetails | null>(null);
   const [newMessage, setNewMessage] = useState('');
@@ -244,17 +247,21 @@ const Chat = () => {
       {/* Input */}
       <div className="bg-card border-t">
         <div className="container mx-auto px-4 py-4">
-          <form onSubmit={handleSendMessage} className="flex gap-2">
-            <Input
-              value={newMessage}
-              onChange={(e) => setNewMessage(e.target.value)}
-              placeholder="Type a message..."
-              className="flex-1"
-            />
-            <Button type="submit" disabled={!newMessage.trim()}>
-              <Send className="h-4 w-4" />
-            </Button>
-          </form>
+          {isBanned && activeBan ? (
+            <BannedUserAlert activeBan={activeBan} />
+          ) : (
+            <form onSubmit={handleSendMessage} className="flex gap-2">
+              <Input
+                value={newMessage}
+                onChange={(e) => setNewMessage(e.target.value)}
+                placeholder="Type a message..."
+                className="flex-1"
+              />
+              <Button type="submit" disabled={!newMessage.trim()}>
+                <Send className="h-4 w-4" />
+              </Button>
+            </form>
+          )}
         </div>
       </div>
     </div>

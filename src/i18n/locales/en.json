@@ -486,6 +486,21 @@
     "submitted": "Report submitted successfully. We'll review it shortly.",
     "error": "Failed to submit report"
   },
+  "warnings": {
+    "warning": "Warning",
+    "temporaryBan": "Temporary Ban",
+    "permanentBan": "Permanent Ban",
+    "accountWarnings": "Account Warnings ({{count}})",
+    "accountTemporarilyBanned": "Your account has been temporarily suspended",
+    "accountPermanentlyBanned": "Your account has been permanently banned",
+    "banExpiresIn": "Expires in {{time}}",
+    "expiresIn": "Expires in {{time}}",
+    "expired": "Expired",
+    "actionBlockedPermanent": "This action is not available",
+    "actionBlockedTemporary": "This action is temporarily unavailable",
+    "userBanned": "This user has been banned",
+    "userHasWarnings": "This user has account warnings"
+  },
   "common": {
     "search": "Search",
     "filter": "Filter",

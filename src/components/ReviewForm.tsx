@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/components/AuthProvider';
+import { useUserWarnings } from '@/hooks/useUserWarnings';
+import { BannedUserAlert } from '@/components/BannedUserAlert';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
@@ -20,6 +22,7 @@ interface ReviewFormProps {
 export function ReviewForm({ reviewedUserId, announcementId, reviewType, onSuccess, onCancel }: ReviewFormProps) {
   const { t } = useTranslation();
   const { user } = useAuth();
+  const { activeBan, isBanned } = useUserWarnings();
   const [rating, setRating] = useState(0);
   const [hoveredRating, setHoveredRating] = useState(0);
   const [reviewText, setReviewText] = useState('');
@@ -80,6 +83,9 @@ export function ReviewForm({ reviewedUserId, announcementId, reviewType, onSucce
         </CardTitle>
       </CardHeader>
       <CardContent>
+        {isBanned && activeBan ? (
+          <BannedUserAlert activeBan={activeBan} />
+        ) : (
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
             <Label>{t('trust.yourRating')}</Label>
@@ -136,6 +142,7 @@ export function ReviewForm({ reviewedUserId, announcementId, reviewType, onSucce
             )}
           </div>
         </form>
+        )}
       </CardContent>
     </Card>
   );
