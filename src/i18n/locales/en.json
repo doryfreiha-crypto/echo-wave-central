@@ -525,5 +525,10 @@
     "clearAll": "Clear all",
     "filters": "Filters",
     "showLess": "Show less"
+  },
+  "ads": {
+    "advertisement": "Advertisement",
+    "yourAdHere": "Your Ad Here",
+    "sponsoredContent": "Sponsored Content"
   }
 }

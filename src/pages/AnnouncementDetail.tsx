@@ -11,6 +11,7 @@ import { Megaphone, MapPin, ArrowLeft, Calendar, Eye, Heart, CheckCircle, Messag
 import { toast } from 'sonner';
 import { getCategoryFields } from '@/lib/categoryFields';
 import { useTranslation } from 'react-i18next';
+import AdBanner from '@/components/AdBanner';
 
 interface Category {
   id: string;
@@ -328,6 +329,11 @@ export default function AnnouncementDetail() {
                 </CardContent>
               </Card>
             )}
+
+            {/* Ad Banner after content */}
+            <div className="flex justify-center">
+              <AdBanner size="leaderboard" slot="detail-bottom" />
+            </div>
           </div>
 
           {/* Details Sidebar */}
@@ -419,6 +425,9 @@ export default function AnnouncementDetail() {
               onContact={user && announcement.user_id !== user.id ? handleContactSeller : undefined}
               isOwnListing={announcement.user_id === user?.id}
             />
+
+            {/* Sidebar Ad Banner */}
+            <AdBanner size="rectangle" slot="detail-sidebar" className="mx-auto" />
           </div>
         </div>
       </div>

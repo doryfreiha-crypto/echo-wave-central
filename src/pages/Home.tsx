@@ -16,6 +16,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { LanguageSwitcher } from '@/components/LanguageSwitcher';
 import { ScrollAnimate } from '@/hooks/use-scroll-animation';
 import { Footer } from '@/components/Footer';
+import AdBanner from '@/components/AdBanner';
 
 interface Category {
   id: string;
@@ -565,6 +566,13 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      {/* Top Ad Banner */}
+      <div className="container mx-auto px-4 py-6">
+        <div className="flex justify-center">
+          <AdBanner size="leaderboard" slot="home-top" />
+        </div>
+      </div>
 
       <div id="listings" className="container mx-auto px-4 py-8">
         <div className="flex gap-6">
