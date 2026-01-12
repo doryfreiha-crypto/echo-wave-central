@@ -14,6 +14,8 @@ import { z } from 'zod';
 import { getCategoryFields, type FieldDefinition } from '@/lib/categoryFields';
 import ImageUpload from '@/components/ImageUpload';
 import { useSubscriptionLimits, getTierDisplayName, getTierColor } from '@/hooks/useSubscriptionLimits';
+import { useUserWarnings } from '@/hooks/useUserWarnings';
+import { BannedUserAlert } from '@/components/BannedUserAlert';
 import { Badge } from '@/components/ui/badge';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 const announcementSchema = z.object({
@@ -33,6 +35,7 @@ export default function CreateAnnouncement() {
   const navigate = useNavigate();
   const { user } = useAuth();
   const subscriptionInfo = useSubscriptionLimits();
+  const { activeBan, isBanned } = useUserWarnings();
   const [categories, setCategories] = useState<Category[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [selectedImages, setSelectedImages] = useState<File[]>([]);
@@ -158,7 +161,12 @@ export default function CreateAnnouncement() {
             </p>
           </CardHeader>
           <CardContent>
-            {!subscriptionInfo.canCreate && (
+            {/* Show ban alert if user is banned */}
+            {isBanned && activeBan && (
+              <BannedUserAlert activeBan={activeBan} />
+            )}
+            
+            {!isBanned && !subscriptionInfo.canCreate && (
               <Alert variant="destructive" className="mb-6">
                 <AlertCircle className="h-4 w-4" />
                 <AlertDescription>
@@ -300,7 +308,7 @@ export default function CreateAnnouncement() {
               <Button 
                 type="submit" 
                 className="w-full" 
-                disabled={isLoading || !subscriptionInfo.canCreate}
+                disabled={isLoading || !subscriptionInfo.canCreate || isBanned}
               >
                 {isLoading ? 'Creating...' : 'Create Announcement'}
               </Button>

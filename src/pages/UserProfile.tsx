@@ -10,7 +10,9 @@ import { UserTrustBadge } from '@/components/UserTrustBadge';
 import { UserReviews } from '@/components/UserReviews';
 import { ReviewForm } from '@/components/ReviewForm';
 import { ReportButton } from '@/components/ReportButton';
-import { ArrowLeft, Megaphone, Calendar, Package, MessageSquare } from 'lucide-react';
+import { UserWarningsDisplay } from '@/components/UserWarningsDisplay';
+import { useUserWarnings } from '@/hooks/useUserWarnings';
+import { ArrowLeft, Megaphone, Calendar, Package, MessageSquare, ShieldAlert } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { formatDistanceToNow } from 'date-fns';
 
@@ -41,6 +43,12 @@ export default function UserProfile() {
   const [announcements, setAnnouncements] = useState<Announcement[]>([]);
   const [loading, setLoading] = useState(true);
   const [showReviewForm, setShowReviewForm] = useState(false);
+  
+  // Fetch warnings for the profile being viewed (only admins can see other users' warnings)
+  const { warnings: profileWarnings, isBanned: isProfileBanned } = useUserWarnings(userId);
+  
+  // Fetch current user's warnings (to check if they're banned)
+  const { isBanned: isCurrentUserBanned } = useUserWarnings();
 
   useEffect(() => {
     if (userId) {
@@ -172,8 +180,21 @@ export default function UserProfile() {
                 </div>
               </div>
             </div>
+            
+            {/* Show banned status for profile owner or admins */}
+            {isProfileBanned && (
+              <div className="mt-4 flex items-center gap-2 text-destructive">
+                <ShieldAlert className="w-5 h-5" />
+                <span className="font-medium">{t('warnings.userBanned')}</span>
+              </div>
+            )}
           </CardContent>
         </Card>
+        
+        {/* Display warnings - only visible to profile owner or admins */}
+        {isOwnProfile && profileWarnings.length > 0 && (
+          <UserWarningsDisplay warnings={profileWarnings} showAll />
+        )}
 
         <div className="grid gap-6 lg:grid-cols-2">
           {/* Active Listings */}
@@ -226,8 +247,8 @@ export default function UserProfile() {
           <div className="space-y-6">
             <UserReviews userId={profile.id} />
 
-            {/* Leave Review Button */}
-            {user && !isOwnProfile && !showReviewForm && (
+            {/* Leave Review Button - disabled if current user is banned */}
+            {user && !isOwnProfile && !showReviewForm && !isCurrentUserBanned && (
               <Button 
                 variant="outline" 
                 className="w-full"
